@@ -1,2 +1,2 @@
 # funding
-se project about construct a funding system for staffs 
+Se project about construct a funding system for staffs 
