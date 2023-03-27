@@ -47,22 +47,22 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
-<!--		&lt;!&ndash; Spring boot starter data jpa: includes Hibernate, Spring data jpa &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-data-jpa</artifactId>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; JDBC driver &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-jdbc</artifactId>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; PostgreSQL JDBC driver &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.postgresql</groupId>-->
-<!--			<artifactId>postgresql</artifactId>-->
-<!--			<version>42.2.9</version>-->
-<!--		</dependency>-->
+		<!-- Spring boot starter data jpa: includes Hibernate, Spring data jpa -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<!-- JDBC driver -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<!-- PostgreSQL JDBC driver -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.9</version>
+		</dependency>
 <!--		&lt;!&ndash; Spring boot starter security: includes Spring security &ndash;&gt;-->
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.boot</groupId>-->
