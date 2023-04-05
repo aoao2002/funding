@@ -5,7 +5,7 @@ server:
   tomcat.uri-encoding: UTF-8
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/se
+    url: jdbc:postgresql://43.136.96.80:5432/se
     username: checker
     password: 123456
     driver-class-name: org.postgresql.Driver
