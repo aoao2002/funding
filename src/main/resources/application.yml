@@ -1,5 +1,5 @@
 server:
-  port: 8030
+  port: 8080
   session-timeout: 30
   tomcat.max-threads: 0
   tomcat.uri-encoding: UTF-8
@@ -10,7 +10,10 @@ spring:
     password: 123456
     driver-class-name: org.postgresql.Driver
     jpa:
-      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      database: postgres
+      show-sql: true
       hibernate:
         ddl-auto: update
-      show-sql: true
+        naming:
+          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
