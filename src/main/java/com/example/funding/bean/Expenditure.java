@@ -5,6 +5,8 @@ import com.sun.istack.NotNull;
 import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,6 +33,14 @@ public class Expenditure extends BaseBean{
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date endTime;
-
-
+    /**
+     * 经费所属课题组
+     */
+    @ManyToMany(mappedBy = "expenditures", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Group> groups = new HashSet<>();
+    /**
+     * 经费申请
+     */
+    @OneToMany(mappedBy = "expenditure", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Application> applications = new HashSet<>();
 }

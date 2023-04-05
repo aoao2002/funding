@@ -23,7 +23,7 @@ public class User extends BaseBean{
     /**
      * 用户身份（0 staff 1 manager）
      */
-    @Column(name = "identity", nullable = true)
+    @NotNull
     private int identity;
     /**
      * 管理的课题组
@@ -31,5 +31,14 @@ public class User extends BaseBean{
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_group", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "group_id")})
     private Set<Group> groups = new HashSet<>();
-
+    /**
+     * 提交的申请(只有staff才有)
+     */
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Application> applications = new HashSet<>();
+    /**
+     * 提交的反馈(只有manager才有)
+     */
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Feedback> feedbacks = new HashSet<>();
 }
