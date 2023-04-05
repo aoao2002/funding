@@ -12,7 +12,7 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Table(name = "group")
+@Table(name = "all_group")
 public class Group extends BaseBean{
     //name
     @NotNull
@@ -25,5 +25,8 @@ public class Group extends BaseBean{
     /**
      * 课题组下的经费
      */
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "group_expenditure", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "expenditure_id")})
+    private Set<Expenditure> expenditures = new HashSet<>();
 
 }

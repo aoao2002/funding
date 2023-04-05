@@ -12,7 +12,7 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "all_user")
 public class User extends BaseBean{
     //name
     @NotNull
@@ -24,7 +24,7 @@ public class User extends BaseBean{
      * 用户身份（0 staff 1 manager）
      */
     @Column(name = "identity", nullable = true)
-    private String identity;
+    private int identity;
     /**
      * 管理的课题组
      */
