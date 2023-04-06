@@ -5,6 +5,8 @@ import com.example.funding.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface UserService {
 
@@ -12,5 +14,9 @@ public interface UserService {
     SaResult Logout();
 
     SaResult addUser(String email, String pwd, String name);
+
+    UserInfo getUserByMail(String email);
+    List<UserInfo> getUserByName(String name);
+
 
 }
