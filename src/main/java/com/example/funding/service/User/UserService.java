@@ -11,4 +11,6 @@ public interface UserService {
     SaResult LoginMail(String Mail, String pwd);
     SaResult Logout();
 
+    SaResult addUser(String email, String pwd, String name);
+
 }

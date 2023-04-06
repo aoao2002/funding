@@ -22,4 +22,11 @@ public class UserServiceMpl implements UserService{
         // 1. clear session
         return null;
     }
+
+    public SaResult addUser(String email, String pwd, String name){
+        // TODO
+        // 1. check if email exists
+        // 2. if not, insert into database
+        return null;
+    }
 }
