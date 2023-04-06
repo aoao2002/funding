@@ -17,3 +17,28 @@ spring:
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  # for the bug in Swagger
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  redis:
+    database: 0
+    host: 106.55.104.82
+    jedis:
+      pool:
+        max-active: 50
+        max-idle: 20
+        max-wait: 3000
+        min-idle: 2
+    port: 6379
+    timeout: 5000
+
+sa-token:
+  activity-timeout: -1
+  is-concurrent: true
+  is-log: false
+  is-share: true
+  timeout: 2592000
+  token-name: satoken
+  token-style: uuid

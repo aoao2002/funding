@@ -1,14 +1,19 @@
 package com.example.funding.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.funding.service.User.EmailAndPwd;
+import com.example.funding.service.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import cn.dev33.satoken.util.SaResult;
 
 @RestController
 @RequestMapping("/user/")
 public class UserCtrl {
+
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(value ="register", method= RequestMethod.POST)
     @ResponseBody
     public boolean register(String email, String password){
@@ -19,20 +24,16 @@ public class UserCtrl {
     }
     @RequestMapping(value ="loginEmail", method= RequestMethod.POST)
     @ResponseBody
-    public boolean loginEmail(String email, String password){
-        // TODO
-        // 1. check if email exists
-        // 2. check if password is correct
-        // 3. if correct, set session
-        return false;
+    public SaResult loginEmail(@RequestBody EmailAndPwd emailAndPwd){
+        return userService.LoginMail(emailAndPwd.getEmail(), emailAndPwd.getPwd());
     }
+
     @RequestMapping(value ="logout", method= RequestMethod.POST)
     @ResponseBody
-    public boolean logout(){
-        // TODO
-        // 1. clear session
-        return false;
+    public SaResult Logout(){
+        return userService.Logout();
     }
+
     @RequestMapping(value ="getUserInfo", method= RequestMethod.GET)
     @ResponseBody
     public boolean getUserInfo(String mail){
