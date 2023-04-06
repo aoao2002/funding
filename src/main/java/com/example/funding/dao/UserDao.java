@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UserDao extends CommonDao<User> {
 
-    User findByMail(String email);
+    User findByEmail(String email);
 }
