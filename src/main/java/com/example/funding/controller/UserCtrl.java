@@ -2,8 +2,11 @@ package com.example.funding.controller;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.example.funding.Util.Handler.InputChecker;
+import com.example.funding.Util.Handler.ReturnHelper;
 import com.example.funding.service.User.EmailAndPwd;
 import com.example.funding.service.User.RegisterInfo;
+import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +14,7 @@ import cn.dev33.satoken.util.SaResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @RestController
-@RequestMapping("/user/")
+@RequestMapping("user/")
 public class UserCtrl {
 
     private static final Logger logger = LoggerFactory.getLogger(UserCtrl.class);
@@ -31,22 +34,15 @@ public class UserCtrl {
         return SaResult.ok("logout success");
     }
 
-    @RequestMapping(value ="getUserInfo", method= RequestMethod.GET)
-    public SaResult getUserInfo(String mail, String name){
-        // TODO
-        // 1. check if mail exists
-        // 2. check if name exists
-        // 3. if both exists, return some user info
-//        UserInfo result = null;
-//        if(InputChecker.checkNullAndEmpty(mail))
-//            result = userService.getUserByMail(mail);
-//        else if(InputChecker.checkNullAndEmpty(name))
-//            result = userService.getUserByName(name);
-//
-//        if (result == null) {
-//            return SaResult.error("no such user");
-//        }
-        return SaResult.ok().setData(null);
+    @RequestMapping(value ="getUserByName", method= RequestMethod.GET)
+    public SaResult getUserByName(String name){
+        return ReturnHelper.returnObj(userService.getUserByName(name));
+    }
+
+    @RequestMapping(value ="getUserByMail", method= RequestMethod.GET)
+    public SaResult getUserByMail(String mail){
+
+        return ReturnHelper.returnObj(userService.getUserByMail(mail));
     }
 
     @RequestMapping(value ="isLogin", method= RequestMethod.GET)

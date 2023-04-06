@@ -12,4 +12,6 @@ public interface UserDao extends CommonDao<User> {
     User findById(long ID);
 
     User findByName(String name);
+
+    List<User> findAllByName(String name);
 }
