@@ -24,7 +24,7 @@ spring:
 
   redis:
     database: 0
-    host: 106.55.104.82
+    host: 43.136.96.80
     jedis:
       pool:
         max-active: 50
