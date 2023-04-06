@@ -17,6 +17,9 @@ public class User extends BaseBean{
     //name
     @NotNull
     private String name;
+    // email
+    @NotNull
+    private String email;
     // password
     @NotNull
     private String pw;
