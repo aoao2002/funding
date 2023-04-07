@@ -20,4 +20,11 @@ public class ApplicationCtrl {
         // TODO
         return false;
     }
+
+    @RequestMapping(value ="edit/newExpenditureApplication", method= RequestMethod.POST)
+    @ResponseBody
+    public boolean newExpenditureApplication(){
+        // TODO
+        return false;
+    }
 }

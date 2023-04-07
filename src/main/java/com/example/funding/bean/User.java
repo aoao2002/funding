@@ -27,7 +27,7 @@ public class User extends BaseBean{
     private String pw;
 
     /**
-     * 用户身份（0 staff 1 manager）
+     * 用户身份（0 staff 1 manager 2 president）
      */
     @NotNull
     private int identity;

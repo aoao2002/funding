@@ -8,9 +8,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/feedback/")
 public class FeedbackCtrl {
-    @RequestMapping(value ="edit/submitFeedback", method= RequestMethod.POST)
+    @RequestMapping(value ="edit/replyNewExpenditure", method= RequestMethod.POST)
     @ResponseBody
-    public boolean submitFeedback(){
+    public boolean replyNewExpenditure(){
+        // TODO
+        return false;
+    }
+    @RequestMapping(value ="edit/replyApplyExpenditure", method= RequestMethod.POST)
+    @ResponseBody
+    public boolean replyApplyExpenditure(){
         // TODO
         return false;
     }
