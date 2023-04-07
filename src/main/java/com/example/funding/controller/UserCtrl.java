@@ -41,7 +41,6 @@ public class UserCtrl {
 
     @RequestMapping(value ="getUserByMail", method= RequestMethod.GET)
     public SaResult getUserByMail(String mail){
-
         return ReturnHelper.returnObj(userService.getUserByMail(mail));
     }
 
