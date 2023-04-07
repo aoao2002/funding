@@ -18,5 +18,7 @@ public interface UserService {
     UserInfo getUserByMail(String email);
     List<UserInfo> getUserByName(String name);
 
+    boolean editMyInfo(UserInfo userInfo);
+
 
 }

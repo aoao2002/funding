@@ -1,5 +1,4 @@
 package com.example.funding.service.User;
-
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,5 +98,10 @@ public class UserServiceMpl implements UserService{
         );
 
         return userInfos;
+    }
+
+    @Override
+    public boolean editMyInfo(UserInfo userInfo) {
+        return false;
     }
 }

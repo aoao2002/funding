@@ -55,4 +55,10 @@ public class UserCtrl {
         return userService.LoginMail(emailAndPwd.getEmail(), emailAndPwd.getPwd());
     }
 
+    @RequestMapping(value ="editMyInfo", method= RequestMethod.POST)
+    public SaResult editMyInfo(String bio, String phoneNumber, String sex){
+        return ReturnHelper.returnBool(userService.editMyInfo(new UserInfo(bio, phoneNumber, sex)));
+
+    }
+
 }
