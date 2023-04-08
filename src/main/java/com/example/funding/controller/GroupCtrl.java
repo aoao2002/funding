@@ -1,5 +1,13 @@
 package com.example.funding.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
+import com.example.funding.Util.Handler.ReturnHelper;
+import com.example.funding.bean.User;
+import com.example.funding.service.Group.GroupService;
+import com.example.funding.service.User.UserInfo;
+import com.example.funding.service.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -9,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/group/")
 public class GroupCtrl {
 
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(value ="view/getAllGroups", method= RequestMethod.POST)
     @ResponseBody
-    public boolean getAllGroups(){
-        // TODO
+    public SaResult getAllGroups(){
         // 1. get all groups
-        return false;
+        return ReturnHelper.returnObj(groupService.getAllGroups());
     }
 
 
@@ -24,19 +36,18 @@ public class GroupCtrl {
 
     @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
     @ResponseBody
-    public boolean joinGroup(){
-        // TODO
+    public SaResult joinGroup(String groupName){
         // 1. check if name exists
         // 2. if not, insert into database
-        return false;
+        System.out.printf("check groupName %s\n", groupName);
+        return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
     @RequestMapping(value ="edit/quitGroup", method= RequestMethod.POST)
     @ResponseBody
-    public boolean quitGroup(){
-        // TODO
+    public SaResult quitGroup(String groupName){
         // 1. check if name exists
         // 2. if exists, delete from database
-        return false;
+        return ReturnHelper.returnBool(groupService.quitGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
 
 
@@ -46,10 +57,11 @@ public class GroupCtrl {
 
     @RequestMapping(value ="edit/modifyGroup", method= RequestMethod.POST)
     @ResponseBody
-    public boolean modifyGroup(){
-        // TODO
+    public boolean modifyGroup(String name, String updateName){
+        // TODO 可以再商量一下
         // 1. check if name exists
         // 2. if exists, update database
+        // 3. modify what? add user or add expenditure
         return false;
     }
 

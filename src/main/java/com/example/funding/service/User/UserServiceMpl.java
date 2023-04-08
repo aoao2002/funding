@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceMpl implements UserService{
@@ -103,5 +104,15 @@ public class UserServiceMpl implements UserService{
     @Override
     public boolean editMyInfo(UserInfo userInfo) {
         return false;
+    }
+
+    @Override
+    public UserInfo getUserById(long id) {
+        Optional<User> user = userDao.findById(id);
+        if(user.isEmpty()){
+            System.out.println("no user with this id");
+            return null;
+        }
+        return new UserInfo(user.get());
     }
 }
