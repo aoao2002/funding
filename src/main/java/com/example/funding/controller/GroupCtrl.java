@@ -58,7 +58,7 @@ public class GroupCtrl {
     @RequestMapping(value ="edit/modifyGroup", method= RequestMethod.POST)
     @ResponseBody
     public boolean modifyGroup(String name, String updateName){
-        // TODO 可以再商量一下
+        // TODO 可以再商量一下，暂时不管
         // 1. check if name exists
         // 2. if exists, update database
         // 3. modify what? add user or add expenditure
@@ -72,26 +72,24 @@ public class GroupCtrl {
 
     @RequestMapping(value ="edit/createGroup", method= RequestMethod.POST)
     @ResponseBody
-    public boolean createGroup(){
-        // TODO
+    public SaResult createGroup(String groupName){
         // 1. check if name exists
         // 2. if not, insert into database
-        return false;
+        return ReturnHelper.returnBool(groupService.createGroup(groupName));
     }
     @RequestMapping(value ="edit/deleteGroup", method= RequestMethod.POST)
     @ResponseBody
-    public boolean deleteGroup(){
-        // TODO
+    public SaResult deleteGroup(String groupName){
         // 1. check if name exists
         // 2. if exists, delete from database
-        return false;
+        return ReturnHelper.returnBool(groupService.deleteGroup(groupName));
     }
     @RequestMapping(value ="edit/assignManager", method= RequestMethod.POST)
     @ResponseBody
-    public boolean assignManager(){
-        // TODO
+    public SaResult assignManager(String groupName, String manEmail){
+        // NOTE 展示成员的时候需要注意有些是管理员
         // 1. check if name exists
         // 2. if exists, update database
-        return false;
+        return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));
     }
 }

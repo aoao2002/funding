@@ -6,10 +6,8 @@ import com.example.funding.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 @Service
 public class GroupServiceMpl implements GroupService {
@@ -70,7 +68,57 @@ public class GroupServiceMpl implements GroupService {
         return true;
     }
 
-    public boolean checkGroupName(String groupName, long staffId){
+    /*
+    using groupDao.existsByName(groupName), the IDEA would skip following code if it is null by finding groupName, raise an error
+     */
+    public boolean createGroup(String groupName){
+        if(groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is exist\n", groupName);
+            return false;
+        }
+        System.out.println("this group does not exist");
+        Group group = new Group();
+        group.setName(groupName);
+        Date date = new Date();
+        System.out.println(date);
+        group.setCreatedDate(date);
+        groupDao.save(group);
+        return true;
+    }
+
+    public boolean deleteGroup(String groupName){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        return groupDao.deleteByName(groupName)>0;
+    }
+
+    public boolean assignManager(String groupName, String manEmail){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("this group of name %s is null\n", groupName);
+            return false;
+        }
+        User user = userDao.findByEmail(manEmail);
+        if(user == null){
+            System.out.printf("this user of email %s is null\n", manEmail);
+            return false;
+        }
+        Set<User> groupUsers = group.getUsers();
+        Set<Group> userGroups = user.getGroups();
+        groupUsers.add(user);
+        userGroups.add(group);
+        group.setUsers(groupUsers);
+        user.setGroups(userGroups);
+        return true;
+    }
+    public boolean checkGroupName(String groupName){
+
         return false;
     }
 }

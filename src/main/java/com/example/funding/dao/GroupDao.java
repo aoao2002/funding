@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface GroupDao extends CommonDao<Group>{
+    boolean existsByName(String name);
     Group findByName(String name);
 
     boolean existsByNameAndUsers_Name(String groupName, String userName);
@@ -22,6 +23,8 @@ public interface GroupDao extends CommonDao<Group>{
     @Modifying
     @Query("update Group g set g.users = ?1 where g.name = ?2")
     int updateUsersByName(User users, String name);
+
+    long deleteByName(String name);
 
 
 

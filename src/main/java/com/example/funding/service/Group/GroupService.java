@@ -11,4 +11,7 @@ public interface GroupService {
     public List<GroupInfo> getAllGroups();
     public boolean joinGroup(String groupName, long staffId);
     public boolean quitGroup(String groupName, long staffId);
+    public boolean createGroup(String groupName);
+    public boolean deleteGroup(String groupName);
+    public boolean assignManager(String groupName, String manEmail);
 }
