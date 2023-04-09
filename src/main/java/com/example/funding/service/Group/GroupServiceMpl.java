@@ -91,6 +91,16 @@ public class GroupServiceMpl implements GroupService {
             System.out.printf("this group of %s is not exist\n", groupName);
             return false;
         }
+        //TODO 删除关系表中的关系先，
+        Group group = groupDao.findByName(groupName);
+        Set<User> groupUsers = group.getUsers();
+//        groupUsers.stream().forEach(s->s.setGroups(s.getGroups().remove(group))); //how to handle this to avoid for loop
+        for (User user : groupUsers) {
+            Set<Group> userGroups = user.getGroups();
+            userGroups.remove(group);
+            user.setGroups(userGroups);
+        }
+        group.setUsers(new HashSet<>());
         return groupDao.deleteByName(groupName)>0;
     }
 
