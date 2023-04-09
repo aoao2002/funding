@@ -71,7 +71,17 @@ public class GroupServiceMpl implements GroupService {
     /*
     using groupDao.existsByName(groupName), the IDEA would skip following code if it is null by finding groupName, raise an error
      */
-    public boolean createGroup(String groupName){
+    public boolean createGroup(String groupName, long staffId){
+        Optional<User> use = userDao.findById(staffId);
+        if(use.isEmpty()){
+            System.out.printf("sorry, your id of %d is not exist", staffId);
+            return false;
+        }
+        if(use.get().getIdentity() == 0){
+            System.out.println("Sorry, you are staff, having no right to create this group");
+            return false;
+        }
+
         if(groupDao.existsByName(groupName)){
             System.out.printf("this group of %s is exist\n", groupName);
             return false;
@@ -86,7 +96,16 @@ public class GroupServiceMpl implements GroupService {
         return true;
     }
 
-    public boolean deleteGroup(String groupName){
+    public boolean deleteGroup(String groupName, long staffId){
+        Optional<User> use = userDao.findById(staffId);
+        if(use.isEmpty()){
+            System.out.printf("sorry, your id of %d is not exist", staffId);
+            return false;
+        }
+        if(use.get().getIdentity() == 0){
+            System.out.printf("Sorry, you are staff, having no right to delete this group\n");
+            return false;
+        }
         if(!groupDao.existsByName(groupName)){
             System.out.printf("this group of %s is not exist\n", groupName);
             return false;
@@ -104,7 +123,17 @@ public class GroupServiceMpl implements GroupService {
         return groupDao.deleteByName(groupName)>0;
     }
 
-    public boolean assignManager(String groupName, String manEmail){
+    public boolean assignManager(String groupName, String manEmail, long staffId){
+        Optional<User> use = userDao.findById(staffId);
+        if(use.isEmpty()){
+            System.out.printf("sorry, your id of %d is not exist", staffId);
+            return false;
+        }
+        if(use.get().getIdentity() != 2){
+            System.out.println("Sorry, you have no right to assign this group");
+            return false;
+        }
+
         if(!groupDao.existsByName(groupName)){
             System.out.printf("this group of %s is not exist\n", groupName);
             return false;

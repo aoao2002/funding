@@ -75,14 +75,14 @@ public class GroupCtrl {
     public SaResult createGroup(String groupName){
         // 1. check if name exists
         // 2. if not, insert into database
-        return ReturnHelper.returnBool(groupService.createGroup(groupName));
+        return ReturnHelper.returnBool(groupService.createGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
     @RequestMapping(value ="edit/deleteGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult deleteGroup(String groupName){
         // 1. check if name exists
         // 2. if exists, delete from database
-        return ReturnHelper.returnBool(groupService.deleteGroup(groupName));
+        return ReturnHelper.returnBool(groupService.deleteGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
     @RequestMapping(value ="edit/assignManager", method= RequestMethod.POST)
     @ResponseBody
@@ -90,6 +90,6 @@ public class GroupCtrl {
         // NOTE 展示成员的时候需要注意有些是管理员
         // 1. check if name exists
         // 2. if exists, update database
-        return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));
+        return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail, StpUtil.getLoginIdAsLong()));
     }
 }
