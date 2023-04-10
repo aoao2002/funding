@@ -1,5 +1,6 @@
 package com.example.funding.service.Group;
 
+import com.example.funding.bean.Application;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
@@ -27,6 +28,7 @@ public class GroupServiceMpl implements GroupService {
 
     @Override
     public boolean applyGroup(String groupName, String comment, long staffId) {
+//        new application, send it to all managers
         Group group = groupDao.findByName(groupName);
         if(group == null){
             System.out.printf("there is no group of %s\n", groupName);
@@ -40,16 +42,25 @@ public class GroupServiceMpl implements GroupService {
         groupApplication.setApplyTime(date);
         groupApplication.setStatus(0);
         groupApplicationDao.save(groupApplication);
+//        find the corr manager and send it to him
+        Set<User> users = group.getUsers();
+//        Iterator<User> iterator = users.iterator();
+//        TODO 这里可以直接get出来add吗，！！
+        users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupApplications().add(groupApplication));
         return true;
     }
 
     @Override
     public boolean passApplyGroup(long applyId) {
+//        找到application，再找到expen，再找到group，再找到所有manager，所有的application都设置然后删除
         Optional<GroupApplication> groupApplication = groupApplicationDao.findById(applyId);
         if(groupApplication.isEmpty()){
             System.out.printf("there is no such groupApplication of id %d\n", applyId);
             return false;
         }
+        groupApplication.get().setStatus(1);
+        groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupApplications().remove(groupApplication));
+
         return false;
     }
 
@@ -119,6 +130,7 @@ public class GroupServiceMpl implements GroupService {
         group.setName(groupName);
         Date date = new Date();
         group.setCreatedDate(date);
+        group.setUsers(new HashSet<>(userDao.findByIdentity(2)));
         groupDao.save(group);
         return true;
     }
