@@ -39,7 +39,7 @@ public class GroupCtrl {
         return ReturnHelper.returnObj(groupService.getAllGroups());
     }
 
-    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
+    @RequestMapping(value ="view/getGroupsByUserName", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getGroupsByUserName(String userName){
         return ReturnHelper.returnObj(groupService.getAllGroups());

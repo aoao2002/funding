@@ -3,8 +3,10 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Handler.InputChecker;
+import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
 import com.example.funding.controller.UserCtrl;
+import com.example.funding.dao.GroupDao;
 import com.example.funding.dao.UserDao;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -21,6 +23,9 @@ public class UserServiceMpl implements UserService{
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private GroupDao groupDao;
 
     private User getMe(){
         return findById(StpUtil.getLoginIdAsLong());
@@ -139,6 +144,14 @@ public class UserServiceMpl implements UserService{
 
     @Override
     public SaResult getUserByGroup(String groupName) {
+        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(groupName)))
+            return SaResult.error("getUserByGroup fail: input Null or Empty");
+
+        Group group = groupDao.findByName(groupName);
+        if(group==null) return SaResult.error("getUserByGroup fail: no such group");
+
+        List<User> users = userDao.findAllByGroups(group);
+
         return null;
     }
 }
