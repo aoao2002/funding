@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 //import sun.jvm.hotspot.oops.RawHeapVisitor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/group/")
 public class GroupCtrl {
+//    TODO 加入和退出，staff和manager的操作本质上是一样的，得优化一下
 
     @Autowired
     private GroupService groupService;
@@ -35,6 +37,15 @@ public class GroupCtrl {
     /**
      * staff's behavior
      */
+
+    @RequestMapping(value = "edit/applyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean applyGroup(String groupName, String comment){
+//        1. check group
+//        2. file json body
+        return false;
+
+    }
 
     @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
     @ResponseBody
