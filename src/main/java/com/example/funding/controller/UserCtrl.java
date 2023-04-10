@@ -69,13 +69,4 @@ public class UserCtrl {
     }
 
     // find back pwd
-
-
-    /**
-     * 得到自己管理的组接受到的所有加入申请
-     */
-    @RequestMapping(value ="view/getMyGroupsJoinRequest", method= RequestMethod.GET)
-    public SaResult getMyGroupsJoinRequest(){
-        return ReturnHelper.returnObj(null);
-    }
 }
