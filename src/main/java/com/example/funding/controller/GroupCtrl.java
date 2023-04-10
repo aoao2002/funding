@@ -95,4 +95,13 @@ public class GroupCtrl {
         // 3. must be pre
         return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));
     }
+
+    @RequestMapping(value ="edit/unassignManager", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult unassignManager(String groupName, String manEmail){
+        // NOTE 展示成员的时候需要注意有些是管理员
+        // 1. check if name exists
+        // 2. if exists, update database
+        return ReturnHelper.returnBool(groupService.unassignManager(groupName, manEmail));
+    }
 }

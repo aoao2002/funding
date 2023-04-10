@@ -87,10 +87,16 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public boolean deleteGroup(String groupName){
-        if(!groupDao.existsByName(groupName)){
-            System.out.printf("this group of %s is not exist\n", groupName);
-            return false;
+        //TODO 删除关系表中的关系先，
+        Group group = groupDao.findByName(groupName);
+        Set<User> groupUsers = group.getUsers();
+//        groupUsers.stream().forEach(s->s.setGroups(s.getGroups().remove(group))); //how to handle this to avoid for loop
+        for (User user : groupUsers) {
+            Set<Group> userGroups = user.getGroups();
+            userGroups.remove(group);
+            user.setGroups(userGroups);
         }
+        group.setUsers(new HashSet<>());
         return groupDao.deleteByName(groupName)>0;
     }
 
@@ -113,6 +119,30 @@ public class GroupServiceMpl implements GroupService {
         Set<Group> userGroups = user.getGroups();
         groupUsers.add(user);
         userGroups.add(group);
+        group.setUsers(groupUsers);
+        user.setGroups(userGroups);
+        return true;
+    }
+
+    public boolean unassignManager(String groupName, String manEmail){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("this group of name %s is null\n", groupName);
+            return false;
+        }
+        User user = userDao.findByEmail(manEmail);
+        if(user == null){
+            System.out.printf("this user of email %s is null\n", manEmail);
+            return false;
+        }
+        Set<User> groupUsers = group.getUsers();
+        Set<Group> userGroups = user.getGroups();
+        groupUsers.remove(user);
+        userGroups.remove(group);
         group.setUsers(groupUsers);
         user.setGroups(userGroups);
         return true;

@@ -14,4 +14,5 @@ public interface GroupService {
     public boolean createGroup(String groupName);
     public boolean deleteGroup(String groupName);
     public boolean assignManager(String groupName, String manEmail);
+    public boolean unassignManager(String groupName, String manEmail);
 }
