@@ -33,16 +33,18 @@ public class GroupCtrl {
         return ReturnHelper.returnObj(groupService.getAllGroups());
     }
 
-    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
-    @ResponseBody
-    public SaResult getGroupsByName(String name){
-        return ReturnHelper.returnObj(groupService.getAllGroups());
-    }
+//    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
+//    @ResponseBody
+//    public SaResult getGroupsByName(String name){
+////        return ReturnHelper.returnObj(groupService.getAllGroups());
+//        return ReturnHelper.returnBool(false);
+//    }
 
     @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getGroupsByUserName(String userName){
         return ReturnHelper.returnObj(groupService.getAllGroups());
+//        return ReturnHelper.returnBool(false);
     }
 
     /**
