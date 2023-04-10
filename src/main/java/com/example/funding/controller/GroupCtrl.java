@@ -8,14 +8,18 @@ import com.example.funding.service.Group.GroupService;
 import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import cn.dev33.satoken.util.SaResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+//import sun.jvm.hotspot.oops.RawHeapVisitor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/group/")
 public class GroupCtrl {
+//    TODO 加入和退出，staff和manager的操作本质上是一样的，得优化一下
 
     @Autowired
     private GroupService groupService;
@@ -33,6 +37,15 @@ public class GroupCtrl {
     /**
      * staff's behavior
      */
+
+    @RequestMapping(value = "edit/applyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean applyGroup(String groupName, String comment){
+//        1. check group
+//        2. file json body
+        return false;
+
+    }
 
     @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
     @ResponseBody
@@ -90,6 +103,16 @@ public class GroupCtrl {
         // NOTE 展示成员的时候需要注意有些是管理员
         // 1. check if name exists
         // 2. if exists, update database
+        // 3. must be pre
         return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));
+    }
+
+    @RequestMapping(value ="edit/unassignManager", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult unassignManager(String groupName, String manEmail){
+        // NOTE 展示成员的时候需要注意有些是管理员
+        // 1. check if name exists
+        // 2. if exists, update database
+        return ReturnHelper.returnBool(groupService.unassignManager(groupName, manEmail));
     }
 }

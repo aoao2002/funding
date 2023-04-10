@@ -52,12 +52,11 @@ public class User extends BaseBean{
     private int sex;
 
     /**
-     * 管理的课题组
+     * 课题组
      */
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_group", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "group_id")})
-//    private Set<Group> groups = new HashSet<>();
     private Set<Group> groups;
 
     /**

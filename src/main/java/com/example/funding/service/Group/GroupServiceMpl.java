@@ -1,6 +1,7 @@
 package com.example.funding.service.Group;
 
 import com.example.funding.bean.Group;
+import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
 import com.example.funding.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,48 @@ public class GroupServiceMpl implements GroupService {
     private GroupDao groupDao;
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private GroupApplicationDao groupApplicationDao;
     @Override
     public List<GroupInfo> getAllGroups(){
         List<Group> groups = groupDao.findAll();
         return groups.stream().map(GroupInfo::new).toList();
     }
+
+    @Override
+    public boolean applyGroup(String groupName, String comment, long staffId) {
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("there is no group of %s\n", groupName);
+            return false;
+        }
+        Date date = new Date();
+        GroupApplication groupApplication = new GroupApplication();
+        groupApplication.setUser(userDao.findById(staffId).get());
+        groupApplication.setGroup(group);
+        groupApplication.setComment(comment);
+        groupApplication.setApplyTime(date);
+        groupApplication.setStatus(0);
+        groupApplicationDao.save(groupApplication);
+        return true;
+    }
+
+    @Override
+    public boolean passApplyGroup(long applyId) {
+        Optional<GroupApplication> groupApplication = groupApplicationDao.findById(applyId);
+        if(groupApplication.isEmpty()){
+            System.out.printf("there is no such groupApplication of id %d\n", applyId);
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean rejectApplyGroup(long applyId) {
+        return false;
+    }
+
 
     @Override
     public boolean joinGroup(String groupName, long staffId){
@@ -80,17 +118,21 @@ public class GroupServiceMpl implements GroupService {
         Group group = new Group();
         group.setName(groupName);
         Date date = new Date();
-        System.out.println(date);
         group.setCreatedDate(date);
         groupDao.save(group);
         return true;
     }
 
     public boolean deleteGroup(String groupName){
-        if(!groupDao.existsByName(groupName)){
-            System.out.printf("this group of %s is not exist\n", groupName);
-            return false;
+        Group group = groupDao.findByName(groupName);
+        Set<User> groupUsers = group.getUsers();
+//        groupUsers.stream().forEach(s->s.setGroups(s.getGroups().remove(group))); //how to handle this to avoid for loop
+        for (User user : groupUsers) {
+            Set<Group> userGroups = user.getGroups();
+            userGroups.remove(group);
+            user.setGroups(userGroups);
         }
+        group.setUsers(new HashSet<>());
         return groupDao.deleteByName(groupName)>0;
     }
 
@@ -104,7 +146,7 @@ public class GroupServiceMpl implements GroupService {
             System.out.printf("this group of name %s is null\n", groupName);
             return false;
         }
-        User user = userDao.findByEmail(manEmail);
+        User user = userDao.findByEmailAndIdentity(manEmail, 1);
         if(user == null){
             System.out.printf("this user of email %s is null\n", manEmail);
             return false;
@@ -113,6 +155,30 @@ public class GroupServiceMpl implements GroupService {
         Set<Group> userGroups = user.getGroups();
         groupUsers.add(user);
         userGroups.add(group);
+        group.setUsers(groupUsers);
+        user.setGroups(userGroups);
+        return true;
+    }
+
+    public boolean unassignManager(String groupName, String manEmail){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("this group of name %s is null\n", groupName);
+            return false;
+        }
+        User user = userDao.findByEmailAndIdentity(manEmail, 1);
+        if(user == null){
+            System.out.printf("this user of email %s is null\n", manEmail);
+            return false;
+        }
+        Set<User> groupUsers = group.getUsers();
+        Set<Group> userGroups = user.getGroups();
+        groupUsers.remove(user);
+        userGroups.remove(group);
         group.setUsers(groupUsers);
         user.setGroups(userGroups);
         return true;

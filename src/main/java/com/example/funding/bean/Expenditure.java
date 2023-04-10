@@ -44,6 +44,7 @@ public class Expenditure extends BaseBean{
     @OneToMany(mappedBy = "expenditure", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Application> applications = new HashSet<>();
 
+    //TODO: each year usage
     //quota amount
     @Column(name = "quota", nullable = true)
     private double quota;

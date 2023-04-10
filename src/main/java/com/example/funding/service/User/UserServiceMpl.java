@@ -22,6 +22,18 @@ public class UserServiceMpl implements UserService{
     @Autowired
     private UserDao userDao;
 
+    private User getMe(){
+        return findById(StpUtil.getLoginIdAsLong());
+    }
+
+    public User findById(long userID){
+        Optional<User> us = userDao.findById(userID);
+        if(us.isEmpty()){
+            return null;
+        }
+        return us.get();
+    }
+
     public SaResult LoginMail(String Mail, String pwd){
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd)))
             return SaResult.error("login fail: input Null or Empty");;
@@ -48,9 +60,9 @@ public class UserServiceMpl implements UserService{
         return SaResult.ok("注销成功");
     }
 
-    public SaResult addUser(String email, String pwd, String name){
+    public SaResult addUser(String email, String pwd, String name, String identity){
 
-        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email, pwd, name)))
+        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email, pwd, name, identity)))
             return SaResult.error("register error: input Null or Empty");
 
         // check mail
@@ -59,7 +71,7 @@ public class UserServiceMpl implements UserService{
         }
 
         // check if user mail exist
-        User user = userDao.findByEmail(email);
+        User user = userDao.findByEmailAndIdentity(email, Integer.parseInt(identity));
 
         if (user==null) {
             User new_user = new User();
@@ -97,13 +109,17 @@ public class UserServiceMpl implements UserService{
                     userInfos.add(new UserInfo(user));
                 }
         );
-
         return userInfos;
     }
 
     @Override
     public boolean editMyInfo(UserInfo userInfo) {
-        return false;
+
+        if (userInfo==null) return false;
+        User me = getMe();
+        if(me==null) return false;
+        userDao.save(userInfo.changeUser(me));
+        return true;
     }
 
     @Override
@@ -114,5 +130,10 @@ public class UserServiceMpl implements UserService{
             return null;
         }
         return new UserInfo(user.get());
+    }
+
+    @Override
+    public UserInfo getMyInfo() {
+        return getUserById(getMe().getId());
     }
 }

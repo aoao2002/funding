@@ -12,13 +12,14 @@ import java.util.Date;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Table(name = "e_application")
-public class Application extends BaseBean{
+@Table(name = "group_application")
+
+public class GroupApplication extends BaseBean{
     //申请时间
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date applyTime;
-    //申请的附加评论
+    //申请理由
     @Column(name = "comment", nullable = true)
     private String comment;
     /**
@@ -33,15 +34,13 @@ public class Application extends BaseBean{
      */
     @NotNull
     @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "expenditure_id")
-    private Expenditure expenditure;
+    @JoinColumn(name = "group_id")
+    private Group group;
     /**
      * 申请的状态（0 未审核 1 审核通过 2 审核未通过）
      */
     @NotNull
     private int status;
 
-    /**
-     * TODO 加上支出金额以及支出类别
-     */
+
 }
