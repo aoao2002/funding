@@ -22,8 +22,8 @@ public class UserCtrl {
 
     @RequestMapping(value ="register", method= RequestMethod.POST)
     public SaResult register(@RequestBody RegisterInfo registerInfo){
-        return userService.addUser(registerInfo.getEmail(),
-                registerInfo.getPwd(), registerInfo.getName());
+        return userService.addUser(registerInfo.getEmail(), registerInfo.getPwd(),
+                registerInfo.getName(), registerInfo.getIdentity());
     }
 
     @RequestMapping(value ="logout", method= RequestMethod.POST)

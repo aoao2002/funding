@@ -60,9 +60,9 @@ public class UserServiceMpl implements UserService{
         return SaResult.ok("注销成功");
     }
 
-    public SaResult addUser(String email, String pwd, String name){
+    public SaResult addUser(String email, String pwd, String name, String identity){
 
-        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email, pwd, name)))
+        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email, pwd, name, identity)))
             return SaResult.error("register error: input Null or Empty");
 
         // check mail
@@ -71,7 +71,7 @@ public class UserServiceMpl implements UserService{
         }
 
         // check if user mail exist
-        User user = userDao.findByEmail(email);
+        User user = userDao.findByEmailAndIdentity(email, Integer.parseInt(identity));
 
         if (user==null) {
             User new_user = new User();
