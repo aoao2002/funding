@@ -71,17 +71,7 @@ public class GroupServiceMpl implements GroupService {
     /*
     using groupDao.existsByName(groupName), the IDEA would skip following code if it is null by finding groupName, raise an error
      */
-    public boolean createGroup(String groupName, long staffId){
-        Optional<User> use = userDao.findById(staffId);
-        if(use.isEmpty()){
-            System.out.printf("sorry, your id of %d is not exist", staffId);
-            return false;
-        }
-        if(use.get().getIdentity() == 0){
-            System.out.println("Sorry, you are staff, having no right to create this group");
-            return false;
-        }
-
+    public boolean createGroup(String groupName){
         if(groupDao.existsByName(groupName)){
             System.out.printf("this group of %s is exist\n", groupName);
             return false;
@@ -96,20 +86,7 @@ public class GroupServiceMpl implements GroupService {
         return true;
     }
 
-    public boolean deleteGroup(String groupName, long staffId){
-        Optional<User> use = userDao.findById(staffId);
-        if(use.isEmpty()){
-            System.out.printf("sorry, your id of %d is not exist", staffId);
-            return false;
-        }
-        if(use.get().getIdentity() == 0){
-            System.out.printf("Sorry, you are staff, having no right to delete this group\n");
-            return false;
-        }
-        if(!groupDao.existsByName(groupName)){
-            System.out.printf("this group of %s is not exist\n", groupName);
-            return false;
-        }
+    public boolean deleteGroup(String groupName){
         //TODO 删除关系表中的关系先，
         Group group = groupDao.findByName(groupName);
         Set<User> groupUsers = group.getUsers();
@@ -123,17 +100,7 @@ public class GroupServiceMpl implements GroupService {
         return groupDao.deleteByName(groupName)>0;
     }
 
-    public boolean assignManager(String groupName, String manEmail, long staffId){
-        Optional<User> use = userDao.findById(staffId);
-        if(use.isEmpty()){
-            System.out.printf("sorry, your id of %d is not exist", staffId);
-            return false;
-        }
-        if(use.get().getIdentity() != 2){
-            System.out.println("Sorry, you have no right to assign this group");
-            return false;
-        }
-
+    public boolean assignManager(String groupName, String manEmail){
         if(!groupDao.existsByName(groupName)){
             System.out.printf("this group of %s is not exist\n", groupName);
             return false;
@@ -152,6 +119,30 @@ public class GroupServiceMpl implements GroupService {
         Set<Group> userGroups = user.getGroups();
         groupUsers.add(user);
         userGroups.add(group);
+        group.setUsers(groupUsers);
+        user.setGroups(userGroups);
+        return true;
+    }
+
+    public boolean unassignManager(String groupName, String manEmail){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("this group of name %s is null\n", groupName);
+            return false;
+        }
+        User user = userDao.findByEmail(manEmail);
+        if(user == null){
+            System.out.printf("this user of email %s is null\n", manEmail);
+            return false;
+        }
+        Set<User> groupUsers = group.getUsers();
+        Set<Group> userGroups = user.getGroups();
+        groupUsers.remove(user);
+        userGroups.remove(group);
         group.setUsers(groupUsers);
         user.setGroups(userGroups);
         return true;
