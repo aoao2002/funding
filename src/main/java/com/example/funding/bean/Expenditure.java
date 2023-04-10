@@ -19,14 +19,17 @@ public class Expenditure extends BaseBean{
     //name
     @NotNull
     private String name;
+    //sequence number
+    @NotNull
+    private String number;
 
     // total_amount
     @NotNull
-    private long totalAmount;
+    private double totalAmount;
 
     // remaining_amount
     @NotNull
-    private long remainingAmount;
+    private double remainingAmount;
 
     // start_time
     @Temporal(TemporalType.DATE)
@@ -51,4 +54,7 @@ public class Expenditure extends BaseBean{
     private Set<Application> applications = new HashSet<>();
 
     //TODO: each year usage
+    //quota amount
+    @Column(name = "quota", nullable = true)
+    private double quota;
 }

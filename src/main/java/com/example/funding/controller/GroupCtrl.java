@@ -67,13 +67,26 @@ public class GroupCtrl {
         return ReturnHelper.returnBool(false);
     }
 
-    @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
+    @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult joinGroup(String groupName){
+    public SaResult JoinApi(String groupName){
         // 1. check if name exists
         // 2. if not, insert into database
         System.out.printf("check groupName %s\n", groupName);
         return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
+    }
+
+
+    /**
+     * staff's behavior
+     */
+
+    @RequestMapping(value = "edit/joinGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult joinGroup(String groupName, String comment){
+        //   1. check group
+        //   2. file json body
+        return ReturnHelper.returnBool(false);
     }
     @RequestMapping(value ="edit/quitGroup", method= RequestMethod.POST)
     @ResponseBody
@@ -96,6 +109,16 @@ public class GroupCtrl {
         // 2. if exists, update database
         // 3. modify what? add user or add expenditure
         return false;
+    }
+    @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passApplyGroup(long applyId){
+        return ReturnHelper.returnBool(false);
+    }
+    @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectApplyGroup(long applyId){
+        return ReturnHelper.returnBool(false);
     }
 
 
@@ -129,7 +152,7 @@ public class GroupCtrl {
 
     @RequestMapping(value ="edit/unassignManager", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult unassignManager(String groupName, String manEmail){
+    public SaResult unAssignManager(String groupName, String manEmail){
         // NOTE 展示成员的时候需要注意有些是管理员
         // 1. check if name exists
         // 2. if exists, update database
