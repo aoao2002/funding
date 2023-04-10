@@ -18,4 +18,8 @@ public class ExpenditureCtrl {
         return false;
     }
 
+    //getBasicExpenditureInfo --> bean
+    //增长率
+    //饼状图
+
 }
