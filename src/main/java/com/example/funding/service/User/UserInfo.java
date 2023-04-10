@@ -37,6 +37,7 @@ public class UserInfo {
         user.setBio(getBio());
         user.setPhoneNumber(getPhoneNumber());
         user.setSex(getSex());
+        user.setName(getName());
         return user;
     }
 
