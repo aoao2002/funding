@@ -65,6 +65,9 @@ public class User extends BaseBean{
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Application> applications;
 
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<GroupApplication> groupApplications;
+
     /**
      * 提交的反馈(只有manager才有)
      */

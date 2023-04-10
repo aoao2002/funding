@@ -40,11 +40,20 @@ public class GroupCtrl {
 
     @RequestMapping(value = "edit/applyGroup", method = RequestMethod.POST)
     @ResponseBody
-    public boolean applyGroup(String groupName, String comment){
+    public SaResult applyGroup(String groupName, String comment){
 //        1. check group
 //        2. file json body
-        return false;
-
+        return ReturnHelper.returnBool(false);
+    }
+    @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passApplyGroup(long applyId){
+        return ReturnHelper.returnBool(false);
+    }
+    @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectApplyGroup(long applyId){
+        return ReturnHelper.returnBool(false);
     }
 
     @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
