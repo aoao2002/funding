@@ -34,11 +34,11 @@ public class UserServiceMpl implements UserService{
         return us.get();
     }
 
-    public SaResult LoginMail(String Mail, String pwd){
-        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd)))
+    public SaResult LoginMail(String Mail, String pwd, String identity){
+        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd, identity)))
             return SaResult.error("login fail: input Null or Empty");;
 
-        User user = userDao.findByEmail(Mail);
+        User user = userDao.findByEmailAndIdentity(Mail, Integer.parseInt(identity));
         if (user==null) return SaResult.error("login fail: no such user");
         //check pw
         UserInfo userInfo = new UserInfo(user);
@@ -70,7 +70,7 @@ public class UserServiceMpl implements UserService{
             return SaResult.error("register error: mail format error");
         }
 
-        // check if user mail exist
+        // check if user exist
         User user = userDao.findByEmailAndIdentity(email, Integer.parseInt(identity));
 
         if (user==null) {
@@ -135,5 +135,10 @@ public class UserServiceMpl implements UserService{
     @Override
     public UserInfo getMyInfo() {
         return getUserById(getMe().getId());
+    }
+
+    @Override
+    public SaResult getUserByGroup(String groupName) {
+        return null;
     }
 }

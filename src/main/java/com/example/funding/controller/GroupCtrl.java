@@ -26,13 +26,24 @@ public class GroupCtrl {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value ="view/getAllGroups", method= RequestMethod.POST)
+    @RequestMapping(value ="view/getAllGroups", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllGroups(){
         // 1. get all groups
         return ReturnHelper.returnObj(groupService.getAllGroups());
     }
 
+    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getGroupsByName(String name){
+        return ReturnHelper.returnObj(groupService.getAllGroups());
+    }
+
+    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getGroupsByUserName(String userName){
+        return ReturnHelper.returnObj(groupService.getAllGroups());
+    }
 
     /**
      * staff's behavior
@@ -51,7 +62,10 @@ public class GroupCtrl {
         return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));
     }
     @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
+
+    @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
     @ResponseBody
+    public SaResult JoinApi(String groupName){
     public SaResult rejectApplyGroup(long applyId){
         return ReturnHelper.returnBool(groupService.rejectApplyGroup(applyId));
     }
@@ -63,6 +77,19 @@ public class GroupCtrl {
         // 2. if not, insert into database
         System.out.printf("check groupName %s\n", groupName);
         return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
+    }
+
+
+    /**
+     * staff's behavior
+     */
+
+    @RequestMapping(value = "edit/joinGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult joinGroup(String groupName, String comment){
+        //   1. check group
+        //   2. file json body
+        return ReturnHelper.returnBool(false);
     }
     @RequestMapping(value ="edit/quitGroup", method= RequestMethod.POST)
     @ResponseBody
@@ -90,6 +117,16 @@ public class GroupCtrl {
     @ResponseBody
     public SaResult getAllGroupApplication(){
         return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
+    }
+    @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passApplyGroup(long applyId){
+        return ReturnHelper.returnBool(false);
+    }
+    @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectApplyGroup(long applyId){
+        return ReturnHelper.returnBool(false);
     }
 
 

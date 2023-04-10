@@ -19,25 +19,34 @@ public class Expenditure extends BaseBean{
     //name
     @NotNull
     private String name;
+    //sequence number
+    @NotNull
+    private String number;
+
     // total_amount
     @NotNull
-    private long totalAmount;
+    private double totalAmount;
+
     // remaining_amount
     @NotNull
-    private long remainingAmount;
+    private double remainingAmount;
+
     // start_time
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date startTime;
+
     // end_time
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date endTime;
+
     /**
      * 经费所属课题组
      */
     @ManyToMany(mappedBy = "expenditures", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Group> groups = new HashSet<>();
+
     /**
      * 经费申请
      */
@@ -45,4 +54,7 @@ public class Expenditure extends BaseBean{
     private Set<Application> applications = new HashSet<>();
 
     //TODO: each year usage
+    //quota amount
+    @Column(name = "quota", nullable = true)
+    private double quota;
 }
