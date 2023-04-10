@@ -56,23 +56,10 @@ public class GroupCtrl {
 //        2. file json body
         return ReturnHelper.returnBool(groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong()));
     }
-    @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
-    @ResponseBody
-    public SaResult passApplyGroup(long applyId){
-        return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));
-    }
-    @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
 
     @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
     @ResponseBody
     public SaResult JoinApi(String groupName){
-    public SaResult rejectApplyGroup(long applyId){
-        return ReturnHelper.returnBool(groupService.rejectApplyGroup(applyId));
-    }
-
-    @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
-    @ResponseBody
-    public SaResult joinGroup(String groupName){
         // 1. check if name exists
         // 2. if not, insert into database
         System.out.printf("check groupName %s\n", groupName);
@@ -80,17 +67,10 @@ public class GroupCtrl {
     }
 
 
+
     /**
      * staff's behavior
      */
-
-    @RequestMapping(value = "edit/joinGroup", method = RequestMethod.POST)
-    @ResponseBody
-    public SaResult joinGroup(String groupName, String comment){
-        //   1. check group
-        //   2. file json body
-        return ReturnHelper.returnBool(false);
-    }
     @RequestMapping(value ="edit/quitGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult quitGroup(String groupName){
@@ -121,12 +101,12 @@ public class GroupCtrl {
     @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult passApplyGroup(long applyId){
-        return ReturnHelper.returnBool(false);
+        return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));
     }
     @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult rejectApplyGroup(long applyId){
-        return ReturnHelper.returnBool(false);
+        return ReturnHelper.returnBool(groupService.rejectApplyGroup(applyId));
     }
 
 
