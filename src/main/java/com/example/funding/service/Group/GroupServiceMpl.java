@@ -5,11 +5,13 @@ import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
 import com.example.funding.dao.*;
+import com.example.funding.service.Application.GroupAppInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupServiceMpl implements GroupService {
@@ -59,14 +61,35 @@ public class GroupServiceMpl implements GroupService {
             return false;
         }
         groupApplication.get().setStatus(1);
-        groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupApplications().remove(groupApplication));
-
-        return false;
+//        该组里所有manager的组申请set中删去这份application
+        groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
+                .forEach(s->s.getGroupApplications().remove(groupApplication.get()));
+//        调用join方法将人加入到该组
+        this.joinGroup(groupApplication.get().getGroup().getName(), groupApplication.get().getUser().getId());
+        return true;
     }
 
     @Override
     public boolean rejectApplyGroup(long applyId) {
-        return false;
+        Optional<GroupApplication> groupApplication = groupApplicationDao.findById(applyId);
+        if(groupApplication.isEmpty()){
+            System.out.printf("there is no such groupApplication of id %d\n", applyId);
+            return false;
+        }
+        groupApplication.get().setStatus(2);
+//        该组里所有manager的组申请set中删去这份application
+        groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
+                .forEach(s->s.getGroupApplications().remove(groupApplication.get()));
+        return true;
+    }
+
+    public Set<GroupAppInfo> getAllGroupApplicationToBeChecked(long staffId){
+        Optional<User> user = userDao.findById(staffId);
+        if(user.isEmpty()){
+            System.out.printf("something wrong, the staffId of %d is not exist\n", staffId);
+            return null;
+        }
+        return user.get().getGroupApplications().stream().filter(s->s.getStatus() == 0).map(GroupAppInfo::new).collect(Collectors.toSet());
     }
 
 
@@ -80,17 +103,19 @@ public class GroupServiceMpl implements GroupService {
             System.out.printf("this group of name %s is null\n", groupName);
             return false;
         }
-        Set<User> groupUsers = group.getUsers();
+//        Set<User> groupUsers = group.getUsers();
         Optional<User> user = userDao.findById(staffId);
         if(user.isEmpty()){
             System.out.printf("this user of id %d is not exist\n", staffId);
             return false;
         }
-        Set<Group> userGroups = user.get().getGroups();
-        userGroups.add(group);
-        user.get().setGroups(userGroups);
-        groupUsers.add(user.get());
-        group.setUsers(groupUsers);
+        user.get().getGroups().add(group);
+        group.getUsers().add(user.get());
+//        Set<Group> userGroups = user.get().getGroups();
+//        userGroups.add(group);
+//        user.get().setGroups(userGroups);
+//        groupUsers.add(user.get());
+//        group.setUsers(groupUsers);
         return true;
     }
 
