@@ -12,7 +12,7 @@ import java.util.Date;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Table(name = "application")
+@Table(name = "e_application")
 public class Application extends BaseBean{
     //申请时间
     @Temporal(TemporalType.DATE)

@@ -21,10 +21,10 @@ public class Expenditure extends BaseBean{
     private String name;
     // total_amount
     @NotNull
-    private long totalAmount;
+    private double totalAmount;
     // remaining_amount
     @NotNull
-    private long remainingAmount;
+    private double remainingAmount;
     // start_time
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
@@ -43,4 +43,8 @@ public class Expenditure extends BaseBean{
      */
     @OneToMany(mappedBy = "expenditure", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Application> applications = new HashSet<>();
+
+    //quota amount
+    @Column(name = "quota", nullable = true)
+    private double quota;
 }
