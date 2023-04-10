@@ -19,6 +19,9 @@ public class Expenditure extends BaseBean{
     //name
     @NotNull
     private String name;
+    //sequence number
+    @NotNull
+    private String number;
     // total_amount
     @NotNull
     private double totalAmount;

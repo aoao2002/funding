@@ -12,13 +12,16 @@ import java.util.Date;
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Table(name = "e_application")
+@Table(name = "expenditure_application")
 public class Application extends BaseBean{
     //申请时间
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date applyTime;
-    //申请的附加评论
+    // 申请摘要（用钱来干什么）
+    @Column(name = "app_abstract", nullable = true)
+    private String app_abstract;
+    //申请的附加评论（加急与否）
     @Column(name = "comment", nullable = true)
     private String comment;
     /**
@@ -44,4 +47,8 @@ public class Application extends BaseBean{
     /**
      * TODO 加上支出金额以及支出类别
      */
+    //支出金额
+    @Column(name = "amount", nullable = true)
+    private double amount;
+    //支出类别
 }

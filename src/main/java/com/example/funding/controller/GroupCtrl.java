@@ -38,15 +38,6 @@ public class GroupCtrl {
      * staff's behavior
      */
 
-    @RequestMapping(value = "edit/applyGroup", method = RequestMethod.POST)
-    @ResponseBody
-    public boolean applyGroup(String groupName, String comment){
-//        1. check group
-//        2. file json body
-        return false;
-
-    }
-
     @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult joinGroup(String groupName){
@@ -71,6 +62,15 @@ public class GroupCtrl {
     @RequestMapping(value ="edit/modifyGroup", method= RequestMethod.POST)
     @ResponseBody
     public boolean modifyGroup(String name, String updateName){
+        // TODO 可以再商量一下，暂时不管
+        // 1. check if name exists
+        // 2. if exists, update database
+        // 3. modify what? add user or add expenditure
+        return false;
+    }
+    @RequestMapping(value ="edit/acceptApplyGroup", method= RequestMethod.POST)
+    @ResponseBody
+    public boolean acceptApplyGroup(String name, String updateName){
         // TODO 可以再商量一下，暂时不管
         // 1. check if name exists
         // 2. if exists, update database
