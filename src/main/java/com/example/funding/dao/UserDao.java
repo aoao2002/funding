@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserDao extends CommonDao<User> {
@@ -23,6 +24,12 @@ public interface UserDao extends CommonDao<User> {
     Optional<User> findById(Long aLong);
 
     User findByEmailAndIdentity(String email, int identity);
+
+    Set<User> findByIdentity(int identity);
+
+
+
+
 
 
 
