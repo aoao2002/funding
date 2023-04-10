@@ -49,6 +49,12 @@ public class Application extends BaseBean{
     private int status;
 
     /**
+     * 是新建经费项目还是申请经费拨款(0 新建经费项目 1 申请经费拨款)
+     */
+    @NotNull
+    private int type;
+
+    /**
      * TODO 加上支出金额以及支出类别
      */
     //支出金额

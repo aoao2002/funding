@@ -26,6 +26,15 @@ public class GroupCtrl {
     @Autowired
     private UserService userService;
 
+    @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult JoinApi(String groupName){
+        // 1. check if name exists
+        // 2. if not, insert into database
+        System.out.printf("check groupName %s\n", groupName);
+        return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
+    }
+
     @RequestMapping(value ="view/getAllGroups", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllGroups(){
@@ -47,32 +56,20 @@ public class GroupCtrl {
 //        return ReturnHelper.returnBool(false);
     }
 
+
+
+
     /**
      * staff's behavior
      */
 
-    @RequestMapping(value = "edit/applyGroup", method = RequestMethod.POST)
+    @RequestMapping(value = "edit/joinGroup", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult applyGroup(String groupName, String comment){
-//        1. check group
-//        2. file json body
+    public SaResult joinGroup(String groupName, String comment){
+        //   1. check group
+        //   2. file json body
         return ReturnHelper.returnBool(groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong()));
     }
-
-    @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
-    @ResponseBody
-    public SaResult JoinApi(String groupName){
-        // 1. check if name exists
-        // 2. if not, insert into database
-        System.out.printf("check groupName %s\n", groupName);
-        return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
-    }
-
-
-
-    /**
-     * staff's behavior
-     */
     @RequestMapping(value ="edit/quitGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult quitGroup(String groupName){
