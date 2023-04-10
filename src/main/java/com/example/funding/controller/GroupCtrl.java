@@ -43,17 +43,17 @@ public class GroupCtrl {
     public SaResult applyGroup(String groupName, String comment){
 //        1. check group
 //        2. file json body
-        return ReturnHelper.returnBool(false);
+        return ReturnHelper.returnBool(groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong()));
     }
     @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult passApplyGroup(long applyId){
-        return ReturnHelper.returnBool(false);
+        return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));
     }
     @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult rejectApplyGroup(long applyId){
-        return ReturnHelper.returnBool(false);
+        return ReturnHelper.returnBool(groupService.rejectApplyGroup(applyId));
     }
 
     @RequestMapping(value ="edit/joinGroup", method= RequestMethod.POST)
@@ -85,6 +85,11 @@ public class GroupCtrl {
         // 2. if exists, update database
         // 3. modify what? add user or add expenditure
         return false;
+    }
+    @RequestMapping(value ="edit/getAllGroupApplication", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult getAllGroupApplication(){
+        return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
     }
 
 
