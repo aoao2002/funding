@@ -22,6 +22,18 @@ public class UserServiceMpl implements UserService{
     @Autowired
     private UserDao userDao;
 
+    private User getMe(){
+        return findById(StpUtil.getLoginIdAsLong());
+    }
+
+    public User findById(long userID){
+        Optional<User> us = userDao.findById(userID);
+        if(us.isEmpty()){
+            return null;
+        }
+        return us.get();
+    }
+
     public SaResult LoginMail(String Mail, String pwd){
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd)))
             return SaResult.error("login fail: input Null or Empty");;
@@ -97,13 +109,17 @@ public class UserServiceMpl implements UserService{
                     userInfos.add(new UserInfo(user));
                 }
         );
-
         return userInfos;
     }
 
     @Override
     public boolean editMyInfo(UserInfo userInfo) {
-        return false;
+
+        if (userInfo==null) return false;
+        User me = getMe();
+        if(me==null) return false;
+        userDao.save(userInfo.changeUser(me));
+        return true;
     }
 
     @Override
@@ -114,5 +130,10 @@ public class UserServiceMpl implements UserService{
             return null;
         }
         return new UserInfo(user.get());
+    }
+
+    @Override
+    public UserInfo getMyInfo() {
+        return getUserById(getMe().getId());
     }
 }

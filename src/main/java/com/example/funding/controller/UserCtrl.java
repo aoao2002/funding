@@ -1,6 +1,5 @@
 package com.example.funding.controller;
 
-
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.funding.Util.Handler.InputChecker;
 import com.example.funding.Util.Handler.ReturnHelper;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping("user/")
 public class UserCtrl {
-
     private static final Logger logger = LoggerFactory.getLogger(UserCtrl.class);
 
     @Autowired
@@ -58,7 +56,12 @@ public class UserCtrl {
     @RequestMapping(value ="editMyInfo", method= RequestMethod.POST)
     public SaResult editMyInfo(String bio, String phoneNumber, String sex){
         return ReturnHelper.returnBool(userService.editMyInfo(new UserInfo(bio, phoneNumber, sex)));
-
     }
+
+    @RequestMapping(value ="getMyInfo", method= RequestMethod.GET)
+    public SaResult getMyInfo(){
+        return ReturnHelper.returnObj(userService.getMyInfo());
+    }
+
 
 }

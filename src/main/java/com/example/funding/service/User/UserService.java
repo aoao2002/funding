@@ -23,5 +23,8 @@ public interface UserService {
 
     UserInfo getUserById(long id);
 
+    UserInfo getMyInfo();
+
+
 
 }

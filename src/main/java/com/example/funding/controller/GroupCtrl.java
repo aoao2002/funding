@@ -8,10 +8,12 @@ import com.example.funding.service.Group.GroupService;
 import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import cn.dev33.satoken.util.SaResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+//import sun.jvm.hotspot.oops.RawHeapVisitor;
 
 @RestController
 @RequestMapping("/group/")
@@ -90,6 +92,7 @@ public class GroupCtrl {
         // NOTE 展示成员的时候需要注意有些是管理员
         // 1. check if name exists
         // 2. if exists, update database
+        // 3. must be pre
         return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));
     }
 }
