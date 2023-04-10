@@ -63,13 +63,11 @@ public class User extends BaseBean{
      * 提交的申请(只有staff才有)
      */
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-//    private Set<Application> applications = new HashSet<>();
     private Set<Application> applications;
 
     /**
      * 提交的反馈(只有manager才有)
      */
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-//    private Set<Feedback> feedbacks = new HashSet<>();
     private Set<Feedback> feedbacks;
 }

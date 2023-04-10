@@ -19,25 +19,31 @@ public class Expenditure extends BaseBean{
     //name
     @NotNull
     private String name;
+
     // total_amount
     @NotNull
     private long totalAmount;
+
     // remaining_amount
     @NotNull
     private long remainingAmount;
+
     // start_time
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date startTime;
+
     // end_time
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date endTime;
+
     /**
      * 经费所属课题组
      */
     @ManyToMany(mappedBy = "expenditures", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Group> groups = new HashSet<>();
+
     /**
      * 经费申请
      */

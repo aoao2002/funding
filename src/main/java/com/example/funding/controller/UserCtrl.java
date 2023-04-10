@@ -49,8 +49,8 @@ public class UserCtrl {
 
     @RequestMapping(value ="LoginEmail", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult LoginEmail( @RequestBody EmailAndPwd emailAndPwd){
-        return userService.LoginMail(emailAndPwd.getEmail(), emailAndPwd.getPwd());
+    public SaResult LoginEmail( @RequestBody EmailAndPwd emailAndPwd, String identity){
+        return userService.LoginMail(emailAndPwd.getEmail(), emailAndPwd.getPwd(), identity);
     }
 
     @RequestMapping(value ="editMyInfo", method= RequestMethod.POST)

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public interface UserService {
 
-    SaResult LoginMail(String Mail, String pwd);
+    SaResult LoginMail(String Mail, String pwd, String identity);
     SaResult Logout();
 
     SaResult addUser(String email, String pwd, String name, String identity);
