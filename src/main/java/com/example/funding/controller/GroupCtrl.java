@@ -56,16 +56,6 @@ public class GroupCtrl {
 //        2. file json body
         return ReturnHelper.returnBool(false);
     }
-    @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
-    @ResponseBody
-    public SaResult passApplyGroup(long applyId){
-        return ReturnHelper.returnBool(false);
-    }
-    @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
-    @ResponseBody
-    public SaResult rejectApplyGroup(long applyId){
-        return ReturnHelper.returnBool(false);
-    }
 
     @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
     @ResponseBody
