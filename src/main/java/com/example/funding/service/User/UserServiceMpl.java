@@ -38,7 +38,7 @@ public class UserServiceMpl implements UserService{
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd, identity)))
             return SaResult.error("login fail: input Null or Empty");;
 
-        User user = userDao.findByEmailAndIdentity(Mail, Long.parseLong(identity));
+        User user = userDao.findByEmailAndIdentity(Mail, Integer.parseInt(identity));
         if (user==null) return SaResult.error("login fail: no such user");
         //check pw
         UserInfo userInfo = new UserInfo(user);
@@ -71,7 +71,7 @@ public class UserServiceMpl implements UserService{
         }
 
         // check if user exist
-        User user = userDao.findByEmailAndIdentity(email, Long.parseLong(identity));
+        User user = userDao.findByEmailAndIdentity(email, Integer.parseInt(identity));
 
         if (user==null) {
             User new_user = new User();
@@ -135,5 +135,10 @@ public class UserServiceMpl implements UserService{
     @Override
     public UserInfo getMyInfo() {
         return getUserById(getMe().getId());
+    }
+
+    @Override
+    public SaResult getUserByGroup(String groupName) {
+        return null;
     }
 }

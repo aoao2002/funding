@@ -26,13 +26,24 @@ public class GroupCtrl {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value ="view/getAllGroups", method= RequestMethod.POST)
+    @RequestMapping(value ="view/getAllGroups", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllGroups(){
         // 1. get all groups
         return ReturnHelper.returnObj(groupService.getAllGroups());
     }
 
+    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getGroupsByName(String name){
+        return ReturnHelper.returnObj(groupService.getAllGroups());
+    }
+
+    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getGroupsByUserName(String userName){
+        return ReturnHelper.returnObj(groupService.getAllGroups());
+    }
 
     /**
      * staff's behavior

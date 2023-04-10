@@ -29,6 +29,9 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                                 FundingApplication.getLogger().info(SaHolder.getRequest().getUrl());
                                 StpUtil.checkLogin();
                             });
+                    // 基金权限
+                    // 申请权限
+                    // group权限
                 }))
                 .addPathPatterns("/**")
                 .excludePathPatterns("/swagger-ui.html#/")

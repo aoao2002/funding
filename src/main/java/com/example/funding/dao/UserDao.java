@@ -23,7 +23,7 @@ public interface UserDao extends CommonDao<User> {
     @Override
     Optional<User> findById(Long aLong);
 
-    User findByEmailAndIdentity(String email, long identity);
+    User findByEmailAndIdentity(String email, int identity);
 
     Set<User> findByIdentity(int identity);
 

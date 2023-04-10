@@ -25,6 +25,6 @@ public interface UserService {
 
     UserInfo getMyInfo();
 
-
+    SaResult getUserByGroup(String groupName);
 
 }

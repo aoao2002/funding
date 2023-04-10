@@ -63,5 +63,11 @@ public class UserCtrl {
         return ReturnHelper.returnObj(userService.getMyInfo());
     }
 
+    @RequestMapping(value ="getUserByGroup", method= RequestMethod.GET)
+    public SaResult getUserByGroup(String groupName){
+        return ReturnHelper.returnObj(userService.getUserByGroup(groupName));
+    }
+
+    // find back pwd
 
 }
