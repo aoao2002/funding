@@ -83,6 +83,7 @@ public class UserServiceMpl implements UserService{
             new_user.setName(name);
             new_user.setPw(pwd);
             new_user.setEmail(email);
+            new_user.setIdentity(Integer.parseInt(identity));
             userDao.save(new_user);
             return SaResult.ok("register success");
         }

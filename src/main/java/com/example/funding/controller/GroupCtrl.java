@@ -92,9 +92,9 @@ public class GroupCtrl {
         // 3. modify what? add user or add expenditure
         return false;
     }
-    @RequestMapping(value ="edit/getAllGroupApplication", method= RequestMethod.POST)
+    @RequestMapping(value ="edit/getMyGroupApplication", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult getAllGroupApplication(){
+    public SaResult getMyGroupApplication(){
         return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
     }
     @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
