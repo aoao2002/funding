@@ -92,6 +92,14 @@ public class GroupServiceMpl implements GroupService {
         return user.get().getGroupApplications().stream().filter(s->s.getStatus() == 0).map(GroupAppInfo::new).collect(Collectors.toSet());
     }
 
+    public Set<GroupInfo> getMyGroups(long staffId){
+        Optional<User> user = userDao.findById(staffId);
+        if(user.isEmpty()){
+            System.out.printf("something wrong, the staffId of %d is not exist\n", staffId);
+            return null;
+        }
+        return user.get().getGroups().stream().map(GroupInfo::new).collect(Collectors.toSet());
+    }
 
     @Override
     public boolean joinGroup(String groupName, long staffId){

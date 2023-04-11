@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Handler.ReturnHelper;
 import com.example.funding.bean.User;
+import com.example.funding.service.Group.GroupInfo;
 import com.example.funding.service.Group.GroupService;
 import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 //import sun.jvm.hotspot.oops.RawHeapVisitor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping("/group/")
@@ -56,6 +59,11 @@ public class GroupCtrl {
 //        return ReturnHelper.returnBool(false);
     }
 
+    @RequestMapping(value ="view/getMyGroups", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyGroups(){
+        return ReturnHelper.returnObj(groupService.getMyGroups(StpUtil.getLoginIdAsLong()));
+    }
 
 
 
