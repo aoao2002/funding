@@ -54,8 +54,8 @@ public class UserCtrl {
     }
 
     @RequestMapping(value ="editMyInfo", method= RequestMethod.POST)
-    public SaResult editMyInfo(String bio, String phoneNumber, String sex){
-        return ReturnHelper.returnBool(userService.editMyInfo(new UserInfo(bio, phoneNumber, sex)));
+    public SaResult editMyInfo(String bio, String phoneNumber, String sex, String name){
+        return ReturnHelper.returnBool(userService.editMyInfo(new UserInfo(bio, name, phoneNumber, sex)));
     }
 
     @RequestMapping(value ="getMyInfo", method= RequestMethod.GET)
@@ -65,7 +65,7 @@ public class UserCtrl {
 
     @RequestMapping(value ="getUserByGroup", method= RequestMethod.GET)
     public SaResult getUserByGroup(String groupName){
-        return ReturnHelper.returnObj(userService.getUserByGroup(groupName));
+        return userService.getUserByGroup(groupName);
     }
 
     // find back pwd

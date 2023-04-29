@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExpenditureDao extends CommonDao<Expenditure>{
+    Expenditure findByNumber(String number);
 }

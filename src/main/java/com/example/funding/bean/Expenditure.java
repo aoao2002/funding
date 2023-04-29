@@ -44,8 +44,11 @@ public class Expenditure extends BaseBean{
     /**
      * 经费所属课题组
      */
-    @ManyToMany(mappedBy = "expenditures", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<Group> groups = new HashSet<>();
+//    @ManyToMany(mappedBy = "expenditures", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+//    private Set<Group> groups = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     /**
      * 经费申请
@@ -57,4 +60,7 @@ public class Expenditure extends BaseBean{
     //quota amount
     @Column(name = "quota", nullable = true)
     private double quota;
+
+
+
 }

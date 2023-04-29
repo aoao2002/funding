@@ -1,5 +1,6 @@
 package com.example.funding.bean;
 
+import com.example.funding.service.Application.ExpendCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 import lombok.*;
@@ -60,5 +61,8 @@ public class Application extends BaseBean{
     //支出金额
     @Column(name = "amount", nullable = true)
     private double amount;
-    //支出类别
+    //支出类别，在service/Application/ExpendCategory.java
+    @Column(name = "expend_category", nullable = true)
+    private int expendCategory;
+
 }

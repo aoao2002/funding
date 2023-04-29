@@ -83,6 +83,7 @@ public class UserServiceMpl implements UserService{
             new_user.setName(name);
             new_user.setPw(pwd);
             new_user.setEmail(email);
+            new_user.setIdentity(Integer.parseInt(identity));
             userDao.save(new_user);
             return SaResult.ok("register success");
         }
@@ -151,7 +152,15 @@ public class UserServiceMpl implements UserService{
         if(group==null) return SaResult.error("getUserByGroup fail: no such group");
 
         List<User> users = userDao.findAllByGroups(group);
+        List<UserInfo> userInfos = new ArrayList<>();
+        logger.error(users.size()+"");
 
-        return null;
+        users.forEach(
+                user -> {
+                    logger.info(user.getName());
+                    userInfos.add(new UserInfo(user));
+                }
+        );
+        return SaResult.data(userInfos);
     }
 }
