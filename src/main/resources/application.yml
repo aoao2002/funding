@@ -25,7 +25,7 @@ spring:
 
   redis:
     database: 0
-    host: 120:79:200:84
+    host: 120.79.200.84
 #    host: 106.55.104.82
     jedis:
       pool:

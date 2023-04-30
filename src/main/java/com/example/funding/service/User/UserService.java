@@ -1,6 +1,7 @@
 package com.example.funding.service.User;
 
 import cn.dev33.satoken.util.SaResult;
+import com.example.funding.bean.User;
 import com.example.funding.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,4 +28,7 @@ public interface UserService {
 
     SaResult getUserByGroup(String groupName);
 
+    boolean checkPresident();
+
+    public User findById(long userID);
 }

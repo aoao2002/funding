@@ -3,6 +3,7 @@ package com.example.funding.Util.Handler;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Exception.EditException;
+import com.example.funding.Util.Exception.BeanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public SaResult handlerException(Exception e) {
-//        e.printStackTrace();
+        e.printStackTrace();
         logger.error(e.getMessage());
         return SaResult.error(e.getMessage());
     }
@@ -67,6 +68,14 @@ public class GlobalExceptionHandler {
 
         // 返回给前端
         return SaResult.error(editException.getMessage());
+    }
+
+    @ExceptionHandler(BeanException.class)
+    public SaResult handlerUserException(BeanException userException)
+            throws Exception {
+
+        // 返回给前端
+        return SaResult.error(userException.getMessage());
     }
 
     @ExceptionHandler(NumberFormatException.class)

@@ -2,10 +2,10 @@ package com.example.funding.service.User;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.example.funding.Util.Exception.BeanException;
 import com.example.funding.Util.Handler.InputChecker;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
-import com.example.funding.controller.UserCtrl;
 import com.example.funding.dao.GroupDao;
 import com.example.funding.dao.UserDao;
 import com.google.common.collect.Lists;
@@ -34,7 +34,7 @@ public class UserServiceMpl implements UserService{
     public User findById(long userID){
         Optional<User> us = userDao.findById(userID);
         if(us.isEmpty()){
-            return null;
+            throw new BeanException("the User do not exist");
         }
         return us.get();
     }
@@ -77,6 +77,10 @@ public class UserServiceMpl implements UserService{
 
         // check if user exist
         User user = userDao.findByEmailAndIdentity(email, Integer.parseInt(identity));
+
+        // could not register as president
+        if(Integer.parseInt(identity) == User.getPresidentIdentity())
+            return SaResult.error("could not register as president");
 
         if (user==null) {
             User new_user = new User();
@@ -163,4 +167,18 @@ public class UserServiceMpl implements UserService{
         );
         return SaResult.data(userInfos);
     }
+
+    @Override
+    public boolean checkPresident() {
+        return getMyIdentity() == 2;
+    }
+
+    private int getMyIdentity() {
+        User me = getMe();
+        return me.getIdentity();
+    }
+
+
+
+
 }

@@ -32,34 +32,24 @@ public class GroupCtrl {
     @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
     @ResponseBody
     public SaResult JoinApi(String groupName){
-        // 1. check if name exists
-        // 2. if not, insert into database
         System.out.printf("check groupName %s\n", groupName);
         return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
 
-    @RequestMapping(value ="view/getAllGroups", method= RequestMethod.GET)
+    @RequestMapping(value ="getAllGroups", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllGroups(){
-        // 1. get all groups
         return ReturnHelper.returnObj(groupService.getAllGroups());
     }
 
-//    @RequestMapping(value ="view/getGroupsByName", method= RequestMethod.GET)
-//    @ResponseBody
-//    public SaResult getGroupsByName(String name){
-////        return ReturnHelper.returnObj(groupService.getAllGroups());
-//        return ReturnHelper.returnBool(false);
-//    }
 
-    @RequestMapping(value ="view/getGroupsByUserName", method= RequestMethod.GET)
+    @RequestMapping(value ="getGroupsByUserName", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getGroupsByUserName(String userName){
         return ReturnHelper.returnObj(groupService.getAllGroups());
-//        return ReturnHelper.returnBool(false);
     }
 
-    @RequestMapping(value ="view/getMyGroups", method= RequestMethod.GET)
+    @RequestMapping(value ="getMyGroups", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getMyGroups(){
         return ReturnHelper.returnObj(groupService.getMyGroups(StpUtil.getLoginIdAsLong()));
@@ -69,45 +59,47 @@ public class GroupCtrl {
 
     /**
      * staff's behavior
+     * no need to check authority
      */
 
-    @RequestMapping(value = "edit/joinGroup", method = RequestMethod.POST)
+    @RequestMapping(value = "joinGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult joinGroup(String groupName, String comment){
-        //   1. check group
-        //   2. file json body
+       // TODO：this api just for test
         return ReturnHelper.returnBool(groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong()));
     }
-    @RequestMapping(value ="edit/quitGroup", method= RequestMethod.POST)
+    @RequestMapping(value ="quitGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult quitGroup(String groupName){
-        // 1. check if name exists
-        // 2. if exists, delete from database
         return ReturnHelper.returnBool(groupService.quitGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
 
 
     /**
      * manager's behavior
+     *
+     * the input of each api need include the group name
      */
 
     @RequestMapping(value ="edit/modifyGroup", method= RequestMethod.POST)
     @ResponseBody
-    public boolean modifyGroup(String name, String updateName){
+    public boolean modifyGroup(String groupName, String updateName){
         // TODO 可以再商量一下，暂时不管
         // 1. check if name exists
         // 2. if exists, update database
         // 3. modify what? add user or add expenditure
         return false;
     }
-    @RequestMapping(value ="edit/getMyGroupApplication", method= RequestMethod.POST)
+    @RequestMapping(value ="getMyGroupApplication", method= RequestMethod.POST)
     @ResponseBody
     public SaResult getMyGroupApplication(){
         return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
     }
+
     @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult passApplyGroup(long applyId){
+        // the apply for join the group
         return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));
     }
     @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
@@ -121,36 +113,29 @@ public class GroupCtrl {
      * president's behavior
      */
 
-    @RequestMapping(value ="edit/createGroup", method= RequestMethod.POST)
+    @RequestMapping(value ="president/createGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult createGroup(String groupName){
-        // 1. check if name exists
-        // 2. if not, insert into database
+
         return ReturnHelper.returnBool(groupService.createGroup(groupName));
     }
-    @RequestMapping(value ="edit/deleteGroup", method= RequestMethod.POST)
+    @RequestMapping(value ="president/deleteGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult deleteGroup(String groupName){
-        // 1. check if name exists
-        // 2. if exists, delete from database
+
         return ReturnHelper.returnBool(groupService.deleteGroup(groupName));
     }
-    @RequestMapping(value ="edit/assignManager", method= RequestMethod.POST)
+    @RequestMapping(value ="president/assignManager", method= RequestMethod.POST)
     @ResponseBody
     public SaResult assignManager(String groupName, String manEmail){
-        // NOTE 展示成员的时候需要注意有些是管理员
-        // 1. check if name exists
-        // 2. if exists, update database
-        // 3. must be pre
+
         return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));
     }
 
-    @RequestMapping(value ="edit/unassignManager", method= RequestMethod.POST)
+    @RequestMapping(value ="president/unassignManager", method= RequestMethod.POST)
     @ResponseBody
     public SaResult unassignManager(String groupName, String manEmail){
-        // NOTE 展示成员的时候需要注意有些是管理员
-        // 1. check if name exists
-        // 2. if exists, update database
+
         return ReturnHelper.returnBool(groupService.unassignManager(groupName, manEmail));
     }
 }

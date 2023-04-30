@@ -2,6 +2,7 @@ package com.example.funding.service.Group;
 
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.service.Application.GroupAppInfo;
+import com.sun.jdi.event.StepEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,4 +25,6 @@ public interface GroupService {
     public boolean deleteGroup(String groupName);
     public boolean assignManager(String groupName, String manEmail);
     public boolean unassignManager(String groupName, String manEmail);
+
+    public boolean checkGroupEditPower(String applyID, String groupName, String UserID);
 }

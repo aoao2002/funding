@@ -1,15 +1,18 @@
 package com.example.funding.service.Group;
 
-import com.example.funding.bean.Application;
+import com.example.funding.Util.Exception.BeanException;
+import com.example.funding.Util.Handler.InputChecker;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
 import com.example.funding.dao.*;
 import com.example.funding.service.Application.GroupAppInfo;
+import com.example.funding.service.GroupApplycation.GroupApplicationService;
+import com.example.funding.service.User.UserService;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,7 +24,15 @@ public class GroupServiceMpl implements GroupService {
     private UserDao userDao;
 
     @Autowired
+    private GroupApplicationService groupApplicationService;
+
+    @Autowired
     private GroupApplicationDao groupApplicationDao;
+
+    @Autowired
+    private UserService userService;
+
+
     @Override
     public List<GroupInfo> getAllGroups(){
         List<Group> groups = groupDao.findAll();
@@ -228,6 +239,33 @@ public class GroupServiceMpl implements GroupService {
         user.setGroups(userGroups);
         return true;
     }
+
+    @Override
+    public boolean checkGroupEditPower(String applyID, String groupName, String UserID) {
+        if(!InputChecker.checkNullAndEmpty(groupName) && !InputChecker.checkNullAndEmpty(groupName)){
+            throw new BeanException("you need offer either applyID or groupName to edit group");
+        }
+        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(UserID))){
+            throw new BeanException("do not offer user for edit group");
+        }
+        User user = userService.findById(Long.parseLong(UserID));
+
+        if(user==null) throw new BeanException("UserID wrong for edit group");
+
+        Group group = groupDao.findByName(groupName);
+        if(group==null) {
+            //可能是通过applyID请求的，尝试找到对应group
+
+            GroupApplication groupApplication =  groupApplicationService.findById(Long.parseLong(applyID));
+            if (groupApplication == null) throw new BeanException("groupApplication do not exit");
+
+            group = groupApplication.getGroup();
+            if(group==null) throw new BeanException("group do not exit");
+        }
+
+        return user.getIdentity() != 0 && group.getUsers().contains(user);
+    }
+
     public boolean checkGroupName(String groupName){
 
         return false;

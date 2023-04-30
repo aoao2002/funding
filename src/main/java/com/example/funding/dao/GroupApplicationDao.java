@@ -9,7 +9,6 @@ import java.util.Optional;
 @Repository
 public interface GroupApplicationDao extends CommonDao<GroupApplication>{
 
-
     @Override
     Optional<GroupApplication> findById(Long aLong);
 }

@@ -65,6 +65,7 @@ public class User extends BaseBean{
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Application> applications;
 
+    // 其实应该存在group里面，但是也样也成
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<GroupApplication> groupApplications;
 
@@ -73,4 +74,8 @@ public class User extends BaseBean{
      */
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Feedback> feedbacks;
+
+    public static int getPresidentIdentity(){
+        return 2;
+    }
 }
