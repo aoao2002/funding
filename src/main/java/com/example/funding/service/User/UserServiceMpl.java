@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceMpl implements UserService{
@@ -37,6 +38,19 @@ public class UserServiceMpl implements UserService{
             throw new BeanException("the User do not exist");
         }
         return us.get();
+    }
+
+    @Override
+    public User getUserByMailAndIdentity(String email, String identity) {
+        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email, identity)))
+            return null;
+
+        if(!InputChecker.checkNum(identity))
+            return null;
+
+        int identity_int = Integer.parseInt(identity);
+
+        return userDao.findByEmailAndIdentity(email, identity_int);
     }
 
     public SaResult LoginMail(String Mail, String pwd, String identity){
@@ -96,13 +110,13 @@ public class UserServiceMpl implements UserService{
     }
 
     @Override
-    public UserInfo getUserByMail(String email) {
+    public List<UserInfo> getUserByMail(String email) {
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email)))
             return null;
 
-        User user = userDao.findByEmail(email);
+        List<User> users = userDao.findAllByEmail(email);
 
-        return user!=null ? new UserInfo(user) : null;
+        return users!=null ? users.stream().map(UserInfo::new).collect(Collectors.toList()) : null;
     }
 
     @Override

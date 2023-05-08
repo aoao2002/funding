@@ -42,6 +42,11 @@ public class UserCtrl {
         return ReturnHelper.returnObj(userService.getUserByMail(mail));
     }
 
+    @RequestMapping(value ="getUserByMailAndIdentity", method= RequestMethod.GET)
+    public SaResult getUserByMailAndIdentity(String mail, String identity){
+        return ReturnHelper.returnObj(userService.getUserByMailAndIdentity(mail, identity));
+    }
+
     @RequestMapping(value ="isLogin", method= RequestMethod.GET)
     public SaResult isLogin() {
         return SaResult.ok("isLogin：" + StpUtil.isLogin());

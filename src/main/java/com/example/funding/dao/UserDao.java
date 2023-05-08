@@ -14,8 +14,6 @@ import java.util.Set;
 @Repository
 public interface UserDao extends CommonDao<User> {
 
-    User findByEmail(String Email);
-
     User findByName(String name);
 
     List<User> findAllByName(String name);
@@ -28,6 +26,8 @@ public interface UserDao extends CommonDao<User> {
     User findByEmailAndIdentity(String email, int identity);
 
     Set<User> findByIdentity(int identity);
+
+    List<User> findAllByEmail(String Email);
 
 
 

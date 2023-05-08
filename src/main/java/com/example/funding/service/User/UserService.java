@@ -17,7 +17,7 @@ public interface UserService {
 
     SaResult addUser(String email, String pwd, String name, String identity);
 
-    UserInfo getUserByMail(String email);
+    List<UserInfo> getUserByMail(String email);
     List<UserInfo> getUserByName(String name);
 
     boolean editMyInfo(UserInfo userInfo);
@@ -31,4 +31,6 @@ public interface UserService {
     boolean checkPresident();
 
     public User findById(long userID);
+
+    public User getUserByMailAndIdentity(String email, String identity);
 }
