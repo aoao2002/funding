@@ -61,6 +61,18 @@ public class Expenditure extends BaseBean{
     @Column(name = "quota", nullable = true)
     private double quota;
 
+    /**
+     * 申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销）
+     */
+    @NotNull
+    private int status;
+
+    /**
+     * 是新建经费项目还是申请经费拨款(0 新建经费项目 1 申请经费拨款)
+     */
+    @NotNull
+    private int type;
+
 
 
 }
