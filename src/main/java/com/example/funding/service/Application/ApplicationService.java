@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 public interface ApplicationService {
 
     public AppInfo getAppInfoByNumber(String expendNumber, long staffId);
-
+    public boolean submitApplication(AppInfo appInfo);
 }

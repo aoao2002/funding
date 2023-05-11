@@ -24,4 +24,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         appInfo.setUserName(userDao.findById(staffId).get().getName());
         return appInfo;
     }
+    public boolean submitApplication(AppInfo appInfo){
+        return true;
+    }
 }
