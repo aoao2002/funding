@@ -26,6 +26,13 @@ public class ApplicationServiceMpl implements ApplicationService{
     ApplicationDao applicationDao;
     @Autowired
     GroupDao groupDao;
+
+    /**
+     * AppInfo getAppInfoByNumber(String expendNumber, long staffId)
+     * @param expendNumber
+     * @param staffId
+     * @return
+     */
     @Override
     public AppInfo getAppInfoByNumber(String expendNumber, long staffId) {
         Expenditure expenditure = expenditureDao.findByNumber(expendNumber);

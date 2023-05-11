@@ -266,8 +266,53 @@ public class GroupServiceMpl implements GroupService {
         return user.getIdentity() != 0 && group.getUsers().contains(user);
     }
 
-    public boolean checkGroupName(String groupName){
-
-        return false;
+    /**
+     * test only
+     */
+    public boolean assignStaff(String groupName, String manEmail){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("this group of name %s is null\n", groupName);
+            return false;
+        }
+        User user = userDao.findByEmailAndIdentity(manEmail, 0);
+        if(user == null){
+            System.out.printf("this user of email %s is null\n", manEmail);
+            return false;
+        }
+        Set<User> groupUsers = group.getUsers();
+        Set<Group> userGroups = user.getGroups();
+        groupUsers.add(user);
+        userGroups.add(group);
+        group.setUsers(groupUsers);
+        user.setGroups(userGroups);
+        return true;
+    }
+    public boolean unassignStaff(String groupName, String manEmail){
+        if(!groupDao.existsByName(groupName)){
+            System.out.printf("this group of %s is not exist\n", groupName);
+            return false;
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            System.out.printf("this group of name %s is null\n", groupName);
+            return false;
+        }
+        User user = userDao.findByEmailAndIdentity(manEmail, 0);
+        if(user == null){
+            System.out.printf("this user of email %s is null\n", manEmail);
+            return false;
+        }
+        Set<User> groupUsers = group.getUsers();
+        Set<Group> userGroups = user.getGroups();
+        groupUsers.remove(user);
+        userGroups.remove(group);
+        group.setUsers(groupUsers);
+        user.setGroups(userGroups);
+        return true;
     }
 }

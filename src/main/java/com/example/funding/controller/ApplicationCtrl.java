@@ -45,6 +45,7 @@ public class ApplicationCtrl {
     */
     @RequestMapping(value ="edit/submitApplication", method= RequestMethod.POST)
     @ResponseBody
+
     public SaResult submitApplication(String expenditureNumber, int cate, String abstrac, String comment,double applyAmount){
         return ReturnHelper.returnObj(applicationService.submitApplication(expenditureNumber, cate,
                 abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong()));

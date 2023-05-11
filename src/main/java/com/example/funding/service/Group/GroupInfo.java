@@ -38,4 +38,15 @@ public class GroupInfo {
         this.expenNames = group.getExpenditures().stream().map(Expenditure::getName).toList();
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public List<String> getMemberNames() {
+        return memberNames;
+    }
+
+    public List<String> getExpenNames() {
+        return expenNames;
+    }
 }

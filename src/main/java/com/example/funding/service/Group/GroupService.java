@@ -25,6 +25,8 @@ public interface GroupService {
     public boolean deleteGroup(String groupName);
     public boolean assignManager(String groupName, String manEmail);
     public boolean unassignManager(String groupName, String manEmail);
+    public boolean assignStaff(String groupName, String manEmail);
+    public boolean unassignStaff(String groupName, String manEmail);
 
     public boolean checkGroupEditPower(String applyID, String groupName, String UserID);
 }
