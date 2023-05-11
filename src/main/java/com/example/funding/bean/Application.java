@@ -44,13 +44,14 @@ public class Application extends BaseBean{
 
 
     /**
-     * 申请的状态（0 未审核 1 审核通过 2 审核未通过）
+     * 申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销）
      */
     @NotNull
     private int status;
 
     /**
      * 是新建经费项目还是申请经费拨款(0 新建经费项目 1 申请经费拨款)
+     * TODO 通过app新建不了，信息不够expend，现在是改了expend来实现
      */
     @NotNull
     private int type;

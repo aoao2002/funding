@@ -62,12 +62,19 @@ public class User extends BaseBean{
     /**
      * 提交的申请(只有staff才有)
      */
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Application> applications;
 
     // 其实应该存在group里面，但是也样也成
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<GroupApplication> groupApplications;
+
+    /**
+     * expend的申请(只有staff才有)
+     * TODO app以及expend这里三个set修改成manyToMany，因为一份申请可以给到很多人
+     */
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Expenditure> expenditures;
 
     /**
      * 提交的反馈(只有manager才有)
