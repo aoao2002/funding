@@ -13,9 +13,9 @@ import java.text.ParseException;
 public interface ApplicationService {
 
     public AppInfo getAppInfoByNumber(String expendNumber, long staffId);
-    public long submitApplication(String expendNumber, int expendCategory, String abstrac ,
+    public SaResult submitApplication(String expendNumber, int expendCategory, String abstrac ,
                                      String comment, double amount, long userId);
-    public boolean withdrawApplication(long appId);
+    public SaResult withdrawApplication(long appId);
     public SaResult getMyApps(long userId);
     public SaResult getMyAppsToExam(long userId);
     public SaResult passApplication(long userId, long appId);
@@ -23,6 +23,8 @@ public interface ApplicationService {
     public long newExpenditureApplication(String expenditureName, String GroupName, String expenditureNumber,
                               double expenditureTotalAmount, String BeginTime, String EndTime, long userId) throws ParseException;
 
+    public SaResult submitExpend(String expName, String expNumber, double totalAmound,
+                                 String startTime, String endTime, String groupName, long userId) throws ParseException;
     public SaResult getMyExpendsToExam(long userId);
     public SaResult passExpenditure(long userId, long expId);
     public SaResult rejectExpenditure(long userId, long expId);

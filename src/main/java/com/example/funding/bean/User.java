@@ -84,6 +84,7 @@ public class User extends BaseBean{
     /**
      * 提交的反馈 【不需要特定的映射】-这样应该可以实现staff的属于收到的feedback，manager属于发出的feedback
      * TODO 这里作为测试尝试一个变量多种用途，上面还是不同用途不同变量
+     * 上面确实不适合放在一个，因为这里的操作有可能出现管理员申请
      */
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Feedback> feedbacks;

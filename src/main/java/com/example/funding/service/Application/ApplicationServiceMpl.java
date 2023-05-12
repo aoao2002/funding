@@ -53,17 +53,19 @@ public class ApplicationServiceMpl implements ApplicationService{
     3. 将app加入到对应管理者的set里可能失败
      */
     @Override
-    public long submitApplication(String expendNumber, int expendCategory,String abstrac , String comment, double amount, long userId) {
+    public SaResult submitApplication(String expendNumber, int expendCategory,String abstrac , String comment, double amount, long userId) {
         Expenditure expenditure = expenditureDao.findByNumber(expendNumber);
         if(expenditure == null){
-            System.out.printf("this expenditure of %s is not exist\n", expendNumber);
-            return -1;
+            return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
         if(amount > expenditure.getRemainingAmount()){
-            System.out.println("the amount requested exceeds the limit ");
-            return -1;
+            return SaResult.error("the amount requested exceeds the limit ");
+        }
+        if (expenditure.getStatus() != 1){
+            return SaResult.error("this expenditure is under establishment");
         }
         Application application = new Application();
+        application.setCreatedDate(new Date());
         application.setApplyTime(new Date());
         application.setApp_abstract(abstrac);
         application.setComment(comment);
@@ -80,19 +82,18 @@ public class ApplicationServiceMpl implements ApplicationService{
 
         expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amount, expendNumber);
 
-        return application1.getId();
+        return SaResult.ok().setData(application1.getId());
     }
 
     @Override
-    public boolean withdrawApplication(long appId) {
+    public SaResult withdrawApplication(long appId) {
         Optional<Application> application = applicationDao.findById(appId);
         if(application.isEmpty()){
-            System.out.println("this app is not present");
-            return false;
+            return SaResult.error("this app is not present");
         }
 //        设置成撤销状态
         application.get().setStatus(3);
-        return true;
+        return SaResult.ok();
     }
     /*
     获取自己提交的所有申请
@@ -102,7 +103,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("the user is not exist");
         }
         List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
-                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getApplyTime)).map(AppInfo::new).toList();
+                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
 
@@ -117,7 +118,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
 //        这里获得的app应该都是填好了全部的（有expend
         List<AppInfo> appInfos = userDao.findById(userId).get().getAppToExam().stream()
-                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getApplyTime)).map(AppInfo::new).toList();
+                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
 
@@ -171,18 +172,98 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("the user is not exist");
         }
         /*
-        TODO 1. 利用AppInfo类，同时申请的信息也会插入数据库，但是只有标志位为1才能被组选来申请application
+        利用AppInfo类，同时申请的信息也会插入数据库，但是只有标志位为1才能被组选来申请application
         下面这句表示没被处理的放前面，相同处理状态的按照时间排序
          */
-        List<AppInfo> appInfos = userDao.findById(userId).get().getAppToExam().stream()
-                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getApplyTime)).map(AppInfo::new).toList();
-        return SaResult.data(appInfos);
+        List<ExpendInfo> expInfos = userDao.findById(userId).get().getExpendToExam().stream()
+                .sorted(Comparator.comparing(Expenditure::getStatus).thenComparing(Expenditure::getCreatedDate)).map(ExpendInfo::new).toList();
+        return SaResult.data(expInfos);
+    }
+//    TODO quota是管理员设置？
+    public SaResult submitExpend(String expName, String expNumber, double totalAmound,
+                                 String startTime, String endTime, String groupName, long userId) throws ParseException {
+        /*
+        验证各种关系：是否存在这个人/小组，小组包含人？小组已有该基金？
+        检验小信息：时间（没有很严格）
+         */
+//        当前用户与申请小组的检测
+        Optional<User> user = userDao.findById(userId);
+        if (user.isEmpty()){
+            return SaResult.error("this user is not exist");
+        }
+        Group group = groupDao.findByName(groupName);
+        if(group == null){
+            return SaResult.error("this group is not exist");
+        }
+        if (!group.getUsers().contains(user.get())){
+            return SaResult.error("this user cannot submit this expenditure application for this group");
+        }
+//        number存在
+        Optional<Expenditure> e0 = group.getExpenditures().stream().filter(s->s.getNumber().equals(expNumber))
+                .findFirst();
+        if(e0.isPresent()) {
+            return SaResult.error("this expenditure number has been exist");
+        }
+//        时间的简单检测
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = sdf.parse(startTime), end = sdf.parse(endTime);
+        if (start.after(end)){
+            return SaResult.error("the start time is after end");
+        }
+//      提交与保存
+        Expenditure e = new Expenditure();
+        e.setName(expName);
+        e.setNumber(expNumber);
+        e.setTotalAmount(totalAmound);
+        e.setRemainingAmount(totalAmound);
+        e.setCreatedDate(new Date());
+        e.setStartTime(start);
+        e.setEndTime(end);
+        e.setGroup(group);
+        e.setQuota(totalAmound);
+        e.setStatus(0);
+        e.setType(0);
+        Expenditure expenditure = expenditureDao.save(e);
+        group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->{
+            s.getExpendToExam().add(expenditure);
+//            userDao.save(s);
+        });
+        ExpendInfo expendInfo = new ExpendInfo(expenditure);
+        userDao.updateSexById(user.get().getSex(), user.get().getId());
+        return SaResult.ok().setData(expendInfo);
+    }
+    public SaResult checkUserAndExpend(Optional<User> user, Optional<Expenditure> expenditure){
+        if (user.isEmpty()){
+            return SaResult.error("this user is not exist");
+        }
+        if (expenditure.isEmpty()){
+            return SaResult.error("this expenditure is not exist");
+        }
+        if (user.get().getIdentity()==0){
+            return SaResult.error("this person has no right to pass");
+        }
+        if (!expenditure.get().getGroup().getUsers().contains(user.get())){
+            return SaResult.error("this person not in the group of the expenditure");
+        }
+        return SaResult.ok();
     }
     public SaResult passExpenditure(long userId, long expId){
-        return null;
+        Optional<User> user = userDao.findById(userId);
+        Optional<Expenditure> expenditure = expenditureDao.findById(expId);
+        SaResult res = checkUserAndExpend(user, expenditure);
+        if (res.getCode()==200){
+            int expenditure1 = expenditureDao.updateStatusById(1, expId);
+            return SaResult.ok().setData(expenditure1);
+        }else return res;
     }
     public SaResult rejectExpenditure(long userId, long expId){
-        return null;
+        Optional<User> user = userDao.findById(userId);
+        Optional<Expenditure> expenditure = expenditureDao.findById(expId);
+        SaResult res = checkUserAndExpend(user, expenditure);
+        if (res.getCode()==200){
+            int expenditure1 = expenditureDao.updateStatusById(2, expId);
+            return SaResult.ok().setData(expenditure1);
+        }else return res;
     }
 
 
@@ -192,6 +273,8 @@ public class ApplicationServiceMpl implements ApplicationService{
         1. 填写的组别不属于该用户属于的组
         2. 填写的时间不对
         3. 该经费不存在（这个交给上面去审核）
+
+        TODO 这里是直接创建，之后写一个申请的方法，申请通过后才正式创建
      */
     public long newExpenditureApplication(String expenditureName, String groupName, String expenditureNumber,
                                           double expenditureTotalAmount, String beginTime, String endTime, long userId) throws ParseException {

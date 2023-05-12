@@ -15,4 +15,11 @@ public interface ExpenditureDao extends CommonDao<Expenditure>{
     @Query("update Expenditure e set e.remainingAmount = ?1 where e.number = ?2")
     int updateRemainingAmountByNumber(double remainingAmount, String number);
 
+    @Transactional
+    @Modifying
+    @Query("update Expenditure e set e.status = ?1 where e.id = ?2")
+    int updateStatusById(int status, Long id);
+
+
+
 }

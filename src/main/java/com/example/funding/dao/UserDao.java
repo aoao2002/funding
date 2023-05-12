@@ -1,9 +1,13 @@
 package com.example.funding.dao;
 
+import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
 import com.example.funding.service.User.UserInfo;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.*;
 import java.util.Date;
@@ -28,6 +32,20 @@ public interface UserDao extends CommonDao<User> {
     Set<User> findByIdentity(int identity);
 
     List<User> findAllByEmail(String Email);
+
+    @Transactional
+    @Modifying
+    @Query("update User u set u.expendToExam = ?1 where u.id = ?2")
+    int updateExpendToExamById(Expenditure expendToExam, Long id);
+
+    @Transactional
+    @Modifying
+    @Query("update User u set u.sex = ?1 where u.id = ?2")
+    int updateSexById(int sex, Long id);
+
+
+
+
 
 
 

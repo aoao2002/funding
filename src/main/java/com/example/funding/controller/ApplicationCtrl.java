@@ -42,8 +42,8 @@ public class ApplicationCtrl {
     @RequestMapping(value ="edit/submitApplication", method= RequestMethod.POST)
     @ResponseBody
     public SaResult submitApplication(String expenditureNumber, int cate, String abstrac, String comment,double applyAmount){
-        return ReturnHelper.returnObj(applicationService.submitApplication(expenditureNumber, cate,
-                abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong()));
+        return applicationService.submitApplication(expenditureNumber, cate,
+                abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong());
     }
     @RequestMapping(value ="edit/withdrawApplication", method= RequestMethod.POST)
     @ResponseBody
@@ -99,6 +99,14 @@ public class ApplicationCtrl {
         return ReturnHelper.returnObj(applicationService.newExpenditureApplication(expenditureName, groupName, expenditureNumber,
                 expenditureTotalAmount, beginTime, endTime, StpUtil.getLoginIdAsLong()));
     }
+    @RequestMapping(value ="edit/submitExpend", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult submitExpend(String expName, String expNumber, double totalAmound,
+                                 String startTime, String endTime, String groupName) throws ParseException {
+        return ReturnHelper.returnObj(applicationService.submitExpend(expName, expNumber, totalAmound,
+                startTime, endTime, groupName, StpUtil.getLoginIdAsLong()));
+    }
+
 
     /*
     TODO 管理者部分的api(Expend部分)：
