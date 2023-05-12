@@ -60,26 +60,32 @@ public class User extends BaseBean{
     private Set<Group> groups;
 
     /**
-     * 提交的申请(只有staff才有)
-     */
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<Application> applications;
-
-    // 其实应该存在group里面，但是也样也成
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<GroupApplication> groupApplications;
-
-    /**
-     * expend的申请(只有staff才有)
-     * TODO app以及expend这里三个set修改成manyToMany，因为一份申请可以给到很多人
-     */
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<Expenditure> expenditures;
-
-    /**
-     * 提交的反馈(只有manager才有)
+     * 自己的提交记录(只有staff才有)
+     * 需要审批的apps(only for manager)
+     * 自己提交的小组申请
+     * 需要审批的
+     * 自己提交的基金建立
+     * 需要审批的
      */
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Application> applications;
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Application> appToExam;
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<GroupApplication> groupApplications;
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<GroupApplication> groupAppToExam;
+//    因为基金不属于个人，属于小组
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Expenditure> expenditures;
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Expenditure> expendToExam;
+
+    /**
+     * 提交的反馈 【不需要特定的映射】-这样应该可以实现staff的属于收到的feedback，manager属于发出的feedback
+     * TODO 这里作为测试尝试一个变量多种用途，上面还是不同用途不同变量
+     */
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Feedback> feedbacks;
 
     public static int getPresidentIdentity(){

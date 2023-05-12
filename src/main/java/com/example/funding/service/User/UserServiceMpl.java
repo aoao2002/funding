@@ -56,7 +56,6 @@ public class UserServiceMpl implements UserService{
     public SaResult LoginMail(String Mail, String pwd, String identity){
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd, identity)))
             return SaResult.error("login fail: input Null or Empty");;
-
         User user = userDao.findByEmailAndIdentity(Mail, Integer.parseInt(identity));
         if (user==null) return SaResult.error("login fail: no such user");
         //check pw

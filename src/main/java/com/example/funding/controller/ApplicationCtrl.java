@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.ParseException;
 
 /**
- * TODO 通过test类来检查，手动测试太麻烦了
+ * TODO 通过test类来检查，手动测试太麻烦了/ps测试类更麻烦
  * 有的方法：app/expend 的新建，申请，
  * 1. getAppInfoByNumber(String expendNumber)：填表时通过expendNumber获得该expend相关的其他信息
  * 2. submitApplication：填写申请的其余部分
@@ -31,10 +31,6 @@ public class ApplicationCtrl {
     @RequestMapping(value = "edit/getAppInfoByNumber", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getAppInfoByNumber(String expendNumber){
-//        TODO test
-        /*
-        填写申请时，先填写exp_number，之后会返回相关信息，然后再继续填写相应的信息即可
-         */
         return ReturnHelper.returnObj(applicationService.getAppInfoByNumber(expendNumber, StpUtil.getLoginIdAsLong()));
     }
 
@@ -45,7 +41,6 @@ public class ApplicationCtrl {
     */
     @RequestMapping(value ="edit/submitApplication", method= RequestMethod.POST)
     @ResponseBody
-
     public SaResult submitApplication(String expenditureNumber, int cate, String abstrac, String comment,double applyAmount){
         return ReturnHelper.returnObj(applicationService.submitApplication(expenditureNumber, cate,
                 abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong()));
@@ -55,6 +50,37 @@ public class ApplicationCtrl {
     public SaResult withdrawApplication(long appId){
         // TODO（或者管理者处分析app状态，然后管理者按键操作）
         return ReturnHelper.returnBool(applicationService.withdrawApplication(appId));
+    }
+//    TODO 申请者-获取自己的申请记录（所有）
+    @RequestMapping(value = "edit/getMyApps", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyApps(){
+        return ReturnHelper.returnObj(applicationService.getMyApps(StpUtil.getLoginIdAsLong()));
+    }
+
+    /*
+    TODO 管理者部分的api：
+     1. 获取自己所有需要处理的申请（通过状态号筛选）
+     2. 通过申请
+     3. 拒绝申请
+     */
+    @RequestMapping(value = "edit/getMyAppsToExam", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyAppsToExam(){
+        return ReturnHelper.returnObj(applicationService.getMyAppsToExam(StpUtil.getLoginIdAsLong()));
+    }
+
+//    NOTE 组不重名
+    @RequestMapping(value = "edit/passApplication", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passApplication(long appId){
+        return ReturnHelper.returnObj(applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId));
+    }
+
+    @RequestMapping(value = "edit/rejectApplication", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectApplication(long appId){
+        return ReturnHelper.returnObj(applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId));
     }
 
     /*
@@ -72,5 +98,30 @@ public class ApplicationCtrl {
                                               double expenditureTotalAmount, String beginTime, String endTime) throws ParseException {
         return ReturnHelper.returnObj(applicationService.newExpenditureApplication(expenditureName, groupName, expenditureNumber,
                 expenditureTotalAmount, beginTime, endTime, StpUtil.getLoginIdAsLong()));
+    }
+
+    /*
+    TODO 管理者部分的api(Expend部分)：
+     1. 获取自己所有需要处理的申请（通过状态号筛选）
+     2. 通过申请
+     3. 拒绝申请
+     */
+    @RequestMapping(value = "edit/getMyExpendsToExam", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyExpendsToExam(){
+        return ReturnHelper.returnObj(applicationService.getMyExpendsToExam(StpUtil.getLoginIdAsLong()));
+    }
+
+    //    NOTE 组不重名
+    @RequestMapping(value = "edit/passExpenditure", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passExpenditure(long appId){
+        return ReturnHelper.returnObj(applicationService.passExpenditure(StpUtil.getLoginIdAsLong(), appId));
+    }
+
+    @RequestMapping(value = "edit/rejectExpenditure", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectExpenditure(long appId){
+        return ReturnHelper.returnObj(applicationService.rejectExpenditure(StpUtil.getLoginIdAsLong(), appId));
     }
 }
