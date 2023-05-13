@@ -41,13 +41,13 @@ public class ApplicationCtrl {
     */
     @RequestMapping(value ="edit/submitApplication", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult submitApplication(String expenditureNumber, int cate, String abstrac, String comment,double applyAmount){
+    public SaResult submitApplication(String expenditureNumber, String cate, String abstrac, String comment,String applyAmount){
         return applicationService.submitApplication(expenditureNumber, cate,
                 abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong());
     }
     @RequestMapping(value ="edit/withdrawApplication", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult withdrawApplication(long appId){
+    public SaResult withdrawApplication(String appId){
         // TODO（或者管理者处分析app状态，然后管理者按键操作）
         return applicationService.withdrawApplication(appId);
     }
@@ -73,13 +73,13 @@ public class ApplicationCtrl {
 //    NOTE 组不重名
     @RequestMapping(value = "edit/passApplication", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult passApplication(long appId){
+    public SaResult passApplication(String appId){
         return ReturnHelper.returnObj(applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId));
     }
 
     @RequestMapping(value = "edit/rejectApplication", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult rejectApplication(long appId){
+    public SaResult rejectApplication(String appId){
         return ReturnHelper.returnObj(applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId));
     }
 
@@ -95,13 +95,13 @@ public class ApplicationCtrl {
     @RequestMapping(value ="edit/newExpenditureApplication", method= RequestMethod.POST)
     @ResponseBody
     public SaResult newExpenditureApplication(String expenditureName, String groupName, String expenditureNumber,
-                                              double expenditureTotalAmount, String beginTime, String endTime) throws ParseException {
-        return ReturnHelper.returnObj(applicationService.newExpenditureApplication(expenditureName, groupName, expenditureNumber,
-                expenditureTotalAmount, beginTime, endTime, StpUtil.getLoginIdAsLong()));
+                                              String expenditureTotalAmount, String beginTime, String endTime) throws ParseException {
+        return applicationService.newExpenditureApplication(expenditureName, groupName, expenditureNumber,
+                expenditureTotalAmount, beginTime, endTime, StpUtil.getLoginIdAsLong());
     }
     @RequestMapping(value ="edit/submitExpend", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult submitExpend(String expName, String expNumber, double totalAmound,
+    public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName) throws ParseException {
         return ReturnHelper.returnObj(applicationService.submitExpend(expName, expNumber, totalAmound,
                 startTime, endTime, groupName, StpUtil.getLoginIdAsLong()));
@@ -123,13 +123,13 @@ public class ApplicationCtrl {
     //    NOTE 组不重名
     @RequestMapping(value = "edit/passExpenditure", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult passExpenditure(long appId){
+    public SaResult passExpenditure(String appId){
         return ReturnHelper.returnObj(applicationService.passExpenditure(StpUtil.getLoginIdAsLong(), appId));
     }
 
     @RequestMapping(value = "edit/rejectExpenditure", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult rejectExpenditure(long appId){
+    public SaResult rejectExpenditure(String appId){
         return ReturnHelper.returnObj(applicationService.rejectExpenditure(StpUtil.getLoginIdAsLong(), appId));
     }
 }

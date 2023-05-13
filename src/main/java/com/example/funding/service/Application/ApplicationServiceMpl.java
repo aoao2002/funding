@@ -9,10 +9,13 @@ import com.example.funding.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.DateUtils;
+import org.thymeleaf.util.NumberUtils;
+import org.thymeleaf.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +29,22 @@ public class ApplicationServiceMpl implements ApplicationService{
     ApplicationDao applicationDao;
     @Autowired
     GroupDao groupDao;
+
+    public static boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]+$");
+        return pattern.matcher(str).matches();
+    }
+
+    public static boolean isDouble(String str) {
+        if (str == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^[-\\+]?[.\\d]*$");
+        return pattern.matcher(str).matches();
+    }
 
     /**
      * AppInfo getAppInfoByNumber(String expendNumber, long staffId)
@@ -53,12 +72,24 @@ public class ApplicationServiceMpl implements ApplicationService{
     3. 将app加入到对应管理者的set里可能失败
      */
     @Override
-    public SaResult submitApplication(String expendNumber, int expendCategory,String abstrac , String comment, double amount, long userId) {
+    public SaResult submitApplication(String expendNumber, String expendCategory,String abstrac , String comment, String amount, long userId) {
         Expenditure expenditure = expenditureDao.findByNumber(expendNumber);
         if(expenditure == null){
             return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
-        if(amount > expenditure.getRemainingAmount()){
+        int expCate = 0;
+        double amt = 0.0;
+        if(isInteger(expendCategory)){
+            expCate = Integer.parseInt(expendCategory);
+        }else{
+            return SaResult.error("this category is not integer");
+        }
+        if (isDouble(amount)){
+            amt = Double.parseDouble(amount);
+        }else{
+            return SaResult.error("this amount is not double");
+        }
+        if(amt > expenditure.getRemainingAmount()){
             return SaResult.error("the amount requested exceeds the limit ");
         }
         if (expenditure.getStatus() != 1){
@@ -73,21 +104,27 @@ public class ApplicationServiceMpl implements ApplicationService{
         application.setExpenditure(expenditure);
         application.setStatus(0);
         application.setType(1);
-        application.setAmount(amount);
-        application.setExpendCategory(expendCategory);
+        application.setAmount(amt);
+        application.setExpendCategory(expCate);
         Application application1 = applicationDao.save(application);
 
         Group group = expenditure.getGroup();
         group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getAppToExam().add(application1));
 
-        expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amount, expendNumber);
+        expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amt, expendNumber);
 
         return SaResult.ok().setData(application1.getId());
     }
 
     @Override
-    public SaResult withdrawApplication(long appId) {
-        Optional<Application> application = applicationDao.findById(appId);
+    public SaResult withdrawApplication(String appId) {
+        long appID = 0;
+        if (isInteger(appId)){
+            appID = Integer.parseInt(appId);
+        }else{
+            return SaResult.error("this id is not int");
+        }
+        Optional<Application> application = applicationDao.findById(appID);
         if(application.isEmpty()){
             return SaResult.error("this app is not present");
         }
@@ -127,8 +164,14 @@ public class ApplicationServiceMpl implements ApplicationService{
     2. TODO 获得对象之后直接处理是否可以反映到数据库-不可以
      */
     @Override
-    public SaResult passApplication(long userId, long appId) {
-        Optional<Application> application = applicationDao.findById(appId);
+    public SaResult passApplication(long userId, String appId) {
+        long appID = 0;
+        if (isInteger(appId)){
+            appID = Integer.parseInt(appId);
+        }else{
+            return SaResult.error("this id is not int");
+        }
+        Optional<Application> application = applicationDao.findById(appID);
         if(application.isEmpty()){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
@@ -145,8 +188,14 @@ public class ApplicationServiceMpl implements ApplicationService{
     }
 
     @Override
-    public SaResult rejectApplication(long userId, long appId) {
-        Optional<Application> application = applicationDao.findById(appId);
+    public SaResult rejectApplication(long userId, String appId) {
+        long appID = 0;
+        if (isInteger(appId)){
+            appID = Integer.parseInt(appId);
+        }else{
+            return SaResult.error("this id is not int");
+        }
+        Optional<Application> application = applicationDao.findById(appID);
         if(application.isEmpty()){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
@@ -180,7 +229,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         return SaResult.data(expInfos);
     }
 //    TODO quota是管理员设置？
-    public SaResult submitExpend(String expName, String expNumber, double totalAmound,
+    public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName, long userId) throws ParseException {
         /*
         验证各种关系：是否存在这个人/小组，小组包含人？小组已有该基金？
@@ -204,6 +253,16 @@ public class ApplicationServiceMpl implements ApplicationService{
         if(e0.isPresent()) {
             return SaResult.error("this expenditure number has been exist");
         }
+//      检测amount是否
+        double amt = 0.0;
+        if (isDouble(totalAmound)){
+            amt = Double.parseDouble(totalAmound);
+        }else{
+            return SaResult.error("this amount is not double");
+        }
+        if(amt < 0){
+            return SaResult.error("the amount is illegal ");
+        }
 //        时间的简单检测
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date start = sdf.parse(startTime), end = sdf.parse(endTime);
@@ -214,13 +273,13 @@ public class ApplicationServiceMpl implements ApplicationService{
         Expenditure e = new Expenditure();
         e.setName(expName);
         e.setNumber(expNumber);
-        e.setTotalAmount(totalAmound);
-        e.setRemainingAmount(totalAmound);
+        e.setTotalAmount(amt);
+        e.setRemainingAmount(amt);
         e.setCreatedDate(new Date());
         e.setStartTime(start);
         e.setEndTime(end);
         e.setGroup(group);
-        e.setQuota(totalAmound);
+        e.setQuota(amt);
         e.setStatus(0);
         e.setType(0);
         Expenditure expenditure = expenditureDao.save(e);
@@ -247,21 +306,33 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         return SaResult.ok();
     }
-    public SaResult passExpenditure(long userId, long expId){
+    public SaResult passExpenditure(long userId, String expId){
+        long expID = 0;
+        if (isInteger(expId)){
+            expID = Integer.parseInt(expId);
+        }else{
+            return SaResult.error("this expenditure ID is not integer");
+        }
         Optional<User> user = userDao.findById(userId);
-        Optional<Expenditure> expenditure = expenditureDao.findById(expId);
+        Optional<Expenditure> expenditure = expenditureDao.findById(expID);
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
-            int expenditure1 = expenditureDao.updateStatusById(1, expId);
+            int expenditure1 = expenditureDao.updateStatusById(1, expID);
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
-    public SaResult rejectExpenditure(long userId, long expId){
+    public SaResult rejectExpenditure(long userId, String expId){
+        long expID = 0;
+        if (isInteger(expId)){
+            expID = Integer.parseInt(expId);
+        }else{
+            return SaResult.error("this expenditure ID is not integer");
+        }
         Optional<User> user = userDao.findById(userId);
-        Optional<Expenditure> expenditure = expenditureDao.findById(expId);
+        Optional<Expenditure> expenditure = expenditureDao.findById(expID);
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
-            int expenditure1 = expenditureDao.updateStatusById(2, expId);
+            int expenditure1 = expenditureDao.updateStatusById(2, expID);
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
@@ -276,34 +347,36 @@ public class ApplicationServiceMpl implements ApplicationService{
 
         TODO 这里是直接创建，之后写一个申请的方法，申请通过后才正式创建
      */
-    public long newExpenditureApplication(String expenditureName, String groupName, String expenditureNumber,
-                                          double expenditureTotalAmount, String beginTime, String endTime, long userId) throws ParseException {
+    public SaResult newExpenditureApplication(String expenditureName, String groupName, String expenditureNumber,
+                                          String expenditureTotalAmount, String beginTime, String endTime, long userId) throws ParseException {
+        double expTotalAmt = 0;
+        if (isDouble(expenditureTotalAmount)){
+            expTotalAmt = Integer.parseInt(expenditureTotalAmount);
+        }else{
+            return SaResult.error("this total amount is not double");
+        }
         Expenditure expenditure = new Expenditure();
         expenditure.setName(expenditureName);
         expenditure.setNumber(expenditureNumber);
-        expenditure.setTotalAmount(expenditureTotalAmount);
-        expenditure.setRemainingAmount(expenditureTotalAmount);
+        expenditure.setTotalAmount(expTotalAmt);
+        expenditure.setRemainingAmount(expTotalAmt);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date start = sdf.parse(beginTime), end = sdf.parse(beginTime);
         if(start.after(end)){
-            System.out.println("begin time is after end");
-            return -1;
+            return SaResult.error("begin time is after end").setData(-1);
         }
         expenditure.setStartTime(start);
         expenditure.setEndTime(end);
         Group group = groupDao.findByName(groupName);
         if(group == null){
-            System.out.printf("this group %s is not exist\n", groupName);
-            return -1;
+            return SaResult.error(String.format("this group %s is not exist\n", groupName)).setData(-1);
         }
         Optional<User> user = userDao.findById(userId);
         if (user.isEmpty()){
-            System.out.printf("this user %d is not exist\n",userId);
-            return -1;
+            return SaResult.error(String.format("this user %d is not exist\n",userId)).setData(-1);
         }
         if (!user.get().getGroups().contains(group)){
-            System.out.printf("this user %d is not belong to this group %s", userId, groupName);
-            return -1;
+            return SaResult.error(String.format("this user %d is not belong to this group %s", userId, groupName)).setData(-1);
         }
         expenditure.setGroup(groupDao.findByName(groupName));
         expenditure.setApplications(new HashSet<>());
@@ -312,7 +385,7 @@ public class ApplicationServiceMpl implements ApplicationService{
 //        将这个申请交给管理者
         Expenditure expenditure1 = expenditureDao.save(expenditure);
         group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getExpenditures().add(expenditure1));
-        return expenditure1.getId();
+        return SaResult.ok("success!").setData(expenditure1.getId());
 
     }
 

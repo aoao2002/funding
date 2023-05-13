@@ -13,20 +13,20 @@ import java.text.ParseException;
 public interface ApplicationService {
 
     public AppInfo getAppInfoByNumber(String expendNumber, long staffId);
-    public SaResult submitApplication(String expendNumber, int expendCategory, String abstrac ,
-                                     String comment, double amount, long userId);
-    public SaResult withdrawApplication(long appId);
+    public SaResult submitApplication(String expendNumber, String expendCategory, String abstrac ,
+                                     String comment, String amount, long userId);
+    public SaResult withdrawApplication(String appId);
     public SaResult getMyApps(long userId);
     public SaResult getMyAppsToExam(long userId);
-    public SaResult passApplication(long userId, long appId);
-    public SaResult rejectApplication(long userId, long appId);
-    public long newExpenditureApplication(String expenditureName, String GroupName, String expenditureNumber,
-                              double expenditureTotalAmount, String BeginTime, String EndTime, long userId) throws ParseException;
+    public SaResult passApplication(long userId, String appId);
+    public SaResult rejectApplication(long userId, String appId);
+    public SaResult newExpenditureApplication(String expenditureName, String GroupName, String expenditureNumber,
+                                          String expenditureTotalAmount, String BeginTime, String EndTime, long userId) throws ParseException;
 
-    public SaResult submitExpend(String expName, String expNumber, double totalAmound,
+    public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName, long userId) throws ParseException;
     public SaResult getMyExpendsToExam(long userId);
-    public SaResult passExpenditure(long userId, long expId);
-    public SaResult rejectExpenditure(long userId, long expId);
+    public SaResult passExpenditure(long userId, String expId);
+    public SaResult rejectExpenditure(long userId, String expId);
 
 }
