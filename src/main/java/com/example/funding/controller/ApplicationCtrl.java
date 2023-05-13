@@ -49,7 +49,7 @@ public class ApplicationCtrl {
     @ResponseBody
     public SaResult withdrawApplication(long appId){
         // TODO（或者管理者处分析app状态，然后管理者按键操作）
-        return ReturnHelper.returnBool(applicationService.withdrawApplication(appId));
+        return applicationService.withdrawApplication(appId);
     }
 //    TODO 申请者-获取自己的申请记录（所有）
     @RequestMapping(value = "edit/getMyApps", method = RequestMethod.GET)

@@ -174,8 +174,14 @@ public class GroupServiceMpl implements GroupService {
         group.setName(groupName);
         Date date = new Date();
         group.setCreatedDate(date);
-        group.setUsers(new HashSet<>(userDao.findByIdentity(2)));
-        groupDao.save(group);
+        List<User> admins = userDao.findByIdentity(2);
+        admins.stream().forEach(s->group.getUsers().add(s));
+        Group group1 = groupDao.save(group);
+        admins.forEach(s-> {
+            s.getGroups().add(group1);
+            System.out.printf("in createGroup, %s\n", s.getName());
+        });
+        groupDao.updateCreatedDateById(new Date(), group1.getId());
         return true;
     }
 

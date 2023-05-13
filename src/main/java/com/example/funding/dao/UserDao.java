@@ -29,7 +29,9 @@ public interface UserDao extends CommonDao<User> {
 
     User findByEmailAndIdentity(String email, int identity);
 
-    Set<User> findByIdentity(int identity);
+    @Query("select u from User u where u.identity = ?1")
+    List<User> findByIdentity(int identity);
+
 
     List<User> findAllByEmail(String Email);
 

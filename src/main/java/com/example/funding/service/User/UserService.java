@@ -32,5 +32,7 @@ public interface UserService {
 
     public User findById(long userID);
 
-    public User getUserByMailAndIdentity(String email, String identity);
+    public UserInfo getUserByMailAndIdentity(String email, String identity);
+
+    public SaResult getPresidents();
 }
