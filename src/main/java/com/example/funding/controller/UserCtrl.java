@@ -74,4 +74,10 @@ public class UserCtrl {
     }
 
     // find back pwd
+
+    @RequestMapping(value ="edit/getPresidents", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult getPresidents(){
+        return userService.getPresidents();
+    }
 }

@@ -32,7 +32,9 @@ public interface UserService {
 
     User findById(long userID);
 
-     User getUserByMailAndIdentity(String email, String identity);
+    User getUserByMailAndIdentity(String email, String identity);
 
-     User getMe();
+    User getMe();
+
+    SaResult getPresidents();
 }

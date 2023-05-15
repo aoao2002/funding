@@ -13,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +40,7 @@ public class UserServiceMpl implements UserService{
     }
 
     @Override
-    public User getUserByMailAndIdentity(String email, String identity) {
+    public UserInfo getUserByMailAndIdentity(String email, String identity) {
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(email, identity)))
             return null;
 
@@ -49,14 +48,14 @@ public class UserServiceMpl implements UserService{
             return null;
 
         int identity_int = Integer.parseInt(identity);
+        User user = userDao.findByEmailAndIdentity(email, identity_int);
 
-        return userDao.findByEmailAndIdentity(email, identity_int);
+        return new UserInfo(user);
     }
 
     public SaResult LoginMail(String Mail, String pwd, String identity){
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(Mail, pwd, identity)))
             return SaResult.error("login fail: input Null or Empty");;
-
         User user = userDao.findByEmailAndIdentity(Mail, Integer.parseInt(identity));
         if (user==null) return SaResult.error("login fail: no such user");
         //check pw
@@ -192,6 +191,12 @@ public class UserServiceMpl implements UserService{
         return me.getIdentity();
     }
 
+    public SaResult getPresidents(){
+        List<User> userSet = userDao.findByIdentity(2);
+        Set<UserInfo> userInfos = new HashSet<>();
+        userSet.forEach(s->userInfos.add(new UserInfo(s)));
+        return SaResult.ok().setData(userSet);
+    }
 
 
 

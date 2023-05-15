@@ -9,40 +9,41 @@ import lombok.Setter;
 @Setter
 public class AppInfo {
 //    已有基金的情况下的申请
+    private long appId;
     private long expendId;
     private String expendName;
     private String groupName;
     private double totalAmount;
     private double remainAmount;
     private double availAmount;
-    private long useId;
+    private long userId;
     private String userName;
     private int expendCategory;
     private String appAbstract;
     private double appAmount;
     private String comment;
-
     private int status;
+    private int type;
 
     public AppInfo(){}
+
+//    默认
     public AppInfo(Application application){
-//        TODO 构造有所区别, 基金第一次注册时前端填前半部分；
-//         对app申请时，会通过经费编号然后返回前半部分信息；
-//         已有基金申请的时候，前端填的只有后半部分，后端补全然后更新信息；
-//         所以还是直接填，不设立对象T_T
+        this.appId = application.getId();
         this.expendId = application.getExpenditure().getId();
         this.expendName = application.getExpenditure().getName();
         this.groupName = application.getExpenditure().getGroup().getName();
         this.totalAmount = application.getExpenditure().getTotalAmount();
         this.remainAmount = application.getExpenditure().getRemainingAmount();
-        this.availAmount = application.getExpenditure().getRemainingAmount() - application.getExpenditure().getQuota();
-        this.useId = application.getUser().getId();
+        this.availAmount = this.totalAmount - this.remainAmount;
+        this.userId = application.getUser().getId();
         this.userName = application.getUser().getName();
         this.expendCategory = application.getExpendCategory();
         this.appAbstract = application.getApp_abstract();
         this.appAmount = application.getAmount();
         this.comment = application.getComment();
         this.status = application.getStatus();
+        this.type = application.getType();
     }
     public AppInfo(Expenditure expenditure){
         this.expendId = expenditure.getId();
@@ -51,6 +52,5 @@ public class AppInfo {
         this.totalAmount = expenditure.getTotalAmount();
         this.remainAmount = expenditure.getRemainingAmount();
     }
-
 
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,12 @@ import java.util.Set;
 public interface GroupDao extends CommonDao<Group>{
     boolean existsByName(String name);
     Group findByName(String name);
+
+    @Transactional
+    @Modifying
+    @Query("update Group g set g.createdDate = ?1 where g.id = ?2")
+    int updateCreatedDateById(Date createdDate, Long id);
+
 
     boolean existsByNameAndUsers_Name(String groupName, String userName);
 

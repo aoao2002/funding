@@ -19,6 +19,7 @@ public class Application extends BaseBean{
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date applyTime;
+//    baseBean中已经有createTime，去除该量 TODO 这个量可以去除，但是需要扬数据库
     // 申请摘要（用钱来干什么）
     @Column(name = "app_abstract", nullable = true)
     private String app_abstract;
