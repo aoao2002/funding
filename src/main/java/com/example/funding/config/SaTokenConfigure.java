@@ -51,8 +51,6 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                                 FundingApplication.getLogger().info(SaHolder.getRequest().getUrl());
                                 StpUtil.checkLogin();
                             });
-                    // 基金权限
-
                     // 申请权限
 
                     // group权限
@@ -61,7 +59,6 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 
                     SaRouter.match("/group/edit/**")
                             .check(r -> checkPresident());
-
 
                 }))
                 .addPathPatterns("/**")

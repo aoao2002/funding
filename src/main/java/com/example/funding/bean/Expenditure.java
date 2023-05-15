@@ -54,7 +54,7 @@ public class Expenditure extends BaseBean{
      * 经费申请
      */
     @OneToMany(mappedBy = "expenditure", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<Application> applications = new HashSet<>();
+    private Set<Application> applications;
 
     //TODO: each year usage
     //quota amount

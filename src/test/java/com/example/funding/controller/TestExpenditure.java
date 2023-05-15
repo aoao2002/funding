@@ -16,10 +16,10 @@ public class TestExpenditure {
      * 1. expName/expNum 非法，但是暂时检查不了
      * 2. groupName 不属于这个人的组
      * 3. 时间不对
-     *
+     * <p>
      * SaResult newExpenditureApplication(String expenditureName, String groupName, String expenditureNumber,
      *                                               double expenditureTotalAmount, String beginTime, String endTime)
-     *
+     * <p>
      * Test:插入随机信息，对于组别都有
      */
     @Autowired
@@ -44,7 +44,10 @@ public class TestExpenditure {
         Assertions.assertTrue(res > -1);
 
 
+    }
 
-
+    @Test
+    public void testExpendInfoShow() {
+        
     }
 }

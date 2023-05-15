@@ -30,7 +30,9 @@ public interface UserService {
 
     boolean checkPresident();
 
-    public User findById(long userID);
+    User findById(long userID);
 
-    public User getUserByMailAndIdentity(String email, String identity);
+     User getUserByMailAndIdentity(String email, String identity);
+
+     User getMe();
 }
