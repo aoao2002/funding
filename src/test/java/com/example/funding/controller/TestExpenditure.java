@@ -1,14 +1,20 @@
 package com.example.funding.controller;
 
+import cn.dev33.satoken.util.SaResult;
 import com.example.funding.service.Application.ApplicationService;
 import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.text.ParseException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@SpringBootTest
 public class TestExpenditure {
     /**
      * long newExpenditureApplication(String expenditureName, String GroupName, String expenditureNumber,
@@ -24,8 +30,12 @@ public class TestExpenditure {
      */
     @Autowired
     ApplicationCtrl applicationCtrl;
+
     @Autowired
     ApplicationService applicationService;
+
+    @Autowired
+    UserCtrl userCtrl;
 
 
 //    参演：group-imed/1, mana-aoao/4, staff-y/1
@@ -41,13 +51,12 @@ public class TestExpenditure {
         String expName = "national_nature", expNumber = RandomStringUtils.random(10);
         long res = applicationService.newExpenditureApplication(expName, groupName, expNumber,
                 amount, beginTime, endTime, 1L);
-        Assertions.assertTrue(res > -1);
 
-
+        assertTrue(res > -1);
     }
 
     @Test
     public void testExpendInfoShow() {
-        
+
     }
 }

@@ -32,7 +32,7 @@ public interface UserService {
 
     User findById(long userID);
 
-    User getUserByMailAndIdentity(String email, String identity);
+    UserInfo getUserByMailAndIdentity(String email, String identity);
 
     User getMe();
 
