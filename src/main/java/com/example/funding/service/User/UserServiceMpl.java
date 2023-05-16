@@ -27,7 +27,7 @@ public class UserServiceMpl implements UserService{
     @Autowired
     private GroupDao groupDao;
 
-    private User getMe(){
+    public User getMe(){
         return findById(StpUtil.getLoginIdAsLong());
     }
 

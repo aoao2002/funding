@@ -1,14 +1,19 @@
 package com.example.funding.dao;
 
 import com.example.funding.bean.Expenditure;
+import com.example.funding.bean.Group;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface ExpenditureDao extends CommonDao<Expenditure>{
     Expenditure findByNumber(String number);
+
+    List<Expenditure> findAllByGroup(Group group);
 
     @Transactional
     @Modifying

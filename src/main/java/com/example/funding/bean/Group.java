@@ -23,8 +23,7 @@ public class Group extends BaseBean{
      * 课题组成员
      */
     @ManyToMany(mappedBy = "groups", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<User> users = new HashSet<>();
-
+    private Set<User> users;
 
     /**
      * 课题组下的经费

@@ -1,5 +1,6 @@
 package com.example.funding.dao;
 
+import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
 import com.example.funding.service.Group.GroupInfo;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface GroupDao extends CommonDao<Group>{
@@ -33,10 +35,6 @@ public interface GroupDao extends CommonDao<Group>{
 
     long deleteByName(String name);
 
-
-
-
-
-
+    List<Group> findAllByUsers(User user);
 
 }
