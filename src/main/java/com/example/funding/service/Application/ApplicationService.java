@@ -12,7 +12,7 @@ import java.text.ParseException;
 @Service
 public interface ApplicationService {
 
-    public AppInfo getAppInfoByNumber(String expendNumber, long staffId);
+    public SaResult getAppInfoByNumber(String expendNumber, long staffId);
     public SaResult submitApplication(String expendNumber, String expendCategory, String abstrac ,
                                      String comment, String amount, long userId);
     public SaResult withdrawApplication(String appId);

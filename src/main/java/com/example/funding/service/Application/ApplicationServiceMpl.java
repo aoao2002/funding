@@ -53,16 +53,15 @@ public class ApplicationServiceMpl implements ApplicationService{
      * @return
      */
     @Override
-    public AppInfo getAppInfoByNumber(String expendNumber, long staffId) {
+    public SaResult getAppInfoByNumber(String expendNumber, long staffId) {
         Expenditure expenditure = expenditureDao.findByNumber(expendNumber);
         if(expenditure == null){
-            System.out.printf("this expenditure of %s is not exist\n", expendNumber);
-            return null;
+            return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
         AppInfo appInfo = new AppInfo(expenditure);
         appInfo.setUserId(staffId);
         appInfo.setUserName(userDao.findById(staffId).get().getName());
-        return appInfo;
+        return SaResult.ok().setData(appInfo);
     }
 
     /*

@@ -31,7 +31,7 @@ public class ApplicationCtrl {
     @RequestMapping(value = "edit/getAppInfoByNumber", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getAppInfoByNumber(String expendNumber){
-        return ReturnHelper.returnObj(applicationService.getAppInfoByNumber(expendNumber, StpUtil.getLoginIdAsLong()));
+        return applicationService.getAppInfoByNumber(expendNumber, StpUtil.getLoginIdAsLong());
     }
 
     /* TODO 填写支出类别，内容摘要、支出金额、备注；实现中save过程怎么判断是否成功，测试-注意观察id
@@ -67,20 +67,20 @@ public class ApplicationCtrl {
     @RequestMapping(value = "edit/getMyAppsToExam", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getMyAppsToExam(){
-        return ReturnHelper.returnObj(applicationService.getMyAppsToExam(StpUtil.getLoginIdAsLong()));
+        return applicationService.getMyAppsToExam(StpUtil.getLoginIdAsLong());
     }
 
 //    NOTE 组不重名
     @RequestMapping(value = "edit/passApplication", method = RequestMethod.POST)
     @ResponseBody
     public SaResult passApplication(String appId){
-        return ReturnHelper.returnObj(applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId));
+        return applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId);
     }
 
     @RequestMapping(value = "edit/rejectApplication", method = RequestMethod.POST)
     @ResponseBody
     public SaResult rejectApplication(String appId){
-        return ReturnHelper.returnObj(applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId));
+        return applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId);
     }
 
     /*
@@ -103,8 +103,8 @@ public class ApplicationCtrl {
     @ResponseBody
     public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName) throws ParseException {
-        return ReturnHelper.returnObj(applicationService.submitExpend(expName, expNumber, totalAmound,
-                startTime, endTime, groupName, StpUtil.getLoginIdAsLong()));
+        return applicationService.submitExpend(expName, expNumber, totalAmound,
+                startTime, endTime, groupName, StpUtil.getLoginIdAsLong());
     }
 
 
@@ -117,19 +117,19 @@ public class ApplicationCtrl {
     @RequestMapping(value = "edit/getMyExpendsToExam", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getMyExpendsToExam(){
-        return ReturnHelper.returnObj(applicationService.getMyExpendsToExam(StpUtil.getLoginIdAsLong()));
+        return applicationService.getMyExpendsToExam(StpUtil.getLoginIdAsLong());
     }
 
     //    NOTE 组不重名
     @RequestMapping(value = "edit/passExpenditure", method = RequestMethod.POST)
     @ResponseBody
     public SaResult passExpenditure(String appId){
-        return ReturnHelper.returnObj(applicationService.passExpenditure(StpUtil.getLoginIdAsLong(), appId));
+        return applicationService.passExpenditure(StpUtil.getLoginIdAsLong(), appId);
     }
 
     @RequestMapping(value = "edit/rejectExpenditure", method = RequestMethod.POST)
     @ResponseBody
     public SaResult rejectExpenditure(String appId){
-        return ReturnHelper.returnObj(applicationService.rejectExpenditure(StpUtil.getLoginIdAsLong(), appId));
+        return applicationService.rejectExpenditure(StpUtil.getLoginIdAsLong(), appId);
     }
 }

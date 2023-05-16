@@ -20,6 +20,7 @@ public class GroupInfo {
     private String groupName;
     private List<UserInfo> staffs, managers;
     private List<ExpenditureInfo> expens;
+    private List<String> MemberNames;
 
     public GroupInfo(){}
     public GroupInfo(String groupName){
@@ -30,6 +31,7 @@ public class GroupInfo {
             this.groupName = group.get().getName();
             this.managers = group.get().getUsers().stream().filter(s->s.getIdentity()>0).map(UserInfo::new).toList();
             this.staffs = group.get().getUsers().stream().filter(s->s.getIdentity()==0).map(UserInfo::new).toList();
+            this.MemberNames = group.get().getUsers().stream().map(User::getName).toList();
             this.expens = group.get().getExpenditures().stream().map(ExpenditureInfo::new).toList();
         }else{
             System.out.println("this group is not present");
@@ -39,6 +41,7 @@ public class GroupInfo {
         this.groupName = group.getName();
         this.managers = group.getUsers().stream().filter(s->s.getIdentity()>0).map(UserInfo::new).toList();
         this.staffs = group.getUsers().stream().filter(s->s.getIdentity()==0).map(UserInfo::new).toList();
+        this.MemberNames = group.getUsers().stream().map(User::getName).toList();
         this.expens = group.getExpenditures().stream().map(ExpenditureInfo::new).toList();
     }
 
