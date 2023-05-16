@@ -80,4 +80,16 @@ public class UserCtrl {
     public SaResult getPresidents(){
         return userService.getPresidents();
     }
+
+//    send email
+    /*
+    TODO 这里验证码就放在User里，对应一个真实邮箱。
+    1. 找回密码通过这个邮箱
+    2. 创建账户验证邮箱，可以先创建User
+     */
+    @RequestMapping(value ="sendEmail", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult sendEmail(){
+        return userService.getPresidents();
+    }
 }

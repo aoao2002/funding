@@ -172,16 +172,19 @@ public class GroupServiceMpl implements GroupService {
         System.out.println("this group does not exist");
         Group group = new Group();
         group.setName(groupName);
+        group.setUsers(new HashSet<>());
+        group.setExpenditures(new HashSet<>());
         Date date = new Date();
         group.setCreatedDate(date);
         List<User> admins = userDao.findByIdentity(2);
-        admins.stream().forEach(s->group.getUsers().add(s));
+        admins.forEach(s->group.getUsers().add(s));
         Group group1 = groupDao.save(group);
         admins.forEach(s-> {
             s.getGroups().add(group1);
             System.out.printf("in createGroup, %s\n", s.getName());
         });
-        groupDao.updateCreatedDateById(new Date(), group1.getId());
+        userDao.saveAll(admins);
+//        groupDao.updateCreatedDateById(new Date(), group1.getId());
         return true;
     }
 

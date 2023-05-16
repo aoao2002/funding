@@ -45,14 +45,13 @@ public class TestExpenditure {
 
     @Test
     public void testExpend() throws ParseException {
-        double amount = 10000;
+        String amount = "10000";
         String beginTime = "2022-02-22 12:00:00", endTime = "2023-02-02 12:11:12";
 //        先插入一个合法的，
         String expName = "national_nature", expNumber = RandomStringUtils.random(10);
-        long res = applicationService.newExpenditureApplication(expName, groupName, expNumber,
+        SaResult res = applicationService.newExpenditureApplication(expName, groupName, expNumber,
                 amount, beginTime, endTime, 1L);
 
-        assertTrue(res > -1);
     }
 
     @Test

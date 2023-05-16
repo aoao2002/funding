@@ -1,8 +1,12 @@
 package com.example.funding.service.User;
 import com.example.funding.bean.User;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
+@Setter
 public class UserInfo {
     private String name;
     private String bio;
@@ -10,6 +14,8 @@ public class UserInfo {
     private String phoneNumber;
     private int sex;
     private Date createdData;
+    private long id;
+    private int identity;
 
     public UserInfo(User user) {
         this.name = user.getName();
@@ -18,6 +24,8 @@ public class UserInfo {
         this.phoneNumber = user.getPhoneNumber();
         this.sex = user.getSex();
         this.createdData = user.getCreatedDate();
+        this.id = user.getId();
+        this.identity = user.getIdentity();
     }
 
     public UserInfo(String bio, String name, String phoneNumber, String sex) {
