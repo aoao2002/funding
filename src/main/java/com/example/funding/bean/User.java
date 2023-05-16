@@ -3,6 +3,7 @@ package com.example.funding.bean;
 import com.sun.istack.NotNull;
 import lombok.*;
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,6 +89,16 @@ public class User extends BaseBean{
      */
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Feedback> feedbacks;
+
+    /*
+    关于邮箱验证：上一次code日期，对应code
+     */
+    @Column(name = "code_time")
+    private Date codeTime;
+
+    @Column(name = "code")
+    private String code;
+
 
     public static int getPresidentIdentity(){
         return 2;

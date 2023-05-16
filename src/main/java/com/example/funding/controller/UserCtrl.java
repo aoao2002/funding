@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import cn.dev33.satoken.util.SaResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
+
 @RestController
 @RequestMapping("user/")
 public class UserCtrl {
@@ -20,6 +24,7 @@ public class UserCtrl {
     @Autowired
     private UserService userService;
 
+//    TODO 之后注册时，首先将account设置为abnormal
     @RequestMapping(value ="register", method= RequestMethod.POST)
     public SaResult register(@RequestBody RegisterInfo registerInfo){
         return userService.addUser(registerInfo.getEmail(), registerInfo.getPwd(),
@@ -84,12 +89,36 @@ public class UserCtrl {
 //    send email
     /*
     TODO 这里验证码就放在User里，对应一个真实邮箱。
+    TODO 避免大量的邮箱申请，同一用户限制需求邮箱的时间
     1. 找回密码通过这个邮箱
     2. 创建账户验证邮箱，可以先创建User
      */
     @RequestMapping(value ="sendEmail", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult sendEmail(){
-        return userService.getPresidents();
+    public SaResult sendEmail(String mail, String identity) throws MessagingException, IOException {
+        return userService.sendEmail(mail, identity);
     }
+
+    @RequestMapping(value ="checkCode", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult checkCode(String mail, String identity, String code) {
+        return userService.checkCode(mail, identity, code);
+    }
+
+    @RequestMapping(value ="validMail", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult validMail(String mail, String identity) {
+        return userService.validMail(mail, identity);
+    }
+    @RequestMapping(value ="unValidMail", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult unValidMail(String mail, String identity) {
+        return userService.unValidMail(mail, identity);
+    }
+    @RequestMapping(value ="getPasswd", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult getPasswd(String mail, String identity) {
+        return userService.getPasswd(mail, identity);
+    }
+
 }
