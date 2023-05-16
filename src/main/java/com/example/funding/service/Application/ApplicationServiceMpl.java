@@ -6,6 +6,7 @@ import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
 import com.example.funding.dao.*;
+import com.example.funding.service.Group.GroupInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.DateUtils;
@@ -374,6 +375,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         expenditure.setStartTime(start);
         expenditure.setEndTime(end);
         Group group = groupDao.findByName(groupName);
+        GroupInfo groupInfo = new GroupInfo(group);
         if(group == null){
             return SaResult.error(String.format("this group %s is not exist\n", groupName)).setData(-1);
         }
@@ -381,7 +383,8 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (user.isEmpty()){
             return SaResult.error(String.format("this user %d is not exist\n",userId)).setData(-1);
         }
-        if (!user.get().getGroups().contains(group)){
+        if (!groupInfo.getMemberNames().contains(user.get().getName())){
+//        if (!group.getUsers().contains(user.get())){
             return SaResult.error(String.format("this user %d is not belong to this group %s", userId, groupName)).setData(-1);
         }
         expenditure.setGroup(groupDao.findByName(groupName));
