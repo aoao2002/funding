@@ -93,14 +93,19 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("the amount requested exceeds the limit ");
         }
         if (expenditure.getStatus() != 1){
-            return SaResult.error("this expenditure is under establishment");
+            return SaResult.error(String.format("the status is wrong; status: %d", expenditure.getStatus()));
         }
+        Optional<User> user = userDao.findById(userId);
+        if (user.isEmpty()){
+            return SaResult.error(String.format("user of %d is not exist", userId));
+        }
+        User user1 = user.get();
         Application application = new Application();
         application.setCreatedDate(new Date());
         application.setApplyTime(new Date());
         application.setApp_abstract(abstrac);
         application.setComment(comment);
-        application.setUser(userDao.findById(userId).get());
+        application.setUser(user1);
         application.setExpenditure(expenditure);
         application.setStatus(0);
         application.setType(1);
@@ -110,6 +115,8 @@ public class ApplicationServiceMpl implements ApplicationService{
 
         Group group = expenditure.getGroup();
         group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getAppToExam().add(application1));
+        user1.getApplications().add(application1);
+//        group.getUsers().stream().forEach(s->userDao.save(s));
 
         expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amt, expendNumber);
 

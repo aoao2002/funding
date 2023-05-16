@@ -55,7 +55,7 @@ public class ApplicationCtrl {
     @RequestMapping(value = "edit/getMyApps", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getMyApps(){
-        return ReturnHelper.returnObj(applicationService.getMyApps(StpUtil.getLoginIdAsLong()));
+        return applicationService.getMyApps(StpUtil.getLoginIdAsLong());
     }
 
     /*
