@@ -192,6 +192,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         if(user.isEmpty()){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
+        if (application.get().getStatus() != 0){
+            return SaResult.error("this application can not be modified");
+        }
         if(application.get().getExpenditure().getGroup().getUsers().contains(user.get())){
             applicationDao.updateStatusById(1, application.get().getId());
             return SaResult.ok("pass");
@@ -215,6 +218,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         Optional<User> user = userDao.findById(userId);
         if(user.isEmpty()){
             return SaResult.error("this userId "+ userId + " is not exist");
+        }
+        if (application.get().getStatus() != 0){
+            return SaResult.error("this application can not be modified");
         }
         if(application.get().getExpenditure().getGroup().getUsers().contains(user.get())){
             applicationDao.updateStatusById(2, application.get().getId());
@@ -329,6 +335,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         Optional<User> user = userDao.findById(userId);
         Optional<Expenditure> expenditure = expenditureDao.findById(expID);
+        if (expenditure.get().getStatus() != 0){
+            return SaResult.error("this expenditure can not be modified");
+        }
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);
@@ -345,6 +354,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         Optional<User> user = userDao.findById(userId);
         Optional<Expenditure> expenditure = expenditureDao.findById(expID);
+        if (expenditure.get().getStatus() != 0){
+            return SaResult.error("this expenditure can not be modified");
+        }
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(2, expID);
