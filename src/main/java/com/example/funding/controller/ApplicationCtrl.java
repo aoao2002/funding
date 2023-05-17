@@ -51,11 +51,22 @@ public class ApplicationCtrl {
         // TODO（或者管理者处分析app状态，然后管理者按键操作）
         return applicationService.withdrawApplication(appId);
     }
+//    返回该基金在该年度还剩余的额度
+//    public SaResult getQuota(String expendNumber){
+//
+//    }
 //    TODO 申请者-获取自己的申请记录（所有）
     @RequestMapping(value = "edit/getMyApps", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getMyApps(){
         return applicationService.getMyApps(StpUtil.getLoginIdAsLong());
+    }
+
+//    获得自己可以申请的基金
+    @RequestMapping(value = "getAllMyExpends", method = RequestMethod.GET)
+    @ResponseBody
+    SaResult getAllMyExpends(){
+        return applicationService.getAllMyExpends(StpUtil.getLoginIdAsLong());
     }
 
     /*

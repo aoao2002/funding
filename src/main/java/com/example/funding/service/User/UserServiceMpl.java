@@ -325,6 +325,7 @@ public class UserServiceMpl implements UserService{
             return SaResult.error("this user has no code");
         }
         if (code.equals(user.getCode())){
+            userDao.updateStatusById("0", user.getId());
             return SaResult.ok();
         }else{
             return SaResult.error("input wrong code");

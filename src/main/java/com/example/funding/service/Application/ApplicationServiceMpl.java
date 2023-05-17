@@ -140,6 +140,12 @@ public class ApplicationServiceMpl implements ApplicationService{
         return SaResult.ok();
     }
     /*
+    TODO 获取该基金在这个时间段还有的余额，从基金申请开始一年为一个时间段
+     */
+    public SaResult getQuota(String expendNumber){
+        return SaResult.error("haven't finished");
+    }
+    /*
     获取自己提交的所有申请
      */
     public SaResult getMyApps(long userId){
@@ -325,6 +331,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);
+            expenditure.get().getGroup().getExpenditures().add(expenditure.get());
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
@@ -398,6 +405,25 @@ public class ApplicationServiceMpl implements ApplicationService{
 
     }
 
+    /*
+    获得这个用户所有可以申请的基金
+     */
+    public SaResult getAllMyExpends(long userId){
+        Optional<User> user = userDao.findById(userId);
+        if (user.isEmpty()){
+            return SaResult.error("this user is not exist");
+        }
+        List<ExpendInfo> expendInfos = new ArrayList<>();
+        user.get().getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
+        Set<Group> groups = user.get().getGroups();
+        groups.stream().forEach(s->{
+            System.out.println(s.getName());
+            s.getExpenditures().stream().forEach(m-> System.out.println(m.getName()));
+            System.out.println("finished "+ s.getName());
+        });
+
+        return SaResult.ok().setData(expendInfos);
+    }
 
 
 

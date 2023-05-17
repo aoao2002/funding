@@ -17,11 +17,13 @@ public class GroupAppInfoDetail {
     private String groupName;
     private long groupId;
     private int status;
+
     public GroupAppInfoDetail(){}
     public GroupAppInfoDetail(GroupApplication groupApplication){
         this.groupAppId = groupApplication.getId();
         this.applyTime = groupApplication.getApplyTime();
         this.comment = groupApplication.getComment();
+        this.applicant = new UserInfo(groupApplication.getUser());
         this.groupName = groupApplication.getGroup().getName();
         this.groupId = groupApplication.getGroup().getId();
         this.status = groupApplication.getStatus();

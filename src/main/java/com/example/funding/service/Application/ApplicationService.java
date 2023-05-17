@@ -13,6 +13,7 @@ import java.text.ParseException;
 public interface ApplicationService {
 
     public SaResult getAppInfoByNumber(String expendNumber, long staffId);
+    public SaResult getQuota(String expendNumber);
     public SaResult submitApplication(String expendNumber, String expendCategory, String abstrac ,
                                      String comment, String amount, long userId);
     public SaResult withdrawApplication(String appId);
@@ -27,6 +28,7 @@ public interface ApplicationService {
                                  String startTime, String endTime, String groupName, long userId) throws ParseException;
     public SaResult getMyExpendsToExam(long userId);
     public SaResult passExpenditure(long userId, String expId);
+    public SaResult getAllMyExpends(long userId);
     public SaResult rejectExpenditure(long userId, String expId);
 
 }
