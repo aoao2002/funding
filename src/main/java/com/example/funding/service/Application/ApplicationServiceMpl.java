@@ -383,10 +383,10 @@ public class ApplicationServiceMpl implements ApplicationService{
         expenditure.setStartTime(start);
         expenditure.setEndTime(end);
         Group group = groupDao.findByName(groupName);
-        GroupInfo groupInfo = new GroupInfo(group);
         if(group == null){
             return SaResult.error(String.format("this group %s is not exist\n", groupName)).setData(-1);
         }
+        GroupInfo groupInfo = new GroupInfo(group);
         Optional<User> user = userDao.findById(userId);
         if (user.isEmpty()){
             return SaResult.error(String.format("this user %d is not exist\n",userId)).setData(-1);

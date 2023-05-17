@@ -4,6 +4,7 @@ import cn.dev33.satoken.util.SaResult;
 import com.example.funding.bean.User;
 import com.example.funding.dao.UserDao;
 import com.example.funding.service.Application.ApplicationService;
+import com.example.funding.service.Application.ExpendInfo;
 import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ public class TestExpenditure {
     ApplicationCtrl applicationCtrl;
 
     @Autowired
+    ExpenditureCtrl expenditureCtrl;
+
+    @Autowired
     ApplicationService applicationService;
 
     @Autowired
@@ -66,6 +70,8 @@ public class TestExpenditure {
 
     @Test
     public void testExpendInfoShow() {
-
+        List<User> admins = userDao.findByIdentity(2);
+        User admin = admins.get(0);
+        ExpendInfo expendInfo = new ExpendInfo();
     }
 }
