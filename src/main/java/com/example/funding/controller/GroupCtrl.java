@@ -116,7 +116,7 @@ public class GroupCtrl {
     @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
     @ResponseBody
     public SaResult passApplyGroup(long applyId){
-        // the apply for join the group
+        // to apply for join the group
         return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));
     }
     @RequestMapping(value = "edit/rejectApplyGroup", method = RequestMethod.POST)
