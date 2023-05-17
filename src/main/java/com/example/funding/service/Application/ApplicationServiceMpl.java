@@ -140,6 +140,12 @@ public class ApplicationServiceMpl implements ApplicationService{
         return SaResult.ok();
     }
     /*
+    TODO 获取该基金在这个时间段还有的余额，从基金申请开始一年为一个时间段
+     */
+    public SaResult getQuota(String expendNumber){
+        return SaResult.error("haven't finished");
+    }
+    /*
     获取自己提交的所有申请
      */
     public SaResult getMyApps(long userId){
@@ -398,6 +404,18 @@ public class ApplicationServiceMpl implements ApplicationService{
 
     }
 
+    /*
+    获得这个用户所有可以申请的基金
+     */
+    public SaResult getAllMyExpends(long userId){
+        Optional<User> user = userDao.findById(userId);
+        if (user.isEmpty()){
+            return SaResult.error("this user is not exist");
+        }
+        List<ExpendInfo> expendInfos = new ArrayList<>();
+        user.get().getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
+        return SaResult.ok().setData(expendInfos);
+    }
 
 
 
