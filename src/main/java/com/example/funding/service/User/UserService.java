@@ -37,4 +37,6 @@ public interface UserService {
     User getMe();
 
     SaResult getPresidents();
+
+    SaResult getAllManagers();
 }

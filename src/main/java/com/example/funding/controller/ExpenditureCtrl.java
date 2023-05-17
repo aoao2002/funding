@@ -30,19 +30,19 @@ public class ExpenditureCtrl {
 
 
     // 展示经费使用情况 还有很多种展示方式
-    @RequestMapping(value ="view/getOneExpenditureAllInfo", method= RequestMethod.POST)
+    @RequestMapping(value ="view/getOneExpenditureAllInfo", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getOneExpenditureAllInfo(String expenditureNumber){
         return ReturnHelper.returnObj(expenditureService.getOneExpenditureAllInfo(expenditureNumber));
     }
-    @RequestMapping(value ="view/getAllExpenditureInfoInOneGroup", method= RequestMethod.POST)
+    @RequestMapping(value ="view/getAllExpenditureInfoInOneGroup", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllExpenditureInfoInOneGroup(String groupName){
         return ReturnHelper.returnObj(expenditureService.getAllExpenditureInfoInOneGroup(groupName));
     }
 
     //超级管理员才能用这个
-    @RequestMapping(value ="view/getAllExpenditureInfo", method= RequestMethod.POST)
+    @RequestMapping(value ="view/getAllExpenditureInfo", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllExpenditureInfo(){
         return ReturnHelper.returnObj(expenditureService.getAllExpenditureInfo());

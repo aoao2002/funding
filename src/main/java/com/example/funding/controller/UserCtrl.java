@@ -75,10 +75,16 @@ public class UserCtrl {
 
     // find back pwd
 
-    @RequestMapping(value ="edit/getPresidents", method= RequestMethod.POST)
+    @RequestMapping(value ="edit/getPresidents", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getPresidents(){
         return userService.getPresidents();
+    }
+
+    @RequestMapping(value ="edit/getAllManagers", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getAllManagers(){
+        return userService.getAllManagers();
     }
 
 //    send email

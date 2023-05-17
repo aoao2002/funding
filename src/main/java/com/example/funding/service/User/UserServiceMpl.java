@@ -195,9 +195,15 @@ public class UserServiceMpl implements UserService{
         List<User> userSet = userDao.findByIdentity(2);
         Set<UserInfo> userInfos = new HashSet<>();
         userSet.forEach(s->userInfos.add(new UserInfo(s)));
-        return SaResult.ok().setData(userSet);
+        return SaResult.ok().setData(userInfos);
     }
 
+    public SaResult getAllManagers(){
+        List<User> userSet = userDao.findByIdentity(1);
+        Set<UserInfo> userInfos = new HashSet<>();
+        userSet.forEach(s->userInfos.add(new UserInfo(s)));
+        return SaResult.ok().setData(userInfos);
+    }
 
 
 }

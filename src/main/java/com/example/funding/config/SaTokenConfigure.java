@@ -60,6 +60,9 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                     SaRouter.match("/group/edit/**")
                             .check(r -> checkPresident());
 
+                    SaRouter.match("/user/edit/getAllManagers")
+                            .check(r -> checkPresident());
+
                 }))
                 .addPathPatterns("/**")
                 // 以下api不用进行权限认证
