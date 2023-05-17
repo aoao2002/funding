@@ -299,6 +299,10 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (start.after(end)){
             return SaResult.error("the start time is after end");
         }
+//        检查是否已存在
+        if (group.getExpenditures().stream().map(Expenditure::getNumber).toList().contains(expNumber)){
+            return SaResult.error("This expenditure has been exist");
+        }
 //      提交与保存
         Expenditure e = new Expenditure();
         e.setName(expName);
