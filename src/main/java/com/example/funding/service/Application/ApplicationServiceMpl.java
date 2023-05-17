@@ -156,6 +156,18 @@ public class ApplicationServiceMpl implements ApplicationService{
                 .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
+    /*
+    获取自己关于某个基金的所有申请
+     */
+    public SaResult getMyAppsOfExpend(String expendNumber, long userId){
+        if(userDao.findById(userId).isEmpty()){
+            return SaResult.error("the user is not exist");
+        }
+        List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
+                .filter(s->s.getExpenditure().getNumber().equals(expendNumber))
+                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
+        return SaResult.data(appInfos);
+    }
 
     /*
     获得自己需要审批的app

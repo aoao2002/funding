@@ -1,5 +1,6 @@
 package com.example.funding.service.Application;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Handler.ReturnHelper;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public interface ApplicationService {
                                      String comment, String amount, long userId);
     public SaResult withdrawApplication(String appId);
     public SaResult getMyApps(long userId);
+    public SaResult getMyAppsOfExpend(String expendNumber, long userId);
     public SaResult getMyAppsToExam(long userId);
     public SaResult passApplication(long userId, String appId, String comment);
     public SaResult rejectApplication(long userId, String appId, String comment);
