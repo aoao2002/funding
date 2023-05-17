@@ -20,12 +20,12 @@ public class ExpenditureCtrl {
     @RequestMapping(value ="edit/updateExpenditureQuota", method= RequestMethod.POST)
     @ResponseBody
     public SaResult updateExpenditureQuota(String expenditureNumber, String quota){
-        return ReturnHelper.returnBool(expenditureService.updateExpenditureQuota(expenditureNumber,quota));
+        return expenditureService.updateExpenditureQuota(expenditureNumber,quota);
     }
     @RequestMapping(value ="edit/updateExpenditureEndTime", method= RequestMethod.POST)
     @ResponseBody
     public SaResult updateExpenditureEndTime(String expenditureNumber, String endTime){
-        return ReturnHelper.returnBool(expenditureService.updateExpenditureEndTime(expenditureNumber,endTime));
+        return expenditureService.updateExpenditureEndTime(expenditureNumber,endTime);
     }
 
 
@@ -33,19 +33,19 @@ public class ExpenditureCtrl {
     @RequestMapping(value ="view/getOneExpenditureAllInfo", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getOneExpenditureAllInfo(String expenditureNumber){
-        return ReturnHelper.returnObj(expenditureService.getOneExpenditureAllInfo(expenditureNumber));
+        return expenditureService.getOneExpenditureAllInfo(expenditureNumber);
     }
     @RequestMapping(value ="view/getAllExpenditureInfoInOneGroup", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllExpenditureInfoInOneGroup(String groupName){
-        return ReturnHelper.returnObj(expenditureService.getAllExpenditureInfoInOneGroup(groupName));
+        return expenditureService.getAllExpenditureInfoInOneGroup(groupName);
     }
 
     //超级管理员才能用这个
     @RequestMapping(value ="view/getAllExpenditureInfo", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllExpenditureInfo(){
-        return ReturnHelper.returnObj(expenditureService.getAllExpenditureInfo());
+        return expenditureService.getAllExpenditureInfo();
     }
     //增长率
     //饼状图

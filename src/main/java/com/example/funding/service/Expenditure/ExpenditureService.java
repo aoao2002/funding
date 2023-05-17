@@ -1,15 +1,13 @@
 package com.example.funding.service.Expenditure;
 
-import com.example.funding.bean.Expenditure;
+import cn.dev33.satoken.util.SaResult;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface ExpenditureService {
-     ExpenditureInfo getOneExpenditureAllInfo(String expenditureNumber);
-     List<ExpenditureInfo> getAllExpenditureInfoInOneGroup(String groupName);
-     List<ExpenditureInfo> getAllExpenditureInfo();
-     boolean updateExpenditureQuota(String expenditureNumber,String quota);
-     boolean updateExpenditureEndTime(String expenditureNumber,String endTime);
+     SaResult getOneExpenditureAllInfo(String expenditureNumber);
+     SaResult getAllExpenditureInfoInOneGroup(String groupName);
+     SaResult getAllExpenditureInfo();
+     SaResult updateExpenditureQuota(String expenditureNumber, String quota);
+     SaResult updateExpenditureEndTime(String expenditureNumber,String endTime);
 }
