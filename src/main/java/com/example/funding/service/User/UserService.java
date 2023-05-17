@@ -34,6 +34,8 @@ public interface UserService {
 
     boolean checkPresident();
 
+    boolean checkManager();
+
     User findById(long userID);
 
     UserInfo getUserByMailAndIdentity(String email, String identity);

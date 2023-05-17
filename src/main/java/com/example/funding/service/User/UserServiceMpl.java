@@ -204,6 +204,11 @@ public class UserServiceMpl implements UserService{
         return getMyIdentity() == 2;
     }
 
+    @Override
+    public boolean checkManager() {
+        return getMyIdentity() == 1;
+    }
+
     private int getMyIdentity() {
         User me = getMe();
         return me.getIdentity();
