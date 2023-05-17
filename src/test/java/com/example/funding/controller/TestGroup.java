@@ -41,13 +41,13 @@ public class TestGroup {
         assertEquals(200, res.getCode()); //因为用url限制的，方法内部没判断
 
         //申请加入一个组
-        boolean rebol = groupService.applyGroup(groupName,"test",2L);
-        assertTrue(rebol);
-        rebol = groupService.applyGroup(groupName +"daShaZi","test",1L);
-        assertFalse(rebol);
-        rebol = groupService.applyGroup(groupName,"test",1000000L);
-        assertFalse(rebol);
+        res= groupService.applyGroup(groupName,"test",2L);
+        assertEquals(200, res.getCode());
+        res = groupService.applyGroup(groupName +"daShaZi","test",1L);
+        assertEquals(500, res.getCode());
+        res = groupService.applyGroup(groupName,"test",1000000L);
+        assertEquals(500, res.getCode());
         //同意加入
-        rebol = groupService.passApplyGroup(1L);
+
     }
 }
