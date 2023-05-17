@@ -70,6 +70,8 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                 .excludePathPatterns("/user/LoginEmail")
                 .excludePathPatterns("/user/register")
                 .excludePathPatterns("/user/isLogin")
+                .excludePathPatterns("/user/sendEmail")
+                .excludePathPatterns("/user/checkCode")
         ;
     }
     /***

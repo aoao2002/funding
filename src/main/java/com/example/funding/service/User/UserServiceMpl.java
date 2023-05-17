@@ -9,13 +9,27 @@ import com.example.funding.bean.User;
 import com.example.funding.dao.GroupDao;
 import com.example.funding.dao.UserDao;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.websocket.Session;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.mail.internet.MimeMessage.RecipientType;
 
 @Service
 public class UserServiceMpl implements UserService{
@@ -58,6 +72,10 @@ public class UserServiceMpl implements UserService{
             return SaResult.error("login fail: input Null or Empty");;
         User user = userDao.findByEmailAndIdentity(Mail, Integer.parseInt(identity));
         if (user==null) return SaResult.error("login fail: no such user");
+//        check valid the acount
+        if (user.getStatus()!=null && !user.getStatus().equals("0")){
+            return SaResult.error("this account is abnormal");
+        }
         //check pw
         UserInfo userInfo = new UserInfo(user);
         if (user.getEmail().equals(Mail) && user.getPw().equals(pwd)){
@@ -204,6 +222,140 @@ public class UserServiceMpl implements UserService{
         userSet.forEach(s->userInfos.add(new UserInfo(s)));
         return SaResult.ok().setData(userInfos);
     }
+
+//    check whether given is email
+    public static boolean isEmail(String email) {
+        if (email == null || email.length() < 1 || email.length() > 256) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
+        return pattern.matcher(email).matches();
+    }
+    public static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    public SaResult checkMailAndIdentity(String mail, String identity){
+        if (!isEmail(mail)){
+            return SaResult.error("wrong email");
+        }
+        if (!isInteger(identity)){
+            return SaResult.error("wrong identity");
+        }
+        User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
+        if (user == null){
+            return SaResult.error(String.format("no user of mail %s and identity %d", mail, Integer.parseInt(identity)));
+        }
+        return SaResult.ok();
+    }
+
+
+    public SaResult sendEmail(String mail, String identity) throws IOException, MessagingException {
+//        Date date = new Date();
+        SaResult res = checkMailAndIdentity(mail, identity);
+        if (res.getCode() != 200){
+            return res;
+        }
+        User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
+//        准备发邮件
+        Properties props = new Properties();
+//        try (InputStream in = Files.newInputStream(Paths.get("mail.properties")))
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("mail.properties"))
+        {
+            props.load(in);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        InputStream is = getClass().getClassLoader().getResourceAsStream("message.txt");
+        if (is == null){
+            return SaResult.error("message.txt is null");
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        List<String> lines = reader.lines().toList();
+
+        String from = lines.get(0);
+        String subject = lines.get(2);
+
+        Random random = new Random();
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            code.append(random.nextInt(10));
+        }
+        user.setCode(code.toString());
+        userDao.save(user);
+
+        String body = "Dear all:<br><br>There is your code: "+code+" <br><br>Bests<br>Your funding<br>";
+//      passwd of my school email
+        String password = "Xtzs2023";
+
+        javax.mail.Session mailSession = javax.mail.Session.getDefaultInstance(props);
+        MimeMessage message = new MimeMessage(mailSession);
+        // check the MimeMessage API to figure out how to set the sender, receiver, subject, and email body
+        message.setFrom(new InternetAddress(from, "funding", "UTF-8"));
+        message.setRecipient(RecipientType.TO, new InternetAddress(mail, "client", "UTF-8"));
+        message.setSubject(subject, "utf-8");
+        message.setContent(body, "text/html;charset=UTF-8");
+
+        // check the Session API to figure out how to connect to the mail server and send the message
+        javax.mail.Session session = javax.mail.Session.getInstance(props);
+        Transport transport = session.getTransport("smtps");
+        transport.connect(props.getProperty("mail.smtps.host"), props.getProperty("mail.smtps.user"), password);
+        transport.sendMessage(message, InternetAddress.parse(mail));
+        return SaResult.ok();
+    }
+    public SaResult checkCode(String mail, String identity, String code){
+        SaResult res = checkMailAndIdentity(mail, identity);
+        if (res.getCode() != 200){
+            return res;
+        }
+        User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
+        if (code == null || code.length() != 6){
+            return SaResult.error("wrong code input format");
+        }
+        if (user.getCode()==null || user.getCode().equals("")){
+            return SaResult.error("this user has no code");
+        }
+        if (code.equals(user.getCode())){
+            return SaResult.ok();
+        }else{
+            return SaResult.error("input wrong code");
+        }
+    }
+
+    public SaResult validMail(String mail, String identity){
+        SaResult res = checkMailAndIdentity(mail, identity);
+        if (res.getCode() != 200){
+            return res;
+        }
+        User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
+        user.setStatus("0");
+        userDao.save(user);
+        return SaResult.ok();
+    }
+    public SaResult unValidMail(String mail, String identity){
+        SaResult res = checkMailAndIdentity(mail, identity);
+        if (res.getCode() != 200){
+            return res;
+        }
+        User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
+        user.setStatus("1");
+        userDao.save(user);
+        return SaResult.ok();
+    }
+    public SaResult getPasswd(String mail, String identity){
+        SaResult res = checkMailAndIdentity(mail, identity);
+        if (res.getCode() != 200){
+            return res;
+        }
+        User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
+        return SaResult.ok().setData(user.getPw());
+    }
+
+
 
 
 }

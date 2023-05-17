@@ -46,6 +46,13 @@ public interface UserDao extends CommonDao<User> {
     @Query("update User u set u.sex = ?1 where u.id = ?2")
     int updateSexById(int sex, Long id);
 
+    @Transactional
+    @Modifying
+    @Query("update User u set u.code = ?1 where u.email = ?2 and u.identity = ?3")
+    int updateCodeByEmailAndIdentity(String code, String email, int identity);
+
+
+
 
 
 
