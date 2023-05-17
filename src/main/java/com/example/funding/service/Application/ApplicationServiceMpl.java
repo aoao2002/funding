@@ -1,14 +1,12 @@
 package com.example.funding.service.Application;
 
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.bean.Application;
-import com.example.funding.bean.Expenditure;
-import com.example.funding.bean.Group;
-import com.example.funding.bean.User;
+import com.example.funding.bean.*;
 import com.example.funding.dao.*;
 import com.example.funding.service.Group.GroupInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.DateUtils;
 import org.thymeleaf.util.NumberUtils;
 import org.thymeleaf.util.StringUtils;
@@ -30,6 +28,8 @@ public class ApplicationServiceMpl implements ApplicationService{
     ApplicationDao applicationDao;
     @Autowired
     GroupDao groupDao;
+    @Autowired
+    FeedbackDao feedbackDao;
 
     public static boolean isInteger(String str) {
         if (str == null) {
@@ -177,7 +177,7 @@ public class ApplicationServiceMpl implements ApplicationService{
     2. TODO 获得对象之后直接处理是否可以反映到数据库-不可以
      */
     @Override
-    public SaResult passApplication(long userId, String appId) {
+    public SaResult passApplication(long userId, String appId, String comment) {
         long appID = 0;
 //        检查appID是否为整数
         if (isInteger(appId)){
@@ -204,6 +204,16 @@ public class ApplicationServiceMpl implements ApplicationService{
                 .map(s->s.getEmail()+s.getIdentity()).toList()
                 .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(1, application.get().getId());
+            Feedback feedback = new Feedback();
+            feedback.setComment(comment);
+            feedback.setReplyTime(new Date());
+            feedback.setCreatedDate(new Date());
+            feedback.setUser(user.get());
+            feedback.setApplicationId(application.get().getId());
+            feedback.setRead(0);
+            feedbackDao.save(feedback);
+//          申请者会收到feedback
+            application.get().getUser().getFeedbacks().add(feedback);
 
             return SaResult.ok("pass");
         }else{
@@ -212,7 +222,7 @@ public class ApplicationServiceMpl implements ApplicationService{
     }
 
     @Override
-    public SaResult rejectApplication(long userId, String appId) {
+    public SaResult rejectApplication(long userId, String appId, String comment) {
         long appID = 0;
         if (isInteger(appId)){
             appID = Integer.parseInt(appId);
@@ -234,6 +244,16 @@ public class ApplicationServiceMpl implements ApplicationService{
                 .map(s->s.getEmail()+s.getIdentity()).toList()
                 .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(2, application.get().getId());
+            Feedback feedback = new Feedback();
+            feedback.setComment(comment);
+            feedback.setReplyTime(new Date());
+            feedback.setCreatedDate(new Date());
+            feedback.setUser(user.get());
+            feedback.setApplicationId(application.get().getId());
+            feedback.setRead(0);
+            feedbackDao.save(feedback);
+//          申请者会收到feedback
+            application.get().getUser().getFeedbacks().add(feedback);
             return SaResult.ok("reject");
         }else{
             return SaResult.error("this user can not reject the application");

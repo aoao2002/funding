@@ -19,8 +19,8 @@ public interface ApplicationService {
     public SaResult withdrawApplication(String appId);
     public SaResult getMyApps(long userId);
     public SaResult getMyAppsToExam(long userId);
-    public SaResult passApplication(long userId, String appId);
-    public SaResult rejectApplication(long userId, String appId);
+    public SaResult passApplication(long userId, String appId, String comment);
+    public SaResult rejectApplication(long userId, String appId, String comment);
     public SaResult newExpenditureApplication(String expenditureName, String GroupName, String expenditureNumber,
                                           String expenditureTotalAmount, String BeginTime, String EndTime, long userId) throws ParseException;
 

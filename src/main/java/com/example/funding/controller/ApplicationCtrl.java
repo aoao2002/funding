@@ -84,14 +84,14 @@ public class ApplicationCtrl {
 //    NOTE 组不重名
     @RequestMapping(value = "edit/passApplication", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult passApplication(String appId){
-        return applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId);
+    public SaResult passApplication(String appId, String comment){
+        return applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId, comment);
     }
 
     @RequestMapping(value = "edit/rejectApplication", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult rejectApplication(String appId){
-        return applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId);
+    public SaResult rejectApplication(String appId, String comment){
+        return applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId, comment);
     }
 
     /*
