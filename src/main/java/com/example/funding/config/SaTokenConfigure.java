@@ -53,11 +53,18 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                             });
                     // 申请权限
 
+                    // 经费权限(修改只能manager和president)
+                    SaRouter.match("/expenditure/edit/**")
+                            .check(r -> checkManagerAndPresident());
+
                     // group权限
                     SaRouter.match("/group/president/**")
                             .check(r -> checkPresident());
 
                     SaRouter.match("/group/edit/**")
+                            .check(r -> checkPresident());
+
+                    SaRouter.match("/user/edit/getAllManagers")
                             .check(r -> checkPresident());
 
                 }))
@@ -81,6 +88,16 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     public void checkPresident(){
         if (!userService.checkPresident())
             throw new EditException("The user is not the president");
+    }
+
+    public void checkManager(){
+        if (!userService.checkManager())
+            throw new EditException("The user is not the manager");
+    }
+
+    public void checkManagerAndPresident(){
+        if (!userService.checkPresident() && !userService.checkManager())
+            throw new EditException("The user is not the manager or president");
     }
 
     public void checkGroupEditPower(){

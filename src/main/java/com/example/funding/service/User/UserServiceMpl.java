@@ -204,6 +204,11 @@ public class UserServiceMpl implements UserService{
         return getMyIdentity() == 2;
     }
 
+    @Override
+    public boolean checkManager() {
+        return getMyIdentity() == 1;
+    }
+
     private int getMyIdentity() {
         User me = getMe();
         return me.getIdentity();
@@ -213,7 +218,14 @@ public class UserServiceMpl implements UserService{
         List<User> userSet = userDao.findByIdentity(2);
         Set<UserInfo> userInfos = new HashSet<>();
         userSet.forEach(s->userInfos.add(new UserInfo(s)));
-        return SaResult.ok().setData(userSet);
+        return SaResult.ok().setData(userInfos);
+    }
+
+    public SaResult getAllManagers(){
+        List<User> userSet = userDao.findByIdentity(1);
+        Set<UserInfo> userInfos = new HashSet<>();
+        userSet.forEach(s->userInfos.add(new UserInfo(s)));
+        return SaResult.ok().setData(userInfos);
     }
 
 //    check whether given is email
@@ -347,7 +359,6 @@ public class UserServiceMpl implements UserService{
         User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
         return SaResult.ok().setData(user.getPw());
     }
-
 
 
 
