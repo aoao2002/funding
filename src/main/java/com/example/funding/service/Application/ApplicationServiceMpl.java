@@ -179,24 +179,32 @@ public class ApplicationServiceMpl implements ApplicationService{
     @Override
     public SaResult passApplication(long userId, String appId) {
         long appID = 0;
+//        检查appID是否为整数
         if (isInteger(appId)){
             appID = Integer.parseInt(appId);
         }else{
             return SaResult.error("this id is not int");
         }
+//        application不为空,
         Optional<Application> application = applicationDao.findById(appID);
         if(application.isEmpty()){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
+//        user不为空
         Optional<User> user = userDao.findById(userId);
         if(user.isEmpty()){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
+//        判断application是否可以被修改
         if (application.get().getStatus() != 0){
             return SaResult.error("this application can not be modified");
         }
-        if(application.get().getExpenditure().getGroup().getUsers().contains(user.get())){
+//        检查这个人是否有权限修改
+        if(application.get().getExpenditure().getGroup().getUsers().stream()
+                .map(s->s.getEmail()+s.getIdentity()).toList()
+                .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(1, application.get().getId());
+
             return SaResult.ok("pass");
         }else{
             return SaResult.error("this user can not pass the application");
@@ -222,7 +230,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (application.get().getStatus() != 0){
             return SaResult.error("this application can not be modified");
         }
-        if(application.get().getExpenditure().getGroup().getUsers().contains(user.get())){
+        if(application.get().getExpenditure().getGroup().getUsers().stream()
+                .map(s->s.getEmail()+s.getIdentity()).toList()
+                .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(2, application.get().getId());
             return SaResult.ok("reject");
         }else{
@@ -342,6 +352,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);
             expenditure.get().getGroup().getExpenditures().add(expenditure.get());
+            expenditureDao.save(expenditure.get());
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
@@ -430,9 +441,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         user.get().getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
         Set<Group> groups = user.get().getGroups();
         groups.stream().forEach(s->{
-            System.out.println(s.getName());
+//            System.out.println(s.getName());
             s.getExpenditures().stream().forEach(m-> System.out.println(m.getName()));
-            System.out.println("finished "+ s.getName());
+//            System.out.println("finished "+ s.getName());
         });
 
         return SaResult.ok().setData(expendInfos);
