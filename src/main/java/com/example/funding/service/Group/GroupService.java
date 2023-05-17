@@ -1,5 +1,6 @@
 package com.example.funding.service.Group;
 
+import cn.dev33.satoken.util.SaResult;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.service.Application.GroupAppInfo;
 import com.sun.jdi.event.StepEvent;
@@ -14,6 +15,8 @@ import java.util.Set;
 public interface GroupService {
     public List<GroupInfo> getAllGroups();
     public boolean applyGroup(String groupName, String comment, long staffId);
+    public SaResult getMyGroupApplication(long staffId);
+    public SaResult getMyGroupAppToExam(long managerId);
     public boolean passApplyGroup(long applyId);
     public boolean rejectApplyGroup(long applyId);
     public Set<GroupInfo> getMyGroups(long staffId);

@@ -74,12 +74,29 @@ public class GroupCtrl {
         return ReturnHelper.returnBool(groupService.quitGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
 
+//  获得自己申请过的记录
+    @RequestMapping(value ="getMyGroupApplication", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyGroupApplication(){
+        return groupService.getMyGroupApplication(StpUtil.getLoginIdAsLong());
+    }
+
+
+
 
     /**
      * manager's behavior
      *
      * the input of each api need include the group name
      */
+
+    @RequestMapping(value ="getMyGroupAppToExam", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyGroupAppToExam(){
+        return groupService.getMyGroupAppToExam(StpUtil.getLoginIdAsLong());
+    }
+
+
 
     @RequestMapping(value ="edit/modifyGroup", method= RequestMethod.POST)
     @ResponseBody
@@ -90,11 +107,11 @@ public class GroupCtrl {
         // 3. modify what? add user or add expenditure
         return false;
     }
-    @RequestMapping(value ="getMyGroupApplication", method= RequestMethod.POST)
-    @ResponseBody
-    public SaResult getMyGroupApplication(){
-        return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
-    }
+//    @RequestMapping(value ="getMyGroupApplication", method= RequestMethod.POST)
+//    @ResponseBody
+//    public SaResult getMyGroupApplication(){
+//        return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
+//    }
 
     @RequestMapping(value = "edit/passApplyGroup", method = RequestMethod.POST)
     @ResponseBody

@@ -1,5 +1,6 @@
 package com.example.funding.service.Group;
 
+import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Exception.BeanException;
 import com.example.funding.Util.Handler.InputChecker;
 import com.example.funding.bean.Group;
@@ -47,6 +48,11 @@ public class GroupServiceMpl implements GroupService {
             System.out.printf("there is no group of %s\n", groupName);
             return false;
         }
+        Optional<User> user = userDao.findById(staffId);
+        if (user.isEmpty()){
+            System.out.println("there is no the staff");
+            return false;
+        }
         Date date = new Date();
         GroupApplication groupApplication = new GroupApplication();
         groupApplication.setUser(userDao.findById(staffId).get());
@@ -59,8 +65,31 @@ public class GroupServiceMpl implements GroupService {
         Set<User> users = group.getUsers();
 //        Iterator<User> iterator = users.iterator();
 //        TODO 这里可以直接get出来add吗，！！
-        users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupApplications().add(groupApplication));
+        user.get().getGroupApplications().add(groupApplication);
+        users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupAppToExam().add(groupApplication));
+//        userDao.saveAll(users);
+
         return true;
+    }
+
+    public SaResult getMyGroupApplication(long staffId){
+        Optional<User> user = userDao.findById(staffId);
+        if (user.isEmpty()){
+            return SaResult.error("there is no this staff");
+        }
+        List<GroupAppInfoDetail> groupAppInfoDetails = user
+                .get().getGroupApplications().stream().map(GroupAppInfoDetail::new).toList();
+        return SaResult.ok().setData(groupAppInfoDetails);
+
+    }
+    public SaResult getMyGroupAppToExam(long managerId){
+        Optional<User> user = userDao.findById(managerId);
+        if (user.isEmpty()){
+            return SaResult.error("there is no this staff");
+        }
+        List<GroupAppInfoDetail> groupAppInfoDetails = user
+                .get().getGroupAppToExam().stream().map(GroupAppInfoDetail::new).toList();
+        return SaResult.ok().setData(groupAppInfoDetails);
     }
 
     @Override
