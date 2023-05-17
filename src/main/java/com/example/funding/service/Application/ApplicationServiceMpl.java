@@ -257,7 +257,8 @@ public class ApplicationServiceMpl implements ApplicationService{
         if(group == null){
             return SaResult.error("this group is not exist");
         }
-        if (!group.getUsers().contains(user.get())){
+        if (!group.getUsers().stream().map(s->s.getEmail()+s.getIdentity()).toList()
+                .contains(user.get().getEmail()+user.get().getIdentity())){
             return SaResult.error("this user cannot submit this expenditure application for this group");
         }
 //        number存在
