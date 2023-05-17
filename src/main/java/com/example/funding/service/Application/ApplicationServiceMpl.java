@@ -331,6 +331,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);
+            expenditure.get().getGroup().getExpenditures().add(expenditure.get());
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
@@ -414,6 +415,13 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         List<ExpendInfo> expendInfos = new ArrayList<>();
         user.get().getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
+        Set<Group> groups = user.get().getGroups();
+        groups.stream().forEach(s->{
+            System.out.println(s.getName());
+            s.getExpenditures().stream().forEach(m-> System.out.println(m.getName()));
+            System.out.println("finished "+ s.getName());
+        });
+
         return SaResult.ok().setData(expendInfos);
     }
 

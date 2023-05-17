@@ -66,7 +66,7 @@ public class GroupCtrl {
     @ResponseBody
     public SaResult joinGroup(String groupName, String comment){
        // TODO：this api just for test
-        return ReturnHelper.returnBool(groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong()));
+        return groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong());
     }
     @RequestMapping(value ="quitGroup", method= RequestMethod.POST)
     @ResponseBody

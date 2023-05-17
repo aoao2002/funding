@@ -62,6 +62,13 @@ public class ApplicationCtrl {
         return applicationService.getMyApps(StpUtil.getLoginIdAsLong());
     }
 
+//    获得自己可以申请的基金
+    @RequestMapping(value = "getAllMyExpends", method = RequestMethod.GET)
+    @ResponseBody
+    SaResult getAllMyExpends(){
+        return applicationService.getAllMyExpends(StpUtil.getLoginIdAsLong());
+    }
+
     /*
     TODO 管理者部分的api：
      1. 获取自己所有需要处理的申请（通过状态号筛选）
