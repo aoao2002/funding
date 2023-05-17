@@ -14,7 +14,7 @@ import java.util.Set;
 @Transactional
 public interface GroupService {
     public List<GroupInfo> getAllGroups();
-    public boolean applyGroup(String groupName, String comment, long staffId);
+    public SaResult applyGroup(String groupName, String comment, long staffId);
     public SaResult getMyGroupApplication(long staffId);
     public SaResult getMyGroupAppToExam(long managerId);
     public boolean passApplyGroup(long applyId);

@@ -41,17 +41,19 @@ public class GroupServiceMpl implements GroupService {
     }
 
     @Override
-    public boolean applyGroup(String groupName, String comment, long staffId) {
+    public SaResult applyGroup(String groupName, String comment, long staffId) {
 //        new application, send it to all managers
         Group group = groupDao.findByName(groupName);
         if(group == null){
-            System.out.printf("there is no group of %s\n", groupName);
-            return false;
+            return SaResult.error(String.format("there is no group of %s\n", groupName));
         }
         Optional<User> user = userDao.findById(staffId);
         if (user.isEmpty()){
-            System.out.println("there is no the staff");
-            return false;
+            return SaResult.error("there is no the staff");
+        }
+        List<String> groupUsers = group.getUsers().stream().map(s->s.getEmail()+s.getIdentity()).toList();
+        if (groupUsers.contains(user.get().getEmail()+user.get().getIdentity())){
+            return SaResult.error("you have been in this group");
         }
         Date date = new Date();
         GroupApplication groupApplication = new GroupApplication();
@@ -69,7 +71,7 @@ public class GroupServiceMpl implements GroupService {
         users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupAppToExam().add(groupApplication));
 //        userDao.saveAll(users);
 
-        return true;
+        return SaResult.ok();
     }
 
     public SaResult getMyGroupApplication(long staffId){
@@ -101,6 +103,7 @@ public class GroupServiceMpl implements GroupService {
             return false;
         }
         groupApplication.get().setStatus(1);
+        groupApplicationDao.save(groupApplication.get());
 //        该组里所有manager的组申请set中删去这份application
         groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
                 .forEach(s->s.getGroupApplications().remove(groupApplication.get()));
