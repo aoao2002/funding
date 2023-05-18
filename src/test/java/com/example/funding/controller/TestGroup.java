@@ -1,10 +1,7 @@
 package com.example.funding.controller;
 
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.bean.User;
-import com.example.funding.dao.UserDao;
 import com.example.funding.service.Group.GroupService;
-import com.example.funding.service.User.EmailAndPwd;
 import com.example.funding.service.User.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;

@@ -3,7 +3,6 @@ package com.example.funding.service.Group;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Exception.BeanException;
 import com.example.funding.Util.Handler.InputChecker;
-import com.example.funding.bean.Application;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;

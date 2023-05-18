@@ -9,20 +9,15 @@ import com.example.funding.bean.User;
 import com.example.funding.dao.GroupDao;
 import com.example.funding.dao.UserDao;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.websocket.Session;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -360,6 +355,14 @@ public class UserServiceMpl implements UserService{
         }
         User user = userDao.findByEmailAndIdentity(mail, Integer.parseInt(identity));
         return SaResult.ok().setData(user.getPw());
+    }
+
+    public SaResult getMyEmail(long myId){
+        Optional<User> user = userDao.findById(myId);
+        if (user.isEmpty()){
+            return SaResult.error("this id is not exist");
+        }
+        return SaResult.ok().setData(user.get().getEmail());
     }
 
 

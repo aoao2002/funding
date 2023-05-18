@@ -2,12 +2,13 @@ package com.example.funding.service.Expenditure;
 
 import com.example.funding.bean.*;
 import com.example.funding.service.Application.AppInfo;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.*;
 
+@Getter
+@Setter
 public class ExpenditureInfo {
     private String expenditureNumber;
     private String expenditureName;
@@ -20,6 +21,9 @@ public class ExpenditureInfo {
     // end_time
     private Date endTime;
     private double quota;
+    private String status;
+//    申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销 4 时间停止）
+    String[] statusName = {"Unread", "Pass", "Reject", "Withdraw", "Timeout"};
 
     private List<AppInfo> applications=new ArrayList<>();
 
@@ -35,6 +39,7 @@ public class ExpenditureInfo {
         for (Application application : expenditure.getApplications()) {
             this.applications.add(new AppInfo(application));
         }
+        this.status = statusName[expenditure.getStatus()];
     }
 
     public void setExpenditureNumber(String expenditureNumber) {

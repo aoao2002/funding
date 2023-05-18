@@ -1,9 +1,7 @@
 package com.example.funding.dao;
 
-import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
-import com.example.funding.service.Group.GroupInfo;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface GroupDao extends CommonDao<Group>{
