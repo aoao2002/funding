@@ -11,7 +11,10 @@ import java.util.List;
 
 @Repository
 public interface ExpenditureDao extends CommonDao<Expenditure>{
-    Expenditure findByNumber(String number);
+    List<Expenditure> findByNumber(String number);
+
+    Expenditure findByNumberAndStatus(String number, int status);
+
 
     List<Expenditure> findAllByGroup(Group group);
 

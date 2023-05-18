@@ -32,4 +32,5 @@ public class Group extends BaseBean{
     @JoinTable(name = "group_expenditure", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "expenditure_id")})
     private Set<Expenditure> expenditures = new HashSet<>();
 
+
 }
