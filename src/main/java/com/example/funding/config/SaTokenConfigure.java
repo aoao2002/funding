@@ -34,7 +34,6 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 
     /***
      * 注册 Sa-Token 拦截器，打开注解式鉴权功能
-     *
      * 1. 在service实现权限鉴定
      * 2. 在下方实现鉴权函数
      * 3. 在addInterceptors注册鉴权函数
