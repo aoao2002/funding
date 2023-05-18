@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ApplicationServiceMpl implements ApplicationService{
 
     @Autowired
