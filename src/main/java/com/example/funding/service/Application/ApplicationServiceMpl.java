@@ -7,10 +7,13 @@ import com.example.funding.service.Group.GroupInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.DateUtils;
 import org.thymeleaf.util.NumberUtils;
 import org.thymeleaf.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -488,5 +491,34 @@ public class ApplicationServiceMpl implements ApplicationService{
     }
 
 
+    /*
+    csv文件提出申请
+     */
 
+    public SaResult uploadCsvFileToApply(MultipartFile file, long userId){
+        Optional<User> user = userDao.findById(userId);
+        if (user.isEmpty()){
+            return SaResult.error("this user is not exist");
+        }
+        if (file.isEmpty()){
+            return SaResult.error("this file is empty");
+        }
+        String fileName = file.getOriginalFilename();
+        String suffixName = null;
+        if (fileName != null) {
+            suffixName = fileName.substring(fileName.lastIndexOf("."));
+        }
+        if (!suffixName.equals(".csv")){
+            return SaResult.error("this file is not csv");
+        }
+        String filePath = "/Users/chenyifan/Desktop/2020-2021/大三下/软件工程/Project/SoftwareEngineeringProject/src/main/resources/static/csv/";
+        File dest = new File(filePath+fileName);
+        try {
+            file.transferTo(dest);
+            return SaResult.ok("success");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return SaResult.error("fail");
+        }
+    }
 }
