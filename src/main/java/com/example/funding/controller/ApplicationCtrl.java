@@ -2,7 +2,6 @@ package com.example.funding.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.Util.Handler.ReturnHelper;
 import com.example.funding.service.Application.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

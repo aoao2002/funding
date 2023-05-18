@@ -6,7 +6,6 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.funding.FundingApplication;
 import com.example.funding.Util.Exception.EditException;
-import com.example.funding.bean.Expenditure;
 import com.example.funding.service.Expenditure.ExpenditureService;
 import com.example.funding.service.Group.GroupService;
 import com.example.funding.service.User.UserService;

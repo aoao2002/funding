@@ -1,22 +1,18 @@
 package com.example.funding.controller;
 
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.bean.User;
 import com.example.funding.dao.UserDao;
 import com.example.funding.service.User.RegisterInfo;
 import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
-import com.google.common.base.Strings;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 

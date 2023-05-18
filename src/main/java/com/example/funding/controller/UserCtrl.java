@@ -1,7 +1,6 @@
 package com.example.funding.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.example.funding.Util.Handler.InputChecker;
 import com.example.funding.Util.Handler.ReturnHelper;
 import com.example.funding.service.User.EmailAndPwd;
 import com.example.funding.service.User.RegisterInfo;
@@ -125,6 +124,12 @@ public class UserCtrl {
     @ResponseBody
     public SaResult getPasswd(String mail, String identity) {
         return userService.getPasswd(mail, identity);
+    }
+
+    @RequestMapping(value = "getMyEmail", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyEmail(){
+        return userService.getMyEmail(StpUtil.getLoginIdAsLong());
     }
 
 }

@@ -1,6 +1,5 @@
 package com.example.funding.service.Group;
 
-import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
 import com.example.funding.service.Expenditure.ExpenditureInfo;

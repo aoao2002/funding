@@ -5,8 +5,6 @@ import com.example.funding.bean.User;
 import com.example.funding.dao.UserDao;
 import com.example.funding.service.Application.ApplicationService;
 import com.example.funding.service.Application.ExpendInfo;
-import net.bytebuddy.utility.RandomString;
-import org.junit.jupiter.api.Assertions;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

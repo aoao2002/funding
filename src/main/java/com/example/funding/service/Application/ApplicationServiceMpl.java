@@ -18,9 +18,12 @@ import org.thymeleaf.util.StringUtils;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -97,11 +100,14 @@ public class ApplicationServiceMpl implements ApplicationService{
         }else{
             return SaResult.error("this amount is not double");
         }
+        if (amt + (int)getQuota(expendNumber).getData() > expenditure.getQuota()){
+            return SaResult.error("over quota");
+        }
         if(amt > expenditure.getRemainingAmount()){
             return SaResult.error("the amount requested exceeds the limit ");
         }
         if (expenditure.getStatus() != 1){
-            return SaResult.error(String.format("the status is wrong; status: %d", expenditure.getStatus()));
+            return SaResult.error(String.format("the status of expenditure is wrong; status: %d", expenditure.getStatus()));
         }
         Optional<User> user = userDao.findById(userId);
         if (user.isEmpty()){
@@ -144,14 +150,44 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this app is not present");
         }
 //        设置成撤销状态
+        Expenditure expenditure = application.get().getExpenditure();
+        expenditureDao.updateRemainingAmountByNumber(
+                application.get().getExpenditure().getRemainingAmount()+application.get().getAmount(),
+                application.get().getExpenditure().getNumber());
         application.get().setStatus(3);
         return SaResult.ok();
     }
     /*
     TODO 获取该基金在这个时间段还有的余额，从基金申请开始一年为一个时间段
      */
+    public Date getLocalDate(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+        Date dateNow = new Date();
+        instant = dateNow.toInstant();
+        LocalDate localDateNow = instant.atZone(zoneId).toLocalDate();
+        while (localDate.isBefore(localDateNow)){
+            localDate = localDate.plusYears(1);
+        }
+        localDate = localDate.minusYears(1);
+        ZonedDateTime zdt = localDate.atStartOfDay(zoneId);
+        return Date.from(zdt.toInstant());
+    }
     public SaResult getQuota(String expendNumber){
-        return SaResult.error("haven't finished");
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expendNumber, 1);
+        if (expenditure == null){
+            return SaResult.error("wrong expendNumber, there is no such expenditure");
+        }
+        Date date = expenditure.getStartTime();
+        date = getLocalDate(date);
+        Date finalDate = date;
+        List<Application> applications = expenditureDao
+                .findByNumberAndStatus(expendNumber, 1)
+                .getApplications().stream()
+                .filter(s->s.getCreatedDate().after(finalDate) && s.getStatus()<=1)
+                .toList();
+        return SaResult.ok().setData(applications.stream().mapToDouble(Application::getAmount).sum());
     }
     /*
     获取自己提交的所有申请
@@ -161,7 +197,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("the user is not exist");
         }
         List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
-                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
+                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
     /*
@@ -224,6 +260,9 @@ public class ApplicationServiceMpl implements ApplicationService{
                 .map(s->s.getEmail()+s.getIdentity()).toList()
                 .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(1, application.get().getId());
+            expenditureDao.updateRemainingAmountByNumber(
+                    application.get().getExpenditure().getRemainingAmount()+application.get().getAmount(),
+                    application.get().getExpenditure().getNumber());
             Feedback feedback = new Feedback();
             feedback.setComment(comment);
             feedback.setReplyTime(new Date());

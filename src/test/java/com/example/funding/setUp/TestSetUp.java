@@ -1,7 +1,6 @@
 package com.example.funding.setUp;
 
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.bean.User;
 import com.example.funding.controller.GroupCtrl;
 import com.example.funding.controller.UserCtrl;
 import com.example.funding.service.Group.GroupInfo;
@@ -11,9 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.Assert;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,9 +1,7 @@
 package com.example.funding.service.Group;
 
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.bean.GroupApplication;
 import com.example.funding.service.Application.GroupAppInfo;
-import com.sun.jdi.event.StepEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

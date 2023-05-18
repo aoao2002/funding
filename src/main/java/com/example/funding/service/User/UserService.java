@@ -2,14 +2,11 @@ package com.example.funding.service.User;
 
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.bean.User;
-import com.example.funding.dao.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface UserService {
@@ -63,5 +60,6 @@ public interface UserService {
     SaResult validMail(String mail, String identity);
     SaResult unValidMail(String mail, String identity);
     SaResult getPasswd(String mail, String identity);
+    SaResult getMyEmail(long myId);
 
 }

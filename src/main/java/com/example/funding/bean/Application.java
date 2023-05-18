@@ -1,6 +1,5 @@
 package com.example.funding.bean;
 
-import com.example.funding.service.Application.ExpendCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 import lombok.*;
