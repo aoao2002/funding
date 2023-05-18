@@ -1,14 +1,12 @@
 package com.example.funding.service.Application;
 
 import cn.dev33.satoken.util.SaResult;
-import com.example.funding.bean.Application;
-import com.example.funding.bean.Expenditure;
-import com.example.funding.bean.Group;
-import com.example.funding.bean.User;
+import com.example.funding.bean.*;
 import com.example.funding.dao.*;
 import com.example.funding.service.Group.GroupInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.DateUtils;
 import org.thymeleaf.util.NumberUtils;
 import org.thymeleaf.util.StringUtils;
@@ -30,6 +28,8 @@ public class ApplicationServiceMpl implements ApplicationService{
     ApplicationDao applicationDao;
     @Autowired
     GroupDao groupDao;
+    @Autowired
+    FeedbackDao feedbackDao;
 
     public static boolean isInteger(String str) {
         if (str == null) {
@@ -156,6 +156,18 @@ public class ApplicationServiceMpl implements ApplicationService{
                 .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
+    /*
+    获取自己关于某个基金的所有申请
+     */
+    public SaResult getMyAppsOfExpend(String expendNumber, long userId){
+        if(userDao.findById(userId).isEmpty()){
+            return SaResult.error("the user is not exist");
+        }
+        List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
+                .filter(s->s.getExpenditure().getNumber().equals(expendNumber))
+                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
+        return SaResult.data(appInfos);
+    }
 
     /*
     获得自己需要审批的app
@@ -177,23 +189,44 @@ public class ApplicationServiceMpl implements ApplicationService{
     2. TODO 获得对象之后直接处理是否可以反映到数据库-不可以
      */
     @Override
-    public SaResult passApplication(long userId, String appId) {
+    public SaResult passApplication(long userId, String appId, String comment) {
         long appID = 0;
+//        检查appID是否为整数
         if (isInteger(appId)){
             appID = Integer.parseInt(appId);
         }else{
             return SaResult.error("this id is not int");
         }
+//        application不为空,
         Optional<Application> application = applicationDao.findById(appID);
         if(application.isEmpty()){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
+//        user不为空
         Optional<User> user = userDao.findById(userId);
         if(user.isEmpty()){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
-        if(application.get().getExpenditure().getGroup().getUsers().contains(user.get())){
+//        判断application是否可以被修改
+        if (application.get().getStatus() != 0){
+            return SaResult.error("this application can not be modified");
+        }
+//        检查这个人是否有权限修改
+        if(application.get().getExpenditure().getGroup().getUsers().stream()
+                .map(s->s.getEmail()+s.getIdentity()).toList()
+                .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(1, application.get().getId());
+            Feedback feedback = new Feedback();
+            feedback.setComment(comment);
+            feedback.setReplyTime(new Date());
+            feedback.setCreatedDate(new Date());
+            feedback.setUser(user.get());
+            feedback.setApplicationId(application.get().getId());
+            feedback.setRead(0);
+            feedbackDao.save(feedback);
+//          申请者会收到feedback
+            application.get().getUser().getFeedbacks().add(feedback);
+
             return SaResult.ok("pass");
         }else{
             return SaResult.error("this user can not pass the application");
@@ -201,7 +234,7 @@ public class ApplicationServiceMpl implements ApplicationService{
     }
 
     @Override
-    public SaResult rejectApplication(long userId, String appId) {
+    public SaResult rejectApplication(long userId, String appId, String comment) {
         long appID = 0;
         if (isInteger(appId)){
             appID = Integer.parseInt(appId);
@@ -216,8 +249,23 @@ public class ApplicationServiceMpl implements ApplicationService{
         if(user.isEmpty()){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
-        if(application.get().getExpenditure().getGroup().getUsers().contains(user.get())){
+        if (application.get().getStatus() != 0){
+            return SaResult.error("this application can not be modified");
+        }
+        if(application.get().getExpenditure().getGroup().getUsers().stream()
+                .map(s->s.getEmail()+s.getIdentity()).toList()
+                .contains(user.get().getEmail()+user.get().getIdentity())){
             applicationDao.updateStatusById(2, application.get().getId());
+            Feedback feedback = new Feedback();
+            feedback.setComment(comment);
+            feedback.setReplyTime(new Date());
+            feedback.setCreatedDate(new Date());
+            feedback.setUser(user.get());
+            feedback.setApplicationId(application.get().getId());
+            feedback.setRead(0);
+            feedbackDao.save(feedback);
+//          申请者会收到feedback
+            application.get().getUser().getFeedbacks().add(feedback);
             return SaResult.ok("reject");
         }else{
             return SaResult.error("this user can not reject the application");
@@ -283,6 +331,10 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (start.after(end)){
             return SaResult.error("the start time is after end");
         }
+//        检查是否已存在
+        if (group.getExpenditures().stream().map(Expenditure::getNumber).toList().contains(expNumber)){
+            return SaResult.error("This expenditure has been exist");
+        }
 //      提交与保存
         Expenditure e = new Expenditure();
         e.setName(expName);
@@ -329,10 +381,14 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         Optional<User> user = userDao.findById(userId);
         Optional<Expenditure> expenditure = expenditureDao.findById(expID);
+        if (expenditure.get().getStatus() != 0){
+            return SaResult.error("this expenditure can not be modified");
+        }
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);
             expenditure.get().getGroup().getExpenditures().add(expenditure.get());
+            expenditureDao.save(expenditure.get());
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
@@ -345,6 +401,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         Optional<User> user = userDao.findById(userId);
         Optional<Expenditure> expenditure = expenditureDao.findById(expID);
+        if (expenditure.get().getStatus() != 0){
+            return SaResult.error("this expenditure can not be modified");
+        }
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(2, expID);
@@ -418,9 +477,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         user.get().getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
         Set<Group> groups = user.get().getGroups();
         groups.stream().forEach(s->{
-            System.out.println(s.getName());
+//            System.out.println(s.getName());
             s.getExpenditures().stream().forEach(m-> System.out.println(m.getName()));
-            System.out.println("finished "+ s.getName());
+//            System.out.println("finished "+ s.getName());
         });
 
         return SaResult.ok().setData(expendInfos);

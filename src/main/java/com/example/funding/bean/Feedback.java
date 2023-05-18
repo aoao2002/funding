@@ -33,5 +33,7 @@ public class Feedback extends BaseBean{
      * 回复的申请，一一对应
      */
     @NotNull
-    private int applicationId;
+    private long applicationId;
+//    表示是否已读 0 为未读,1为已读
+    private int read;
 }

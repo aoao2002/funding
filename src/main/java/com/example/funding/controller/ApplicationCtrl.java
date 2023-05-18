@@ -55,13 +55,18 @@ public class ApplicationCtrl {
 //    public SaResult getQuota(String expendNumber){
 //
 //    }
-//    TODO 申请者-获取自己的申请记录（所有）
+//    申请者-获取自己的申请记录（所有）
     @RequestMapping(value = "edit/getMyApps", method = RequestMethod.GET)
     @ResponseBody
     public SaResult getMyApps(){
         return applicationService.getMyApps(StpUtil.getLoginIdAsLong());
     }
-
+//    获得自己关于某个基金的所有申请
+    @RequestMapping(value = "edit/getMyAppsOfExpend", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyAppsOfExpend(String expendNumber){
+        return applicationService.getMyAppsOfExpend(expendNumber, StpUtil.getLoginIdAsLong());
+    }
 //    获得自己可以申请的基金
     @RequestMapping(value = "getAllMyExpends", method = RequestMethod.GET)
     @ResponseBody
@@ -84,14 +89,14 @@ public class ApplicationCtrl {
 //    NOTE 组不重名
     @RequestMapping(value = "edit/passApplication", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult passApplication(String appId){
-        return applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId);
+    public SaResult passApplication(String appId, String comment){
+        return applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId, comment);
     }
 
     @RequestMapping(value = "edit/rejectApplication", method = RequestMethod.POST)
     @ResponseBody
-    public SaResult rejectApplication(String appId){
-        return applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId);
+    public SaResult rejectApplication(String appId, String comment){
+        return applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId, comment);
     }
 
     /*
