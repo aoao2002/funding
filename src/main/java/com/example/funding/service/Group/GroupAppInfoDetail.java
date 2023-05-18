@@ -16,7 +16,7 @@ public class GroupAppInfoDetail {
     private UserInfo applicant;
     private String groupName;
     private long groupId;
-    private int status;
+    private String status;
 
     public GroupAppInfoDetail(){}
     public GroupAppInfoDetail(GroupApplication groupApplication){
@@ -26,6 +26,7 @@ public class GroupAppInfoDetail {
         this.applicant = new UserInfo(groupApplication.getUser());
         this.groupName = groupApplication.getGroup().getName();
         this.groupId = groupApplication.getGroup().getId();
-        this.status = groupApplication.getStatus();
+        String[] statusName = {"Unread", "Pass", "Reject"};
+        this.status = statusName[groupApplication.getStatus()];
     }
 }

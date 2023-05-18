@@ -1,6 +1,9 @@
 package com.example.funding.service.Application;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.example.funding.bean.*;
 import com.example.funding.dao.*;
 import com.example.funding.service.Group.GroupInfo;
@@ -12,8 +15,7 @@ import org.thymeleaf.util.DateUtils;
 import org.thymeleaf.util.NumberUtils;
 import org.thymeleaf.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -508,17 +510,34 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (fileName != null) {
             suffixName = fileName.substring(fileName.lastIndexOf("."));
         }
-        if (!suffixName.equals(".csv")){
-            return SaResult.error("this file is not csv");
+        if (suffixName != null && !suffixName.equals(".xlsx")) {
+            return SaResult.error("this file is not xlsx");
         }
-        String filePath = "/Users/chenyifan/Desktop/2020-2021/大三下/软件工程/Project/SoftwareEngineeringProject/src/main/resources/static/csv/";
-        File dest = new File(filePath+fileName);
+        InputStream inputStream = null;
         try {
-            file.transferTo(dest);
-            return SaResult.ok("success");
-        } catch (IOException e) {
+            inputStream = file.getInputStream();
+            // 使用输入流进行操作
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return SaResult.error("fail");
+            // 处理文件不存在的情况
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // 处理关闭输入流时的异常
+                }
+            }
         }
+        List<AppExcel> appExcels = EasyExcel.read(inputStream).head(AppExcel.class)
+                .excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
+        for (AppExcel appExcel : appExcels) {
+            submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(), appExcel.getAbstracts(),
+                    appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
+        }
+        return SaResult.ok();
     }
 }
