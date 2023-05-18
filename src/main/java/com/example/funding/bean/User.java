@@ -75,6 +75,8 @@ public class User extends BaseBean{
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<GroupApplication> groupApplications;
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name="all_user_group_app_to_exam", joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "group_app_to_exam_id")})
     private Set<GroupApplication> groupAppToExam;
 //    因为基金不属于个人，属于小组
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)

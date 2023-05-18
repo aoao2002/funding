@@ -5,6 +5,7 @@ import com.sun.istack.NotNull;
 import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -43,5 +44,6 @@ public class GroupApplication extends BaseBean{
     @NotNull
     private int status;
 
-
+    @ManyToMany(mappedBy = "groupAppToExam", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<User> examiners;
 }

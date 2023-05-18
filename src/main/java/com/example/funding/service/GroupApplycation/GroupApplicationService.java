@@ -8,4 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface GroupApplicationService {
     GroupApplication findById(long applyID);
+
+    boolean deleteById(long applyID);
 }

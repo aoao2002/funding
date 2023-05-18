@@ -1,8 +1,10 @@
 package com.example.funding.dao;
 
+import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -11,4 +13,6 @@ public interface GroupApplicationDao extends CommonDao<GroupApplication>{
 
     @Override
     Optional<GroupApplication> findById(Long aLong);
+
+    List<GroupApplication> findAllByGroup(Group group);
 }

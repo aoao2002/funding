@@ -3,6 +3,7 @@ package com.example.funding.service.Group;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Exception.BeanException;
 import com.example.funding.Util.Handler.InputChecker;
+import com.example.funding.bean.Application;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
@@ -71,8 +72,9 @@ public class GroupServiceMpl implements GroupService {
 //        TODO 这里可以直接get出来add吗，！！
         user.get().getGroupApplications().add(groupApplication);
         users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupAppToExam().add(groupApplication));
+        //找到identity大于0的setExaminers
+        groupApplication.setExaminers(users.stream().filter(s->s.getIdentity()>0).collect(Collectors.toSet()));
 //        userDao.saveAll(users);
-
         return SaResult.ok();
     }
 
@@ -230,6 +232,10 @@ public class GroupServiceMpl implements GroupService {
             Set<Group> userGroups = user.getGroups();
             userGroups.remove(group);
             user.setGroups(userGroups);
+        }
+        List<GroupApplication> groupApplications = groupApplicationDao.findAllByGroup(group);
+        for (GroupApplication groupApplication : groupApplications) {
+            groupApplicationService.deleteById(groupApplication.getId());
         }
         group.setUsers(new HashSet<>());
         return groupDao.deleteByName(groupName)>0;
