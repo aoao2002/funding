@@ -18,7 +18,7 @@ public class AppInfo {
     private double availAmount;
     private long userId;
     private String userName;
-    private int expendCategory;
+    private String[] expendCategory;
     private String appAbstract;
     private double appAmount;
     private String comment;
@@ -41,7 +41,8 @@ public class AppInfo {
         this.availAmount = this.totalAmount - this.remainAmount;
         this.userId = application.getUser().getId();
         this.userName = application.getUser().getName();
-        this.expendCategory = application.getExpendCategory();
+        ExpendCategory expendCategory1 = getExpendCategory(application.getExpendCategory());
+        this.expendCategory = new String[]{expendCategory1.getClass().getSimpleName(), expendCategory1.toString()};
         this.appAbstract = application.getApp_abstract();
         this.appAmount = application.getAmount();
         this.comment = application.getComment();
@@ -60,6 +61,22 @@ public class AppInfo {
         this.groupName = expenditure.getGroup().getName();
         this.totalAmount = expenditure.getTotalAmount();
         this.remainAmount = expenditure.getRemainingAmount();
+    }
+    public ExpendCategory getExpendCategory(int categoryCode) {
+        switch (categoryCode) {
+            case 0: return ExpendCategory.Office.officeSupplies;
+            case 1: return ExpendCategory.Office.pen;
+            case 2: return ExpendCategory.Office.notebook;
+            case 3: return ExpendCategory.Print.print;
+            case 4: return ExpendCategory.Print.paper;
+            case 5: return ExpendCategory.Maintenance.building;
+            case 6: return ExpendCategory.Maintenance.instrument;
+            case 7: return ExpendCategory.Maintenance.publicSever;
+            case 8: return ExpendCategory.Postage.postage;
+            case 9: return ExpendCategory.Postage.telephone;
+            case 10: return ExpendCategory.Train.train;
+            default: return ExpendCategory.Error.noSuchCategory;
+        }
     }
 
 }

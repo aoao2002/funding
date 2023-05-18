@@ -8,7 +8,7 @@ import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;

@@ -7,7 +7,7 @@ import com.example.funding.service.Application.ApplicationService;
 import com.example.funding.service.Application.ExpendInfo;
 import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.lang3.RandomStringUtils;
