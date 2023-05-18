@@ -5,6 +5,8 @@ import com.example.funding.bean.Expenditure;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 public class AppInfo {
@@ -24,9 +26,9 @@ public class AppInfo {
     private String comment;
     private String status;
     private String type;
+
+    private Date createdDate;
 //    0 未审核 1 审核通过 2 审核未通过 3 撤销
-    String[] statusName = {"Unread", "Pass", "Reject", "Withdraw", "Error"};
-    String[] typeName = {"NewExpend", "NewApply", "Error"};
 
     public AppInfo(){}
 
@@ -52,8 +54,11 @@ public class AppInfo {
         if (application.getType()>2){
             application.setType(2);
         }
+        String[] statusName = {"Unread", "Pass", "Reject", "Withdraw", "Error"};
+        String[] typeName = {"NewExpend", "NewApply", "Error"};
         this.status = statusName[application.getStatus()];
         this.type = typeName[application.getType()];
+        this.createdDate = application.getCreatedDate();
     }
     public AppInfo(Expenditure expenditure){
         this.expendId = expenditure.getId();

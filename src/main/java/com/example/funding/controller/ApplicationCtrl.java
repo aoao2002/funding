@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 
@@ -146,5 +147,13 @@ public class ApplicationCtrl {
     @ResponseBody
     public SaResult rejectExpenditure(String appId){
         return applicationService.rejectExpenditure(StpUtil.getLoginIdAsLong(), appId);
+    }
+
+
+    @RequestMapping(value ="file/uploadCsvFileToApply", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult uploadCsvFileToApply(MultipartFile uploadFile){
+        // TODO
+        return applicationService.uploadCsvFileToApply(uploadFile, StpUtil.getLoginIdAsLong());
     }
 }

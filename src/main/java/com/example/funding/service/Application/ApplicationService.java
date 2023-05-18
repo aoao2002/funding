@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 
@@ -33,4 +34,5 @@ public interface ApplicationService {
     public SaResult getAllMyExpends(long userId);
     public SaResult rejectExpenditure(long userId, String expId);
 
+    SaResult uploadCsvFileToApply(MultipartFile file, long userId);
 }
