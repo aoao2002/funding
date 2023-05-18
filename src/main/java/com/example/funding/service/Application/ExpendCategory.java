@@ -16,4 +16,8 @@ public interface ExpendCategory {
     enum Train implements ExpendCategory{
         train;
     }
+    enum Error implements ExpendCategory{
+        noSuchCategory;
+    }
+
 }

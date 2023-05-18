@@ -24,7 +24,8 @@ public class ExpenditureServiceMpl implements ExpenditureService{
 
     @Override
     public SaResult getOneExpenditureAllInfo(String expenditureNumber){
-        Expenditure expenditure = expenditureDao.findByNumber(expenditureNumber);
+//        List<Expenditure> expenditures = expenditureDao.findByNumber(expenditureNumber);
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);
         if (Objects.isNull(expenditure)) {
             return SaResult.error("the expenditure is not exist");
         }
@@ -38,7 +39,8 @@ public class ExpenditureServiceMpl implements ExpenditureService{
 
     @Override
     public SaResult updateExpenditureQuota(String expenditureNumber, String quota){
-        Expenditure expenditure = expenditureDao.findByNumber(expenditureNumber);
+//        List<Expenditure> expenditures = expenditureDao.findByNumber(expenditureNumber);
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);
         if (Objects.isNull(expenditure)) {
             return SaResult.error("the expenditure is not exist");
         }
@@ -56,7 +58,8 @@ public class ExpenditureServiceMpl implements ExpenditureService{
 
     @Override
     public SaResult updateExpenditureEndTime(String expenditureNumber, String endTime){
-        Expenditure expenditure = expenditureDao.findByNumber(expenditureNumber);
+//        List<Expenditure> expenditures = expenditureDao.findByNumber(expenditureNumber);
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);
         if (Objects.isNull(expenditure)) {
             return SaResult.error("the expenditure is not exist");
         }

@@ -8,7 +8,7 @@ import com.example.funding.service.Group.GroupInfo;
 import com.example.funding.service.Group.GroupService;
 import com.example.funding.service.User.RegisterInfo;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.Assert;

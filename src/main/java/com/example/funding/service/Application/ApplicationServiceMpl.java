@@ -61,7 +61,8 @@ public class ApplicationServiceMpl implements ApplicationService{
      */
     @Override
     public SaResult getAppInfoByNumber(String expendNumber, long staffId) {
-        Expenditure expenditure = expenditureDao.findByNumber(expendNumber);
+//        List<Expenditure> expenditures = expenditureDao.findByNumber(expendNumber);
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expendNumber, 1);
         if(expenditure == null){
             return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
@@ -79,7 +80,8 @@ public class ApplicationServiceMpl implements ApplicationService{
      */
     @Override
     public SaResult submitApplication(String expendNumber, String expendCategory,String abstrac , String comment, String amount, long userId) {
-        Expenditure expenditure = expenditureDao.findByNumber(expendNumber);
+//        List<Expenditure> expenditures = expenditureDao.findByNumber(expendNumber);
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expendNumber, 1);
         if(expenditure == null){
             return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
