@@ -574,7 +574,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             }
         }
         List<AppExcel> appExcels = EasyExcel.read(inputStream).head(AppExcel.class)
-                .excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
+                .excelType(ExcelTypeEnum.XLSX).sheet(0).doReadSync();
         for (AppExcel appExcel : appExcels) {
             submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(), appExcel.getAbstracts(),
                     appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
