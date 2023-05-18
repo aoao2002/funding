@@ -226,7 +226,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             feedbackDao.save(feedback);
 //          申请者会收到feedback
             application.get().getUser().getFeedbacks().add(feedback);
-
+            userDao.save(application.get().getUser());
             return SaResult.ok("pass");
         }else{
             return SaResult.error("this user can not pass the application");
@@ -266,6 +266,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             feedbackDao.save(feedback);
 //          申请者会收到feedback
             application.get().getUser().getFeedbacks().add(feedback);
+            userDao.save(application.get().getUser());
             return SaResult.ok("reject");
         }else{
             return SaResult.error("this user can not reject the application");

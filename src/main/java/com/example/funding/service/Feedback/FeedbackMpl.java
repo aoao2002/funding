@@ -6,9 +6,11 @@ import com.example.funding.dao.FeedbackDao;
 import com.example.funding.dao.UserDao;
 import com.example.funding.service.Application.FeedbackInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class FeedbackMpl implements FeedbackService{
 
     @Autowired
