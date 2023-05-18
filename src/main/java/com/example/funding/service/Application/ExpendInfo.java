@@ -19,7 +19,9 @@ public class ExpendInfo {
     String groupName;
     long groupId;
     double quota; //each year usage allowed
-    int status;
+    String status;
+//    申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销 4 时间停止）
+    String[] statusName = {"Unread", "Pass", "Reject", "Withdraw", "Timeout", "Error"};
 
 
     public ExpendInfo(){}
@@ -35,6 +37,9 @@ public class ExpendInfo {
         groupName = e.getGroup().getName();
         groupId = e.getGroup().getId();
         quota = e.getQuota();
-        status = e.getStatus();
+        if (e.getStatus()>5){
+            e.setStatus(5);
+        }
+        status = statusName[e.getStatus()];
     }
 }
