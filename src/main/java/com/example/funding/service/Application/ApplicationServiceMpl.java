@@ -555,9 +555,11 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this file is not xlsx");
         }
         InputStream inputStream = null;
+        List<AppExcel> appExcels = null;
         try {
             inputStream = file.getInputStream();
             // 使用输入流进行操作
+            appExcels = EasyExcel.read(inputStream).head(AppExcel.class).sheet(0).doReadSync();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             // 处理文件不存在的情况
@@ -573,11 +575,15 @@ public class ApplicationServiceMpl implements ApplicationService{
                 }
             }
         }
-        List<AppExcel> appExcels = EasyExcel.read(inputStream).head(AppExcel.class)
-                .excelType(ExcelTypeEnum.XLSX).sheet(0).doReadSync();
-        for (AppExcel appExcel : appExcels) {
-            submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(), appExcel.getAbstracts(),
-                    appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
+        if (appExcels != null) {
+            for (AppExcel appExcel : appExcels) {
+                SaResult res = submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(), appExcel.getAbstracts(),
+                        appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
+                if (res.getCode() != 200) {
+                    return res;
+                }
+                //按理说应该回退
+            }
         }
         return SaResult.ok();
     }
