@@ -156,4 +156,11 @@ public class ApplicationCtrl {
         // TODO
         return applicationService.uploadCsvFileToApply(uploadFile, StpUtil.getLoginIdAsLong());
     }
+
+    @RequestMapping(value ="file/downloadCsvFileApplyFromOneExp", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult downloadCsvFileApplyFromOneExp(String expendNumber){
+        // TODO
+        return null;
+    }
 }
