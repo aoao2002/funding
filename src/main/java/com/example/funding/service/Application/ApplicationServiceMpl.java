@@ -146,7 +146,7 @@ enum Print implements ExpendCategory{
         }else{
             return SaResult.error("this amount is not double");
         }
-        if (amt + (int)getQuota(expendNumber).getData() > expenditure.getQuota()){
+        if (amt + (Double)getQuota(expendNumber).getData() > expenditure.getQuota()){
             return SaResult.error("over quota");
         }
         if(amt > expenditure.getRemainingAmount()){
@@ -206,7 +206,8 @@ enum Print implements ExpendCategory{
     /*
     TODO 获取该基金在这个时间段还有的余额，从基金申请开始一年为一个时间段
      */
-    public Date getLocalDate(Date date){
+    public java.util.Date getLocalDate(java.util.Date date1){
+        java.util.Date date = new Date(date1.getTime());
         Instant instant = date.toInstant();
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDate localDate = instant.atZone(zoneId).toLocalDate();
@@ -225,9 +226,9 @@ enum Print implements ExpendCategory{
         if (expenditure == null){
             return SaResult.error("wrong expendNumber, there is no such expenditure");
         }
-        Date date = expenditure.getStartTime();
+        java.util.Date date = expenditure.getStartTime();
         date = getLocalDate(date);
-        Date finalDate = date;
+        java.util.Date finalDate = date;
         List<Application> applications = expenditureDao
                 .findByNumberAndStatus(expendNumber, 1)
                 .getApplications().stream()
