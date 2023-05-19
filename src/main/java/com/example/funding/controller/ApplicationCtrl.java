@@ -41,8 +41,8 @@ public class ApplicationCtrl {
     */
     @RequestMapping(value ="edit/submitApplication", method= RequestMethod.POST)
     @ResponseBody
-    public SaResult submitApplication(String expenditureNumber, String cate, String abstrac, String comment,String applyAmount){
-        return applicationService.submitApplication(expenditureNumber, cate,
+    public SaResult submitApplication(String expenditureNumber, String cate1, String cate2, String abstrac, String comment,String applyAmount){
+        return applicationService.submitApplication(expenditureNumber, cate1, cate2,
                 abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong());
     }
     @RequestMapping(value ="edit/withdrawApplication", method= RequestMethod.POST)
