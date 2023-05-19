@@ -44,6 +44,12 @@ public class ExpenditureCtrl {
     public SaResult getAllExpenditureInfo(){
         return expenditureService.getAllExpenditureInfo();
     }
+
+    @RequestMapping(value = "view/getOneExpenditureAppInfoByMyself", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getOneExpenditureAppAllInfoByMyself(String expenditureNumber){
+        return expenditureService.getOneExpenditureAppAllInfoByMyself(expenditureNumber);
+    }
     //增长率
     //饼状图
 

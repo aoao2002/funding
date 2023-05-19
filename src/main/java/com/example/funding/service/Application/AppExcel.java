@@ -14,6 +14,8 @@ public class AppExcel {
     @ExcelProperty(value="申请金额")
     private String amount;
     //TODO: category 待定
-    @ExcelProperty(value="类别")
-    private String category;
+    @ExcelProperty(value="一级类别")
+    private String category1;
+    @ExcelProperty(value="二级类别")
+    private String category2;
 }

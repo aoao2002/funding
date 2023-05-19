@@ -1,11 +1,14 @@
 package com.example.funding.service.Expenditure;
 
 import cn.dev33.satoken.util.SaResult;
+import com.example.funding.bean.Application;
 import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
 import com.example.funding.dao.*;
+import com.example.funding.service.Application.AppInfo;
 import com.example.funding.service.User.UserService;
+import org.apache.poi.sl.usermodel.ObjectMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ public class ExpenditureServiceMpl implements ExpenditureService{
     @Autowired UserDao userDao;
 
     @Autowired GroupDao groupDao;
+
+    @Autowired ApplicationDao applicationDao;
 
     @Override
     public SaResult getOneExpenditureAllInfo(String expenditureNumber){
@@ -115,5 +120,27 @@ public class ExpenditureServiceMpl implements ExpenditureService{
             }
         }
         return SaResult.data(expenditureInfoList);
+    }
+
+    @Override
+    public SaResult getOneExpenditureAppAllInfoByMyself(String expenditureNumber){
+//        List<Expenditure> expenditures = expenditureDao.findByNumber(expenditureNumber);
+        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);
+        if (Objects.isNull(expenditure)) {
+            return SaResult.error("the expenditure is not exist");
+        }
+        User user = userService.getMe();
+        // 如果经费所属的课题组user没有这个课题组则返回错误
+        if(!groupDao.findAllByUsers(user).contains(expenditure.getGroup())){
+            return SaResult.error("the expenditure do not belong to the user");
+        }
+        List<Application> applicationList = applicationDao.findAllByExpenditure(expenditure);
+        List<AppInfo> applicationInfoList = new ArrayList<>();
+        for(Application application:applicationList){
+            if (application.getUser().equals(user)){
+                applicationInfoList.add(new AppInfo(application));
+            }
+        }
+        return SaResult.data(applicationInfoList);
     }
 }

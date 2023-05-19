@@ -10,4 +10,6 @@ public interface ExpenditureService {
      SaResult getAllExpenditureInfo();
      SaResult updateExpenditureQuota(String expenditureNumber, String quota);
      SaResult updateExpenditureEndTime(String expenditureNumber,String endTime);
+
+     SaResult getOneExpenditureAppAllInfoByMyself(String expenditureNumber);
 }

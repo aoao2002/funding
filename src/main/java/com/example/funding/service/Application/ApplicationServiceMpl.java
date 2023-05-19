@@ -39,23 +39,7 @@ public class ApplicationServiceMpl implements ApplicationService{
     GroupDao groupDao;
     @Autowired
     FeedbackDao feedbackDao;
-/*
-enum Print implements ExpendCategory{
-        print, paper;
-    }
-    enum Maintenance implements ExpendCategory{
-        building, instrument, publicSever;
-    }
-    enum Postage implements ExpendCategory{
-        postage, telephone;
-    }
-    enum Train implements ExpendCategory{
-        train;
-    }
-    enum Error implements ExpendCategory{
-        noSuchCategory;
-    }
- */
+
     public ExpendCategory getCategoryValueFromStrings(String cate1, String cate2){
         ExpendCategory expendCategory;
         switch (cate1){
@@ -624,8 +608,8 @@ enum Print implements ExpendCategory{
         }
         if (appExcels != null) {
             for (AppExcel appExcel : appExcels) {
-                SaResult res = submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(), appExcel.getAbstracts(),
-                        appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
+                SaResult res = submitApplication(appExcel.getExpenditureId(), appExcel.getCategory1(),appExcel.getCategory2(),
+                        appExcel.getAbstracts(), appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
                 if (res.getCode() != 200) {
                     return res;
                 }
