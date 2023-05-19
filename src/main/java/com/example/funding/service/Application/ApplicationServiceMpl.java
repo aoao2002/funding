@@ -39,6 +39,50 @@ public class ApplicationServiceMpl implements ApplicationService{
     GroupDao groupDao;
     @Autowired
     FeedbackDao feedbackDao;
+/*
+enum Print implements ExpendCategory{
+        print, paper;
+    }
+    enum Maintenance implements ExpendCategory{
+        building, instrument, publicSever;
+    }
+    enum Postage implements ExpendCategory{
+        postage, telephone;
+    }
+    enum Train implements ExpendCategory{
+        train;
+    }
+    enum Error implements ExpendCategory{
+        noSuchCategory;
+    }
+ */
+    public ExpendCategory getCategoryValueFromStrings(String cate1, String cate2){
+        ExpendCategory expendCategory;
+        switch (cate1){
+            case "Office":{
+                expendCategory = ExpendCategory.Office.valueOf(cate2);
+                break;
+            }
+            case "Print":{
+                expendCategory = ExpendCategory.Print.valueOf(cate2);
+                break;
+            }
+            case "Maintenance":{
+                expendCategory = ExpendCategory.Maintenance.valueOf(cate2);
+                break;
+            }
+            case "Postage":{
+                expendCategory = ExpendCategory.Postage.valueOf(cate2);
+                break;
+            }
+            case "Train":{
+                expendCategory = ExpendCategory.Train.valueOf(cate2);
+                break;
+            }
+            default:expendCategory = ExpendCategory.Error.noSuchCategory;
+        }
+        return expendCategory;
+    }
 
     public static boolean isInteger(String str) {
         if (str == null) {
@@ -82,19 +126,21 @@ public class ApplicationServiceMpl implements ApplicationService{
     3. 将app加入到对应管理者的set里可能失败
      */
     @Override
-    public SaResult submitApplication(String expendNumber, String expendCategory,String abstrac , String comment, String amount, long userId) {
+    public SaResult submitApplication(String expendNumber, String expendCategory1, String expendCategory2,
+                                      String abstrac , String comment, String amount, long userId) {
 //        List<Expenditure> expenditures = expenditureDao.findByNumber(expendNumber);
         Expenditure expenditure = expenditureDao.findByNumberAndStatus(expendNumber, 1);
         if(expenditure == null){
             return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
-        int expCate = 0;
+        ExpendCategory expCategory =getCategoryValueFromStrings(expendCategory1, expendCategory2);
+        int expCate = expCategory.getValueOfExpend(expCategory);
         double amt = 0.0;
-        if(isInteger(expendCategory)){
-            expCate = Integer.parseInt(expendCategory);
-        }else{
-            return SaResult.error("this category is not integer");
-        }
+//        if(isInteger(expendCategory)){
+//            expCate = Integer.parseInt(expendCategory);
+//        }else{
+//            return SaResult.error("this category is not integer");
+//        }
         if (isDouble(amount)){
             amt = Double.parseDouble(amount);
         }else{
@@ -576,7 +622,8 @@ public class ApplicationServiceMpl implements ApplicationService{
         List<AppExcel> appExcels = EasyExcel.read(inputStream).head(AppExcel.class)
                 .excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
         for (AppExcel appExcel : appExcels) {
-            submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(), appExcel.getAbstracts(),
+//            TODO 这里category需要修改成两个字符串
+            submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(),appExcel.getCategory(), appExcel.getAbstracts(),
                     appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
         }
         return SaResult.ok();
