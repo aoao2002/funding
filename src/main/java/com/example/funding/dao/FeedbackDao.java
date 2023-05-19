@@ -13,4 +13,5 @@ public interface FeedbackDao extends CommonDao<Feedback>{
     @Query("update Feedback f set f.read = ?1 where f.id = ?2")
     int updateReadById(int read, Long id);
 
+    Feedback findFeedbackByApplicationId(Long id);
 }

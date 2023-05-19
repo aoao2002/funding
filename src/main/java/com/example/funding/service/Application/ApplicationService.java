@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 
 @Service
@@ -35,4 +36,6 @@ public interface ApplicationService {
     public SaResult rejectExpenditure(long userId, String expId);
 
     SaResult uploadCsvFileToApply(MultipartFile file, long userId);
+
+    SaResult downloadCsvFileApplyFromOneExp(HttpServletResponse response, String expenditureNumber,long userId);
 }

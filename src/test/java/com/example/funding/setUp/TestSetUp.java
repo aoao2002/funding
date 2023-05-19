@@ -42,7 +42,7 @@ public class TestSetUp {
 
     @Test
     public void testAdmin(){
-        RegisterInfo registerInfo = new RegisterInfo("aoao@qq.com", "123",
+        RegisterInfo registerInfo = new RegisterInfo("1575720409@qq.com", "wta",
                 "aoao", "1");
         SaResult res = userCtrl.register(registerInfo);
         boolean flag = false;

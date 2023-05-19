@@ -95,6 +95,11 @@ public class SaTokenConfigure implements WebMvcConfigurer {
             throw new EditException("The user is not the manager");
     }
 
+    public void checkStaff(){
+        if (!userService.checkStaff())
+            throw new EditException("The user is not the staff");
+    }
+
     public void checkManagerAndPresident(){
         if (!userService.checkPresident() && !userService.checkManager())
             throw new EditException("The user is not the manager or president");

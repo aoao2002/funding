@@ -2,6 +2,7 @@ package com.example.funding.service.Application;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import cn.hutool.json.JSONObject;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.example.funding.bean.*;
@@ -15,7 +16,10 @@ import org.thymeleaf.util.DateUtils;
 import org.thymeleaf.util.NumberUtils;
 import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -617,5 +621,37 @@ public class ApplicationServiceMpl implements ApplicationService{
             }
         }
         return SaResult.ok();
+    }
+
+    public SaResult downloadCsvFileApplyFromOneExp(HttpServletResponse response, String expenditureNumber, long userId){
+        List<AppExcel> appExcels = CreateDataList();
+        try{
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            String fileName = URLEncoder.encode("经费明细表", StandardCharsets.UTF_8);
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            // 这里需要设置不关闭流
+            EasyExcel.write(response.getOutputStream(), User.class).autoCloseStream(Boolean.FALSE).sheet("员工")
+                    .doWrite(appExcels);
+        }catch (Exception e) {
+            // 重置response
+            response.reset();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("status", "failure");
+            map.put("message", "下载文件失败" + e.getMessage());
+            JSONObject jsonObject=new JSONObject();;
+            try {
+                response.getWriter().println(jsonObject.toString());
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+        return SaResult.ok();
+    }
+
+    private List<AppExcel> CreateDataList(){
+        return null;
     }
 }
