@@ -16,7 +16,7 @@ public interface ApplicationService {
 
     public SaResult getAppInfoByNumber(String expendNumber, long staffId);
     public SaResult getQuota(String expendNumber);
-    public SaResult submitApplication(String expendNumber, String expendCategory, String abstrac ,
+    public SaResult submitApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
                                      String comment, String amount, long userId);
     public SaResult withdrawApplication(String appId);
     public SaResult getMyApps(long userId);

@@ -39,6 +39,50 @@ public class ApplicationServiceMpl implements ApplicationService{
     GroupDao groupDao;
     @Autowired
     FeedbackDao feedbackDao;
+/*
+enum Print implements ExpendCategory{
+        print, paper;
+    }
+    enum Maintenance implements ExpendCategory{
+        building, instrument, publicSever;
+    }
+    enum Postage implements ExpendCategory{
+        postage, telephone;
+    }
+    enum Train implements ExpendCategory{
+        train;
+    }
+    enum Error implements ExpendCategory{
+        noSuchCategory;
+    }
+ */
+    public ExpendCategory getCategoryValueFromStrings(String cate1, String cate2){
+        ExpendCategory expendCategory;
+        switch (cate1){
+            case "Office":{
+                expendCategory = ExpendCategory.Office.valueOf(cate2);
+                break;
+            }
+            case "Print":{
+                expendCategory = ExpendCategory.Print.valueOf(cate2);
+                break;
+            }
+            case "Maintenance":{
+                expendCategory = ExpendCategory.Maintenance.valueOf(cate2);
+                break;
+            }
+            case "Postage":{
+                expendCategory = ExpendCategory.Postage.valueOf(cate2);
+                break;
+            }
+            case "Train":{
+                expendCategory = ExpendCategory.Train.valueOf(cate2);
+                break;
+            }
+            default:expendCategory = ExpendCategory.Error.noSuchCategory;
+        }
+        return expendCategory;
+    }
 
     public static boolean isInteger(String str) {
         if (str == null) {
@@ -82,25 +126,27 @@ public class ApplicationServiceMpl implements ApplicationService{
     3. 将app加入到对应管理者的set里可能失败
      */
     @Override
-    public SaResult submitApplication(String expendNumber, String expendCategory,String abstrac , String comment, String amount, long userId) {
+    public SaResult submitApplication(String expendNumber, String expendCategory1, String expendCategory2,
+                                      String abstrac , String comment, String amount, long userId) {
 //        List<Expenditure> expenditures = expenditureDao.findByNumber(expendNumber);
         Expenditure expenditure = expenditureDao.findByNumberAndStatus(expendNumber, 1);
         if(expenditure == null){
             return SaResult.error(String.format("this expenditure of %s is not exist\n", expendNumber));
         }
-        int expCate = 0;
+        ExpendCategory expCategory =getCategoryValueFromStrings(expendCategory1, expendCategory2);
+        int expCate = expCategory.getValueOfExpend(expCategory);
         double amt = 0.0;
-        if(isInteger(expendCategory)){
-            expCate = Integer.parseInt(expendCategory);
-        }else{
-            return SaResult.error("this category is not integer");
-        }
+//        if(isInteger(expendCategory)){
+//            expCate = Integer.parseInt(expendCategory);
+//        }else{
+//            return SaResult.error("this category is not integer");
+//        }
         if (isDouble(amount)){
             amt = Double.parseDouble(amount);
         }else{
             return SaResult.error("this amount is not double");
         }
-        if (amt + (int)getQuota(expendNumber).getData() > expenditure.getQuota()){
+        if (amt + (Double)getQuota(expendNumber).getData() > expenditure.getQuota()){
             return SaResult.error("over quota");
         }
         if(amt > expenditure.getRemainingAmount()){
@@ -160,7 +206,8 @@ public class ApplicationServiceMpl implements ApplicationService{
     /*
     TODO 获取该基金在这个时间段还有的余额，从基金申请开始一年为一个时间段
      */
-    public Date getLocalDate(Date date){
+    public java.util.Date getLocalDate(java.util.Date date1){
+        java.util.Date date = new Date(date1.getTime());
         Instant instant = date.toInstant();
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDate localDate = instant.atZone(zoneId).toLocalDate();
@@ -179,9 +226,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (expenditure == null){
             return SaResult.error("wrong expendNumber, there is no such expenditure");
         }
-        Date date = expenditure.getStartTime();
+        java.util.Date date = expenditure.getStartTime();
         date = getLocalDate(date);
-        Date finalDate = date;
+        java.util.Date finalDate = date;
         List<Application> applications = expenditureDao
                 .findByNumberAndStatus(expendNumber, 1)
                 .getApplications().stream()
