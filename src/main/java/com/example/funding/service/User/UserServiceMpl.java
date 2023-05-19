@@ -151,8 +151,10 @@ public class UserServiceMpl implements UserService{
 
     @Override
     public boolean editMyInfo(UserInfo userInfo) {
-
         if (userInfo==null) return false;
+        if (!InputChecker.checkNullAndEmpty(Lists.newArrayList(userInfo.getName(),userInfo.getSex()+""))){
+            return false;
+        }
         User me = getMe();
         if(me==null) return false;
         userDao.save(userInfo.changeUser(me));

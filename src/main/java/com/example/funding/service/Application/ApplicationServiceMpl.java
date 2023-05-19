@@ -620,7 +620,7 @@ enum Print implements ExpendCategory{
             }
         }
         List<AppExcel> appExcels = EasyExcel.read(inputStream).head(AppExcel.class)
-                .excelType(ExcelTypeEnum.XLSX).sheet().doReadSync();
+                .excelType(ExcelTypeEnum.XLSX).sheet(0).doReadSync();
         for (AppExcel appExcel : appExcels) {
 //            TODO 这里category需要修改成两个字符串
             submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(),appExcel.getCategory(), appExcel.getAbstracts(),
