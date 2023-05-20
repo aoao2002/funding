@@ -28,6 +28,10 @@ public interface ExpenditureDao extends CommonDao<Expenditure>{
     @Query("update Expenditure e set e.status = ?1 where e.id = ?2")
     int updateStatusById(int status, Long id);
 
+    boolean existsByNumber(String number);
+
+
+
 
 
 }
