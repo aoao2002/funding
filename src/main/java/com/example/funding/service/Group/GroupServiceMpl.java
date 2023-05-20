@@ -55,7 +55,7 @@ public class GroupServiceMpl implements GroupService {
             return SaResult.error("there is no the staff");
         }
         Set<GroupApplication> myApp = user.get().getGroupApplications();
-        if (myApp.stream().anyMatch(s->s.getGroup().getName().equals(groupName))){
+        if (myApp.stream().anyMatch(s->s.getGroup().getName().equals(groupName) && s.getStatus()==0)){
             return SaResult.error("you have submit the application");
         }
         List<String> groupUsers = group.getUsers().stream().map(s->s.getEmail()+s.getIdentity()).toList();
