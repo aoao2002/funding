@@ -33,6 +33,8 @@ public interface UserService {
 
     boolean checkManager();
 
+    boolean checkStaff();
+
     User findById(long userID);
 
     UserInfo getUserByMailAndIdentity(String email, String identity);

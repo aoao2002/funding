@@ -34,7 +34,7 @@ class UserServiceMplTest {
     }
 
     @Test
-    void findById() {
+    public void findById() {
         User user = userService.findById(0);
         Optional<User> expUser = userDao.findById(0L);
         assertEquals(expUser.get().getEmail()+expUser.get().getIdentity(),
@@ -42,7 +42,7 @@ class UserServiceMplTest {
     }
 
     @Test
-    void getUserByMailAndIdentity() {
+    public void getUserByMailAndIdentity() {
         Optional<User> userExp = userDao.findById(0L);
         UserInfo user = userService.getUserByMailAndIdentity(
                 userExp.get().getEmail(),String.valueOf(userExp.get().getIdentity())

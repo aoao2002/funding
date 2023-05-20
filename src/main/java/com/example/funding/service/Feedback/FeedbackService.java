@@ -10,5 +10,5 @@ public interface FeedbackService {
     SaResult getAllMyFeedback(long userId);
     SaResult readFeedback(long feedbackId);
 
-
+    SaResult getFeedbackByAppID(long appID,long userID);
 }

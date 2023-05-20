@@ -35,20 +35,26 @@ public class FeedbackCtrl {
     SaResult getAllMyFeedback(long userId);
     SaResult readFeedback(long feedbackId);
      */
-    @RequestMapping(value ="edit/getFeedbackUnread", method= RequestMethod.GET)
+    @RequestMapping(value ="view/getFeedbackUnread", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getFeedbackUnread(){
          return feedbackService.getFeedbackUnread(StpUtil.getLoginIdAsLong());
     }
-    @RequestMapping(value ="edit/getAllMyFeedback", method= RequestMethod.GET)
+    @RequestMapping(value ="view/getAllMyFeedback", method= RequestMethod.GET)
     @ResponseBody
     public SaResult getAllMyFeedback(){
         return feedbackService.getAllMyFeedback(StpUtil.getLoginIdAsLong());
     }
-    @RequestMapping(value ="edit/readFeedback", method= RequestMethod.GET)
+    @RequestMapping(value ="view/readFeedback", method= RequestMethod.GET)
     @ResponseBody
     public SaResult readFeedback(long feedbackId){
         return feedbackService.readFeedback(feedbackId);
+    }
+
+    @RequestMapping(value ="view/getFeedbackByAppID", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getFeedbackByAppID(long appID){
+        return feedbackService.getFeedbackByAppID(appID,StpUtil.getLoginIdAsLong());
     }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 
 /**
@@ -155,5 +156,12 @@ public class ApplicationCtrl {
     public SaResult uploadCsvFileToApply(MultipartFile uploadFile){
         // TODO
         return applicationService.uploadCsvFileToApply(uploadFile, StpUtil.getLoginIdAsLong());
+    }
+
+    @RequestMapping(value ="file/downloadCsvFileApplyFromOneExp", method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult downloadCsvFileApplyFromOneExp(HttpServletResponse response, String expendNumber){
+        // TODO
+        return applicationService.downloadCsvFileApplyFromOneExp(response, expendNumber, StpUtil.getLoginIdAsLong());
     }
 }

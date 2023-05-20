@@ -2,6 +2,7 @@ package com.example.funding.service.Application;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import cn.hutool.json.JSONObject;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.example.funding.bean.*;
@@ -15,7 +16,10 @@ import org.thymeleaf.util.DateUtils;
 import org.thymeleaf.util.NumberUtils;
 import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -39,23 +43,7 @@ public class ApplicationServiceMpl implements ApplicationService{
     GroupDao groupDao;
     @Autowired
     FeedbackDao feedbackDao;
-/*
-enum Print implements ExpendCategory{
-        print, paper;
-    }
-    enum Maintenance implements ExpendCategory{
-        building, instrument, publicSever;
-    }
-    enum Postage implements ExpendCategory{
-        postage, telephone;
-    }
-    enum Train implements ExpendCategory{
-        train;
-    }
-    enum Error implements ExpendCategory{
-        noSuchCategory;
-    }
- */
+
     public ExpendCategory getCategoryValueFromStrings(String cate1, String cate2){
         ExpendCategory expendCategory;
         switch (cate1){
@@ -602,9 +590,11 @@ enum Print implements ExpendCategory{
             return SaResult.error("this file is not xlsx");
         }
         InputStream inputStream = null;
+        List<AppExcel> appExcels = null;
         try {
             inputStream = file.getInputStream();
             // 使用输入流进行操作
+            appExcels = EasyExcel.read(inputStream).head(AppExcel.class).sheet(0).doReadSync();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             // 处理文件不存在的情况
@@ -620,13 +610,48 @@ enum Print implements ExpendCategory{
                 }
             }
         }
-        List<AppExcel> appExcels = EasyExcel.read(inputStream).head(AppExcel.class)
-                .excelType(ExcelTypeEnum.XLSX).sheet(0).doReadSync();
-        for (AppExcel appExcel : appExcels) {
-//            TODO 这里category需要修改成两个字符串
-            submitApplication(appExcel.getExpenditureId(), appExcel.getCategory(),appExcel.getCategory(), appExcel.getAbstracts(),
-                    appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
+        if (appExcels != null) {
+            for (AppExcel appExcel : appExcels) {
+                SaResult res = submitApplication(appExcel.getExpenditureId(), appExcel.getCategory1(),appExcel.getCategory2(),
+                        appExcel.getAbstracts(), appExcel.getComment(), appExcel.getAmount(), StpUtil.getLoginIdAsLong());
+                if (res.getCode() != 200) {
+                    return res;
+                }
+                //按理说应该回退
+            }
         }
         return SaResult.ok();
+    }
+
+    public SaResult downloadCsvFileApplyFromOneExp(HttpServletResponse response, String expenditureNumber, long userId){
+        List<AppExcel> appExcels = CreateDataList();
+        try{
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            String fileName = URLEncoder.encode("经费明细表", StandardCharsets.UTF_8);
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            // 这里需要设置不关闭流
+            EasyExcel.write(response.getOutputStream(), User.class).autoCloseStream(Boolean.FALSE).sheet("员工")
+                    .doWrite(appExcels);
+        }catch (Exception e) {
+            // 重置response
+            response.reset();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("status", "failure");
+            map.put("message", "下载文件失败" + e.getMessage());
+            JSONObject jsonObject=new JSONObject();;
+            try {
+                response.getWriter().println(jsonObject.toString());
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+        return SaResult.ok();
+    }
+
+    private List<AppExcel> CreateDataList(){
+        return null;
     }
 }
