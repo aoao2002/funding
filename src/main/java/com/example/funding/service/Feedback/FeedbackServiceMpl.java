@@ -61,7 +61,7 @@ public class FeedbackServiceMpl implements FeedbackService{
             return SaResult.error("this application is not exist.");
         }
         //检查该user是否有权限查看该application的反馈
-        if(!application.get().getUser().equals(user.get())){
+        if((!application.get().getUser().equals(user.get()))&&user.get().getIdentity()==0){
             return SaResult.error("this user is not the person who apply this application.");
         }
         Feedback feedback = feedbackDao.findFeedbackByApplicationId(appID);
