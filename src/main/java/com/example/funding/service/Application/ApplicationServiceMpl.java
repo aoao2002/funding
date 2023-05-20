@@ -258,8 +258,10 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("the user is not exist");
         }
 //        这里获得的app应该都是填好了全部的（有expend
+//        List<AppInfo> appInfos = userDao.findById(userId).get().getAppToExam().stream()
+//                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
         List<AppInfo> appInfos = userDao.findById(userId).get().getAppToExam().stream()
-                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
+                .filter(s->s.getStatus() == 0).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
 
@@ -368,8 +370,10 @@ public class ApplicationServiceMpl implements ApplicationService{
         利用AppInfo类，同时申请的信息也会插入数据库，但是只有标志位为1才能被组选来申请application
         下面这句表示没被处理的放前面，相同处理状态的按照时间排序
          */
+//        List<ExpendInfo> expInfos = userDao.findById(userId).get().getExpendToExam().stream()
+//                .sorted(Comparator.comparing(Expenditure::getStatus).thenComparing(Expenditure::getCreatedDate)).map(ExpendInfo::new).toList();
         List<ExpendInfo> expInfos = userDao.findById(userId).get().getExpendToExam().stream()
-                .sorted(Comparator.comparing(Expenditure::getStatus).thenComparing(Expenditure::getCreatedDate)).map(ExpendInfo::new).toList();
+                .filter(s->s.getStatus()==0).map(ExpendInfo::new).toList();
         return SaResult.data(expInfos);
     }
 //    TODO quota是管理员设置？

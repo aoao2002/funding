@@ -2,7 +2,11 @@ package com.example.funding.service.Application;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Data
 public class AppExcel {
     @ExcelProperty(value="经费编号")

@@ -99,7 +99,9 @@ public class GroupServiceMpl implements GroupService {
             return SaResult.error("there is no this staff");
         }
         List<GroupAppInfoDetail> groupAppInfoDetails = user
-                .get().getGroupAppToExam().stream().map(GroupAppInfoDetail::new).toList();
+                .get().getGroupAppToExam().stream()
+                .filter(s->s.getStatus()==0)
+                .map(GroupAppInfoDetail::new).toList();
         return SaResult.ok().setData(groupAppInfoDetails);
     }
 
