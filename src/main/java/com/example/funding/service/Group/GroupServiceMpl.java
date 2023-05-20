@@ -3,6 +3,7 @@ package com.example.funding.service.Group;
 import cn.dev33.satoken.util.SaResult;
 import com.example.funding.Util.Exception.BeanException;
 import com.example.funding.Util.Handler.InputChecker;
+import com.example.funding.bean.Application;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
@@ -53,6 +54,10 @@ public class GroupServiceMpl implements GroupService {
         if (user.isEmpty()){
             return SaResult.error("there is no the staff");
         }
+        Set<GroupApplication> myApp = user.get().getGroupApplications();
+        if (myApp.stream().anyMatch(s->s.getGroup().getName().equals(groupName))){
+            return SaResult.error("you have submit the application");
+        }
         List<String> groupUsers = group.getUsers().stream().map(s->s.getEmail()+s.getIdentity()).toList();
         if (groupUsers.contains(user.get().getEmail()+user.get().getIdentity())){
             return SaResult.error("you have been in this group");
@@ -64,13 +69,14 @@ public class GroupServiceMpl implements GroupService {
         groupApplication.setComment(comment);
         groupApplication.setApplyTime(date);
         groupApplication.setStatus(0);
-        groupApplicationDao.save(groupApplication);
+        groupApplication = groupApplicationDao.save(groupApplication);
 //        find the corr manager and send it to him
         Set<User> users = group.getUsers();
 //        Iterator<User> iterator = users.iterator();
 //        TODO 这里可以直接get出来add吗，！！
         user.get().getGroupApplications().add(groupApplication);
-        users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupAppToExam().add(groupApplication));
+        GroupApplication finalGroupApplication = groupApplication;
+        users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupAppToExam().add(finalGroupApplication));
         //找到identity大于0的setExaminers
         groupApplication.setExaminers(users.stream().filter(s->s.getIdentity()>0).collect(Collectors.toSet()));
 //        userDao.saveAll(users);
@@ -93,7 +99,9 @@ public class GroupServiceMpl implements GroupService {
             return SaResult.error("there is no this staff");
         }
         List<GroupAppInfoDetail> groupAppInfoDetails = user
-                .get().getGroupAppToExam().stream().map(GroupAppInfoDetail::new).toList();
+                .get().getGroupAppToExam().stream()
+                .filter(s->s.getStatus()==0)
+                .map(GroupAppInfoDetail::new).toList();
         return SaResult.ok().setData(groupAppInfoDetails);
     }
 

@@ -1,7 +1,9 @@
 package com.example.funding.controller;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /*
 准备基础人员，组别，基金以及申请
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestApplication {
 
     /**
