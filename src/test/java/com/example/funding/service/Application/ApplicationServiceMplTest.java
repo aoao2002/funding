@@ -9,8 +9,10 @@ import com.example.funding.dao.GroupDao;
 import com.example.funding.dao.UserDao;
 import io.swagger.models.auth.In;
 import org.junit.Before;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ApplicationServiceMplTest {
 //    NOTE 测试fail可能是因为surefile的依赖，需要将surefile都移除
 //    https://stackoverflow.com/questions/45092964/org-apache-maven-lifecycle-lifecycleexecutionexception-failed-to-execute-goal-o
@@ -38,8 +41,8 @@ class ApplicationServiceMplTest {
     @Resource
     GroupDao groupDao;
 
-    List<Long> appId = new ArrayList<>();
-    long userId;
+    static List<Long> appId = new ArrayList<>();
+    static long userId;
 
      /*
         基本信息：
@@ -49,17 +52,17 @@ class ApplicationServiceMplTest {
         成员：name-y,pw-123,mail-12@qq.com
         基金：imed123，
          */
-    public Group group;
-    public User president;
-    public User manager;
-    public User staff;
-    public Expenditure expenditure;
-    Date start  = null, end = null;
+    public static Group group;
+    public static User president;
+    public static User manager;
+    public static User staff;
+    public static Expenditure expenditure;
+    static Date start  = null, end = null;
 
 
     @Test
     @Order(1)
-    public void basicSetUp(){
+    public void basicSetUp1(){
         if (president==null){
             List<User> pre = userDao.findByIdentity(2);
             if (pre.isEmpty()){
@@ -122,7 +125,7 @@ class ApplicationServiceMplTest {
             expenditure1.setName("imed");
             expenditure1.setNumber("imed123");
             expenditure1.setTotalAmount(1000000);
-            expenditure1.setRemainingAmount(0);
+            expenditure1.setRemainingAmount(100000);
             expenditure1.setQuota(1000000);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -143,7 +146,7 @@ class ApplicationServiceMplTest {
 
     @Test
     @Order(2)
-    public void testSubmitApplication() throws Exception {
+    public void testSubmitApplication2() throws Exception {
         /*
         SaResult submitApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
                                      String comment, String amount, long userId);
@@ -152,12 +155,12 @@ class ApplicationServiceMplTest {
 
         这个默认的 基金imed123,
          */
-        String[] condtion = {"test_subApp", "100", "hell", "imed123", "Office", "pen"};
+        String[] condtion = {"test_subApp", "10", "hell", "imed123", "Office", "pen"};
         if (expenditure==null){
             expenditure = expenditureDao.findByNumber("imed123").get(0);
 //            throw new Exception("no such expenditure");
         }
-        User caseUser = staff;
+        User caseUser = userDao.findByEmailAndIdentity("12@qq.com", 0);
         userId = caseUser.getId();
         SaResult res = applicationService.submitApplication(
                 expenditure.getNumber(), condtion[4], condtion[5],
@@ -174,6 +177,7 @@ class ApplicationServiceMplTest {
                 condtion[0], condtion[2], condtion[1],caseUser.getId()
         );
         appId.add((Long) res3.getData());
+        System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
 
     }
@@ -189,7 +193,9 @@ class ApplicationServiceMplTest {
     @Test
     @Order(4)
     public void passApplication() {
+        userId = manager.getId();
         SaResult res = applicationService.passApplication(userId, String.valueOf(appId.get(1)), "good job");
+        System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
     }
 
@@ -197,15 +203,16 @@ class ApplicationServiceMplTest {
     @Order(5)
     public void rejectApplication() {
         SaResult res = applicationService.rejectApplication(userId, String.valueOf(appId.get(2)), "bad jobs");
+        System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
     }
 
-    List<String> testExpNumber;
-    List<Long> testExpId;
+    static List<String> testExpNumber;
+    static List<Long> testExpId;
 
     @Test
     @Order(6)
-    public void submitExpend() throws ParseException {
+    public void submitExpend3() throws ParseException {
         testExpNumber = new ArrayList<>();
         testExpId = new ArrayList<>();
         Random random = new Random();
@@ -215,9 +222,15 @@ class ApplicationServiceMplTest {
             code.append(random.nextInt(10));
         }
         testExpNumber.add(code.toString());
+        if (start == null){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            start = sdf.parse("2017-10-10 12:00:00");
+            end = sdf.parse("2030-10-10 12:00:00");
+        }
         SaResult res1 = applicationService.submitExpend("pass", code.toString(), "10",
                 start.toString(), end.toString(), group.getName(), staff.getId());
         testExpId.add(((ExpendInfo)res1.getData()).getExpendId());
+        System.out.println(res1.getMsg());
 //        NOTE check 是否可以提交
         assertEquals(200, res1.getCode());
 //        申请会被拒绝的expend
@@ -237,6 +250,7 @@ class ApplicationServiceMplTest {
     public void getMyExpendsToExam() {
         SaResult res = applicationService.getAllMyExpends(staff.getId());
         List<ExpendInfo> resExp = (List<ExpendInfo>) res.getData();
+        System.out.println(res.getMsg());
         assertTrue(resExp.stream().map(ExpendInfo::getExpendId).toList().containsAll(testExpId));
     }
 
@@ -244,6 +258,7 @@ class ApplicationServiceMplTest {
     @Order(8)
     public void passExpenditure() {
         SaResult res = applicationService.passExpenditure(manager.getId(), String.valueOf(testExpId.get(0)));
+        System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
     }
 
@@ -251,6 +266,7 @@ class ApplicationServiceMplTest {
     @Order(9)
     public void rejectExpenditure() {
         SaResult res = applicationService.rejectExpenditure(manager.getId(), String.valueOf(testExpId.get(1)));
+        System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
     }
 
@@ -259,6 +275,7 @@ class ApplicationServiceMplTest {
     public void getAllMyExpends() {
         SaResult res = applicationService.getAllMyExpends(staff.getId());
         List<Long> resExpId = ((List<ExpendInfo>)res.getData()).stream().map(ExpendInfo::getExpendId).toList();
+        System.out.println(res.getMsg());
         assertTrue(resExpId.containsAll(testExpId));
     }
 

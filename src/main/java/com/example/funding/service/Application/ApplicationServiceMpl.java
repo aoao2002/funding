@@ -472,6 +472,10 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (expenditure.get().getStatus() != 0){
             return SaResult.error("this expenditure can not be modified");
         }
+        if (expenditureDao.existsByNumberAndStatus(expenditure.get().getNumber(), 1)){
+            expenditureDao.updateStatusById(2, expenditure.get().getId());
+            return SaResult.error("this expenditure has been set up");
+        }
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);

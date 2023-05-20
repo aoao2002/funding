@@ -30,6 +30,10 @@ public interface ExpenditureDao extends CommonDao<Expenditure>{
 
     boolean existsByNumber(String number);
 
+    boolean existsByNumberAndStatus(String number, int status);
+
+
+
 
 
 
