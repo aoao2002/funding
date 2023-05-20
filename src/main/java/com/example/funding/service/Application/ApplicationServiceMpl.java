@@ -429,6 +429,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         e.setTotalAmount(amt);
         e.setRemainingAmount(amt);
         e.setCreatedDate(new Date());
+        e.setApplications(new HashSet<>());
         e.setStartTime(start);
         e.setEndTime(end);
         e.setGroup(group);
