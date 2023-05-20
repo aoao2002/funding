@@ -52,6 +52,8 @@ public interface UserDao extends CommonDao<User> {
     @Query("update User u set u.status = ?1 where u.id = ?2")
     int updateStatusById(String status, Long id);
 
+    List<User> findByGroups_NameAndIdentity(String name, int identity);
+
 
 
 

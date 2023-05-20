@@ -1,5 +1,6 @@
 package com.example.funding.service.Application;
 
+import com.example.funding.bean.Application;
 import com.example.funding.bean.Expenditure;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,8 @@ public class ExpendInfo {
     String expendNumber;
     double totalAmount;
     double remainAmount;
+    double passedAmount;
+    double applyingAmount;
     String startTime;
     String endTime;
     String groupName;
@@ -41,5 +44,9 @@ public class ExpendInfo {
             e.setStatus(5);
         }
         status = statusName[e.getStatus()];
+        passedAmount = e.getApplications().stream().filter(s->s.getStatus()==1)
+                .mapToDouble(Application::getAmount).sum();
+        applyingAmount = e.getApplications().stream().filter(s->s.getAmount()==0)
+                .mapToDouble(Application::getAmount).sum();
     }
 }

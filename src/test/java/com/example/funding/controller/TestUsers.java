@@ -7,10 +7,13 @@ import com.example.funding.service.User.UserInfo;
 import com.example.funding.service.User.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * TODO 这里加入没有管是否已存在的情况，按理应该避免
  */
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestUsers {
-
-    @Autowired
+    @Resource
     UserCtrl userCtrl;
-    @Autowired
+    @Resource
     UserService userService;
-    @Autowired
+    @Resource
     private UserDao userDao;
 
     @Test

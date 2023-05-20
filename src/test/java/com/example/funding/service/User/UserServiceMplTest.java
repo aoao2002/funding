@@ -3,16 +3,22 @@ package com.example.funding.service.User;
 import com.example.funding.bean.User;
 import com.example.funding.dao.UserDao;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
 class UserServiceMplTest {
-    @Autowired
+    @Resource
     UserDao userDao;
-    @Autowired
+    @Resource
     UserService userService;
 
     public String getUserIden(User user){

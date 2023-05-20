@@ -6,10 +6,13 @@ import com.example.funding.dao.UserDao;
 import com.example.funding.service.Application.ApplicationService;
 import com.example.funding.service.Application.ExpendInfo;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestExpenditure {
     /**
      * long newExpenditureApplication(String expenditureName, String GroupName, String expenditureNumber,
@@ -30,19 +34,19 @@ public class TestExpenditure {
      * <p>
      * Test:插入随机信息，对于组别都有
      */
-    @Autowired
+    @Resource
     ApplicationCtrl applicationCtrl;
 
-    @Autowired
+    @Resource
     ExpenditureCtrl expenditureCtrl;
 
-    @Autowired
+    @Resource
     ApplicationService applicationService;
 
-    @Autowired
+    @Resource
     UserCtrl userCtrl;
 
-    @Autowired
+    @Resource
     UserDao userDao;
 
 //    参演：group-imed/1, mana-aoao/4, staff-y/1
