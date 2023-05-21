@@ -25,6 +25,7 @@ public interface UserDao extends CommonDao<User> {
 
 
 
+
     User findByEmailAndIdentity(String email, int identity);
 
     boolean existsByEmailAndIdentity(String email, int identity);
@@ -62,5 +63,6 @@ public interface UserDao extends CommonDao<User> {
     @Transactional
     @Query("select u from User u where u.id = ?1")
     User findByUserId(Long id);
+
 
 }
