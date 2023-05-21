@@ -103,7 +103,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         AppInfo appInfo = new AppInfo(expenditure);
         appInfo.setUserId(staffId);
-        appInfo.setUserName(userDao.findById(staffId).get().getName());
+        appInfo.setUserName(userDao.findByUserId(staffId).getName());
         return SaResult.ok().setData(appInfo);
     }
 
@@ -168,17 +168,16 @@ public class ApplicationServiceMpl implements ApplicationService{
         if (expenditure.getStatus() != 1){
             return SaResult.error(String.format("the status of expenditure is wrong; status: %d", expenditure.getStatus()));
         }
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+        User user = userDao.findByUserId(userId);
+        if (user == null){
             return SaResult.error(String.format("user of %d is not exist", userId));
         }
-        User user1 = user.get();
         Application application = new Application();
         application.setCreatedDate(new Date());
         application.setApplyTime(new Date());
         application.setApp_abstract(abstrac);
         application.setComment(comment);
-        application.setUser(user1);
+        application.setUser(user);
         application.setExpenditure(expenditure);
         application.setStatus(saveStatus);
         application.setType(1);
@@ -191,7 +190,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getAppToExam().add(application1));
             expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amt, expendNumber);
         }
-        user1.getApplications().add(application1);
+        user.getApplications().add(application1);
 //        group.getUsers().stream().forEach(s->userDao.save(s));
 
         return SaResult.ok().setData(application1.getId());
@@ -257,10 +256,10 @@ public class ApplicationServiceMpl implements ApplicationService{
     获取自己提交的所有申请
      */
     public SaResult getMyApps(long userId){
-        if(userDao.findById(userId).isEmpty()){
+        if(userDao.findByUserId(userId) == null){
             return SaResult.error("the user is not exist");
         }
-        List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
+        List<AppInfo> appInfos = userDao.findByUserId(userId).getApplications().stream()
                 .sorted(Comparator.comparing(Application::getStatus).
                         thenComparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
@@ -269,10 +268,10 @@ public class ApplicationServiceMpl implements ApplicationService{
     获取自己关于某个基金的所有申请
      */
     public SaResult getMyAppsOfExpend(String expendNumber, long userId){
-        if(userDao.findById(userId).isEmpty()){
+        if(userDao.findByUserId(userId) == null){
             return SaResult.error("the user is not exist");
         }
-        List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
+        List<AppInfo> appInfos = userDao.findByUserId(userId).getApplications().stream()
                 .filter(s->s.getExpenditure().getNumber().equals(expendNumber))
                 .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
@@ -284,13 +283,13 @@ public class ApplicationServiceMpl implements ApplicationService{
      */
     @Override
     public SaResult getMyAppsToExam(long userId) {
-        if(userDao.findById(userId).isEmpty()){
+        if(userDao.findByUserId(userId) == null){
             return SaResult.error("the user is not exist");
         }
 //        这里获得的app应该都是填好了全部的（有expend
 //        List<AppInfo> appInfos = userDao.findById(userId).get().getAppToExam().stream()
 //                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate)).map(AppInfo::new).toList();
-        List<AppInfo> appInfos = userDao.findById(userId).get().getAppToExam().stream()
+        List<AppInfo> appInfos = userDao.findByUserId(userId).getAppToExam().stream()
                 .filter(s->s.getStatus() == 0).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
@@ -314,8 +313,8 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this appId "+ appId + " is not exist");
         }
 //        user不为空
-        Optional<User> user = userDao.findById(userId);
-        if(user.isEmpty()){
+        User user = userDao.findByUserId(userId);
+        if(user == null){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
 //        判断application是否可以被修改
@@ -325,7 +324,7 @@ public class ApplicationServiceMpl implements ApplicationService{
 //        检查这个人是否有权限修改
         if(application.get().getExpenditure().getGroup().getUsers().stream()
                 .map(s->s.getEmail()+s.getIdentity()).toList()
-                .contains(user.get().getEmail()+user.get().getIdentity())){
+                .contains(user.getEmail()+user.getIdentity())){
             applicationDao.updateStatusById(1, application.get().getId());
             expenditureDao.updateRemainingAmountByNumber(
                     application.get().getExpenditure().getRemainingAmount()+application.get().getAmount(),
@@ -334,7 +333,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             feedback.setComment(comment);
             feedback.setReplyTime(new Date());
             feedback.setCreatedDate(new Date());
-            feedback.setUser(user.get());
+            feedback.setUser(user);
             feedback.setApplicationId(application.get().getId());
             feedback.setRead(0);
             feedbackDao.save(feedback);
@@ -359,8 +358,8 @@ public class ApplicationServiceMpl implements ApplicationService{
         if(application.isEmpty()){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
-        Optional<User> user = userDao.findById(userId);
-        if(user.isEmpty()){
+        User user = userDao.findByUserId(userId);
+        if(user == null){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
         if (application.get().getStatus() != 0){
@@ -368,13 +367,13 @@ public class ApplicationServiceMpl implements ApplicationService{
         }
         if(application.get().getExpenditure().getGroup().getUsers().stream()
                 .map(s->s.getEmail()+s.getIdentity()).toList()
-                .contains(user.get().getEmail()+user.get().getIdentity())){
+                .contains(user.getEmail()+user.getIdentity())){
             applicationDao.updateStatusById(2, application.get().getId());
             Feedback feedback = new Feedback();
             feedback.setComment(comment);
             feedback.setReplyTime(new Date());
             feedback.setCreatedDate(new Date());
-            feedback.setUser(user.get());
+            feedback.setUser(user);
             feedback.setApplicationId(application.get().getId());
             feedback.setRead(0);
             feedbackDao.save(feedback);
@@ -393,7 +392,7 @@ public class ApplicationServiceMpl implements ApplicationService{
     3. 拒绝之后没有具体变化
      */
     public SaResult getMyExpendsToExam(long userId){
-        if(userDao.findById(userId).isEmpty()){
+        if(userDao.findByUserId(userId) == null){
             return SaResult.error("the user is not exist");
         }
         /*
@@ -402,7 +401,7 @@ public class ApplicationServiceMpl implements ApplicationService{
          */
 //        List<ExpendInfo> expInfos = userDao.findById(userId).get().getExpendToExam().stream()
 //                .sorted(Comparator.comparing(Expenditure::getStatus).thenComparing(Expenditure::getCreatedDate)).map(ExpendInfo::new).toList();
-        List<ExpendInfo> expInfos = userDao.findById(userId).get().getExpendToExam().stream()
+        List<ExpendInfo> expInfos = userDao.findByUserId(userId).getExpendToExam().stream()
                 .filter(s->s.getStatus()==0).map(ExpendInfo::new).toList();
         return SaResult.data(expInfos);
     }
@@ -424,8 +423,8 @@ public class ApplicationServiceMpl implements ApplicationService{
         检验小信息：时间（没有很严格）
          */
 //        当前用户与申请小组的检测
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()) {
+        User user = userDao.findByUserId(userId);
+        if (user == null) {
             return SaResult.error("this user is not exist");
         }
         Group group = groupDao.findByName(groupName);
@@ -433,7 +432,7 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this group is not exist");
         }
         if (!group.getUsers().stream().map(s -> s.getEmail() + s.getIdentity()).toList()
-                .contains(user.get().getEmail() + user.get().getIdentity())) {
+                .contains(user.getEmail() + user.getIdentity())) {
             return SaResult.error("this user cannot submit this expenditure application for this group");
         }
 //        number存在
@@ -484,20 +483,20 @@ public class ApplicationServiceMpl implements ApplicationService{
             });
         }
         ExpendInfo expendInfo = new ExpendInfo(expenditure);
-        userDao.updateSexById(user.get().getSex(), user.get().getId());
+        userDao.updateSexById(user.getSex(), user.getId());
         return SaResult.ok().setData(expendInfo);
     }
-    public SaResult checkUserAndExpend(Optional<User> user, Optional<Expenditure> expenditure){
-        if (user.isEmpty()){
+    public SaResult checkUserAndExpend(User user, Optional<Expenditure> expenditure){
+        if (user == null){
             return SaResult.error("this user is not exist");
         }
         if (expenditure.isEmpty()){
             return SaResult.error("this expenditure is not exist");
         }
-        if (user.get().getIdentity()==0){
+        if (user.getIdentity()==0){
             return SaResult.error("this person has no right to pass");
         }
-        if (!expenditure.get().getGroup().getUsers().contains(user.get())){
+        if (!expenditure.get().getGroup().getUsers().contains(user)){
             return SaResult.error("this person not in the group of the expenditure");
         }
         return SaResult.ok();
@@ -509,7 +508,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         }else{
             return SaResult.error("this expenditure ID is not integer");
         }
-        Optional<User> user = userDao.findById(userId);
+        User user = userDao.findByUserId(userId);
         Optional<Expenditure> expenditure = expenditureDao.findById(expID);
         if (expenditure.get().getStatus() != 0){
             return SaResult.error("this expenditure can not be modified");
@@ -533,7 +532,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         }else{
             return SaResult.error("this expenditure ID is not integer");
         }
-        Optional<User> user = userDao.findById(userId);
+        User user = userDao.findByUserId(userId);
         Optional<Expenditure> expenditure = expenditureDao.findById(expID);
         if (expenditure.get().getStatus() != 0){
             return SaResult.error("this expenditure can not be modified");
@@ -580,11 +579,11 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error(String.format("this group %s is not exist\n", groupName)).setData(-1);
         }
         GroupInfo groupInfo = new GroupInfo(group);
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+        User user = userDao.findByUserId(userId);
+        if (user == null){
             return SaResult.error(String.format("this user %d is not exist\n",userId)).setData(-1);
         }
-        if (!groupInfo.getMemberNames().contains(user.get().getName())){
+        if (!groupInfo.getMemberNames().contains(user.getName())){
 //        if (!group.getUsers().contains(user.get())){
             return SaResult.error(String.format("this user %d is not belong to this group %s", userId, groupName)).setData(-1);
         }
@@ -603,13 +602,13 @@ public class ApplicationServiceMpl implements ApplicationService{
     获得这个用户所有可以申请的基金
      */
     public SaResult getAllMyExpends(long userId){
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+        User user = userDao.findByUserId(userId);
+        if (user == null){
             return SaResult.error("this user is not exist");
         }
         List<ExpendInfo> expendInfos = new ArrayList<>();
-        user.get().getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
-        Set<Group> groups = user.get().getGroups();
+        user.getGroups().forEach(s->s.getExpenditures().forEach(m->expendInfos.add(new ExpendInfo(m))));
+        Set<Group> groups = user.getGroups();
         groups.stream().forEach(s->{
 //            System.out.println(s.getName());
             s.getExpenditures().stream().forEach(m-> System.out.println(m.getName()));
@@ -625,8 +624,8 @@ public class ApplicationServiceMpl implements ApplicationService{
      */
 
     public SaResult uploadCsvFileToApply(MultipartFile file, long userId){
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+        User user = userDao.findByUserId(userId);
+        if (user==null){
             return SaResult.error("this user is not exist");
         }
         if (file.isEmpty()){
