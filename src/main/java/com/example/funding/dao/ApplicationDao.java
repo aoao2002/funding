@@ -20,7 +20,6 @@ public interface ApplicationDao extends CommonDao<Application>{
 
     List<Application> findByUser_IdAndStatus(Long id, int status);
 
-
-
+    Application findById(long id);
 
 }

@@ -167,7 +167,7 @@ public class UserServiceMplTest {
         StringBuilder code = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < 10; i++) {
-            code.append(random.nextInt());
+            code.append(random.nextInt(10));
         }
         code.append("@qq.com");
         String email = code.toString();

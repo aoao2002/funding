@@ -204,19 +204,19 @@ public class ApplicationServiceMpl implements ApplicationService{
         }else{
             return SaResult.error("this id is not int");
         }
-        Optional<Application> application = applicationDao.findById(appID);
-        if(application.isEmpty()){
+        Application application = applicationDao.findById(appID);
+        if(application == null){
             return SaResult.error("this app is not present");
         }
-        if (application.get().getStatus() != 0){
+        if (application.getStatus() != 0){
             return SaResult.error("this application has been examined");
         }
 //        设置成撤销状态
-        Expenditure expenditure = application.get().getExpenditure();
+        Expenditure expenditure = application.getExpenditure();
         expenditureDao.updateRemainingAmountByNumber(
-                application.get().getExpenditure().getRemainingAmount()+application.get().getAmount(),
-                application.get().getExpenditure().getNumber());
-        application.get().setStatus(3);
+                application.getExpenditure().getRemainingAmount()+application.getAmount(),
+                application.getExpenditure().getNumber());
+        application.setStatus(3);
         return SaResult.ok();
     }
     /*
@@ -308,8 +308,8 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this id is not int");
         }
 //        application不为空,
-        Optional<Application> application = applicationDao.findById(appID);
-        if(application.isEmpty()){
+        Application application = applicationDao.findById(appID);
+        if(application == null){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
 //        user不为空
@@ -318,28 +318,28 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this userId "+ userId + " is not exist");
         }
 //        判断application是否可以被修改
-        if (application.get().getStatus() != 0){
+        if (application.getStatus() != 0){
             return SaResult.error("this application can not be modified");
         }
 //        检查这个人是否有权限修改
-        if(application.get().getExpenditure().getGroup().getUsers().stream()
+        if(application.getExpenditure().getGroup().getUsers().stream()
                 .map(s->s.getEmail()+s.getIdentity()).toList()
                 .contains(user.getEmail()+user.getIdentity())){
-            applicationDao.updateStatusById(1, application.get().getId());
+            applicationDao.updateStatusById(1, application.getId());
             expenditureDao.updateRemainingAmountByNumber(
-                    application.get().getExpenditure().getRemainingAmount()+application.get().getAmount(),
-                    application.get().getExpenditure().getNumber());
+                    application.getExpenditure().getRemainingAmount()+application.getAmount(),
+                    application.getExpenditure().getNumber());
             Feedback feedback = new Feedback();
             feedback.setComment(comment);
             feedback.setReplyTime(new Date());
             feedback.setCreatedDate(new Date());
             feedback.setUser(user);
-            feedback.setApplicationId(application.get().getId());
+            feedback.setApplicationId(application.getId());
             feedback.setRead(0);
             feedbackDao.save(feedback);
 //          申请者会收到feedback
-            application.get().getUser().getFeedbacks().add(feedback);
-            userDao.save(application.get().getUser());
+            application.getUser().getFeedbacks().add(feedback);
+            userDao.save(application.getUser());
             return SaResult.ok("pass");
         }else{
             return SaResult.error("this user can not pass the application");
@@ -354,32 +354,32 @@ public class ApplicationServiceMpl implements ApplicationService{
         }else{
             return SaResult.error("this id is not int");
         }
-        Optional<Application> application = applicationDao.findById(appID);
-        if(application.isEmpty()){
+        Application application = applicationDao.findById(appID);
+        if(application == null){
             return SaResult.error("this appId "+ appId + " is not exist");
         }
         User user = userDao.findByUserId(userId);
         if(user == null){
             return SaResult.error("this userId "+ userId + " is not exist");
         }
-        if (application.get().getStatus() != 0){
+        if (application.getStatus() != 0){
             return SaResult.error("this application can not be modified");
         }
-        if(application.get().getExpenditure().getGroup().getUsers().stream()
+        if(application.getExpenditure().getGroup().getUsers().stream()
                 .map(s->s.getEmail()+s.getIdentity()).toList()
                 .contains(user.getEmail()+user.getIdentity())){
-            applicationDao.updateStatusById(2, application.get().getId());
+            applicationDao.updateStatusById(2, application.getId());
             Feedback feedback = new Feedback();
             feedback.setComment(comment);
             feedback.setReplyTime(new Date());
             feedback.setCreatedDate(new Date());
             feedback.setUser(user);
-            feedback.setApplicationId(application.get().getId());
+            feedback.setApplicationId(application.getId());
             feedback.setRead(0);
             feedbackDao.save(feedback);
 //          申请者会收到feedback
-            application.get().getUser().getFeedbacks().add(feedback);
-            userDao.save(application.get().getUser());
+            application.getUser().getFeedbacks().add(feedback);
+            userDao.save(application.getUser());
             return SaResult.ok("reject");
         }else{
             return SaResult.error("this user can not reject the application");
