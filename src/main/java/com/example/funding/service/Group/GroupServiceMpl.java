@@ -56,6 +56,7 @@ public class GroupServiceMpl implements GroupService {
         if(group == null){
             return SaResult.error(String.format("there is no group of %s\n", groupName));
         }
+//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if (user == null){
             return SaResult.error("there is no the staff");
@@ -70,7 +71,7 @@ public class GroupServiceMpl implements GroupService {
         }
         Date date = new Date();
         GroupApplication groupApplication = new GroupApplication();
-        groupApplication.setUser(userDao.findById(staffId).get());
+        groupApplication.setUser(user);
         groupApplication.setGroup(group);
         groupApplication.setComment(comment);
         groupApplication.setApplyTime(date);
@@ -92,30 +93,22 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public SaResult getMyGroupApplication(long staffId){
-        long startTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+startTime);
 //        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
-        long endTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+(endTime-startTime));
-//        if (user.isEmpty()){
-//            return SaResult.error("there is no this staff");
-//        }
+        if (user == null){
+            return SaResult.error("there is no this staff");
+        }
         List<GroupAppInfoDetail> groupAppInfoDetails = user
                 .getGroupApplications().stream().map(GroupAppInfoDetail::new).toList();
         return SaResult.ok().setData(groupAppInfoDetails);
 
     }
     public SaResult getMyGroupAppToExam(long managerId){
-        long startTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+startTime);
 //        Optional<User> user = userDao.findById(managerId);
         User user = userDao.findByUserId(managerId);
-        long endTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+(endTime-startTime));
-//        if (user.isEmpty()){
-//            return SaResult.error("there is no this staff");
-//        }
+        if (user == null){
+            return SaResult.error("there is no this staff");
+        }
         List<GroupAppInfoDetail> groupAppInfoDetails = user
                 .getGroupAppToExam().stream()
                 .filter(s->s.getStatus()==0)
@@ -126,18 +119,18 @@ public class GroupServiceMpl implements GroupService {
     @Override
     public boolean passApplyGroup(long applyId) {
 //        找到application，再找到expen，再找到group，再找到所有manager，所有的application都设置然后删除
-        GroupApplication groupApplication = groupApplicationDao.findById(applyId);
-        if(groupApplication == null){
+        Optional<GroupApplication> groupApplication = groupApplicationDao.findById(applyId);
+        if(groupApplication.isEmpty()){
             System.out.printf("there is no such groupApplication of id %d\n", applyId);
             return false;
         }
-        groupApplication.setStatus(1);
-        groupApplicationDao.save(groupApplication);
+        groupApplication.get().setStatus(1);
+        groupApplicationDao.save(groupApplication.get());
 //        该组里所有manager的组申请set中删去这份application
-        groupApplication.getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
-                .forEach(s->s.getGroupApplications().remove(groupApplication));
+        groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
+                .forEach(s->s.getGroupApplications().remove(groupApplication.get()));
 //        调用join方法将人加入到该组
-        this.joinGroup(groupApplication.getGroup().getName(), groupApplication.getUser().getId());
+        this.joinGroup(groupApplication.get().getGroup().getName(), groupApplication.get().getUser().getId());
         return true;
     }
 
@@ -156,6 +149,7 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public Set<GroupAppInfo> getAllGroupApplicationToBeChecked(long staffId){
+//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
             System.out.printf("something wrong, the staffId of %d is not exist\n", staffId);
@@ -165,6 +159,7 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public Set<GroupInfo> getMyGroups(long staffId){
+//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
             System.out.printf("something wrong, the staffId of %d is not exist\n", staffId);
@@ -184,6 +179,7 @@ public class GroupServiceMpl implements GroupService {
             return false;
         }
 //        Set<User> groupUsers = group.getUsers();
+//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
             System.out.printf("this user of id %d is not exist\n", staffId);
@@ -212,6 +208,10 @@ public class GroupServiceMpl implements GroupService {
 //      , and it might be duplicate to judge null
         Set<User> groupUser = group.getUsers();
         User user = userDao.findByUserId(staffId);
+//        Optional<User> user = userDao.findById(staffId);
+        if (user == null){
+            throw new RuntimeException("this user is not exist");
+        }
         Set<Group> userGroups = user.getGroups();
 
         groupUser.remove(user);

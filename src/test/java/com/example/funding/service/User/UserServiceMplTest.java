@@ -37,6 +37,7 @@ public class UserServiceMplTest {
     @Test
     @Order(1)
     public void getMe() {
+        System.out.println("getMeTest");
         userService.getMe();
         assertTrue(true);
 //        这个测试不了
@@ -45,6 +46,7 @@ public class UserServiceMplTest {
     @Test
     @Order(2)
     public void findById() {
+        System.out.println("findByIdTest");
         User user = userService.findById(1);
         Optional<User> expUser = userDao.findById(1L);
         if (expUser.isEmpty()) {
@@ -57,6 +59,7 @@ public class UserServiceMplTest {
     @Test
     @Order(3)
     public void getUserByMailAndIdentity() {
+        System.out.println("getUserByMailAndIdentityTest");
         Optional<User> userExp = userDao.findById(0L);
         if (userExp.isEmpty()) {
             fail();
@@ -92,6 +95,7 @@ public class UserServiceMplTest {
     @Test
     @Order(4)
     public void setUp(){
+        System.out.println("setUpTest");
         if (president==null){
             List<User> pre = userDao.findByIdentity(2);
             if (pre.isEmpty()){
@@ -150,6 +154,7 @@ public class UserServiceMplTest {
     @Test
     @Order(5)
     public void loginMail() {
+        System.out.println("loginMailTest");
         SaResult res = userService.LoginMail("12@qq.com", "123", "0");
         assertEquals(200, res.getCode());
     }
@@ -157,6 +162,7 @@ public class UserServiceMplTest {
     @Test
     @Order(6)
     public void logout() {
+        System.out.println("logoutTest");
         SaResult res = userService.Logout();
         assertEquals(200, res.getCode());
     }
@@ -164,6 +170,7 @@ public class UserServiceMplTest {
     @Test
     @Order(7)
     public void addUser() {
+        System.out.println("addUserTest");
         StringBuilder code = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < 10; i++) {
@@ -178,6 +185,7 @@ public class UserServiceMplTest {
     @Test
     @Order(8)
     public void getUserByMail() {
+        System.out.println("getUserByMailTest");
         List<User> user = userDao.findAllByEmail("12@qq.com");
         List<UserInfo>  methodFind = userService.getUserByMail("12@qq.com");
         assertEquals(user.size(), methodFind.size());
@@ -186,6 +194,7 @@ public class UserServiceMplTest {
     @Test
     @Order(9)
     public void getUserByName() {
+        System.out.println("getUserByNameTest");
         List<User> users = userDao.findAllByName("y");
         List<UserInfo> userInfos = userService.getUserByName("y");
         assertEquals(users.size(), userInfos.size());

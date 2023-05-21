@@ -486,17 +486,17 @@ public class ApplicationServiceMpl implements ApplicationService{
         userDao.updateSexById(user.getSex(), user.getId());
         return SaResult.ok().setData(expendInfo);
     }
-    public SaResult checkUserAndExpend(User user, Optional<Expenditure> expenditure){
+    public SaResult checkUserAndExpend(User user, Expenditure expenditure){
         if (user == null){
             return SaResult.error("this user is not exist");
         }
-        if (expenditure.isEmpty()){
+        if (expenditure == null){
             return SaResult.error("this expenditure is not exist");
         }
         if (user.getIdentity()==0){
             return SaResult.error("this person has no right to pass");
         }
-        if (!expenditure.get().getGroup().getUsers().contains(user)){
+        if (!expenditure.getGroup().getUsers().contains(user)){
             return SaResult.error("this person not in the group of the expenditure");
         }
         return SaResult.ok();
@@ -509,19 +509,19 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this expenditure ID is not integer");
         }
         User user = userDao.findByUserId(userId);
-        Optional<Expenditure> expenditure = expenditureDao.findById(expID);
-        if (expenditure.get().getStatus() != 0){
+        Expenditure expenditure = expenditureDao.findById(expID);
+        if (expenditure.getStatus() != 0){
             return SaResult.error("this expenditure can not be modified");
         }
-        if (expenditureDao.existsByNumberAndStatus(expenditure.get().getNumber(), 1)){
-            expenditureDao.updateStatusById(2, expenditure.get().getId());
+        if (expenditureDao.existsByNumberAndStatus(expenditure.getNumber(), 1)){
+            expenditureDao.updateStatusById(2, expenditure.getId());
             return SaResult.error("this expenditure has been set up");
         }
         SaResult res = checkUserAndExpend(user, expenditure);
         if (res.getCode()==200){
             int expenditure1 = expenditureDao.updateStatusById(1, expID);
-            expenditure.get().getGroup().getExpenditures().add(expenditure.get());
-            expenditureDao.save(expenditure.get());
+            expenditure.getGroup().getExpenditures().add(expenditure);
+            expenditureDao.save(expenditure);
             return SaResult.ok().setData(expenditure1);
         }else return res;
     }
@@ -533,8 +533,8 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this expenditure ID is not integer");
         }
         User user = userDao.findByUserId(userId);
-        Optional<Expenditure> expenditure = expenditureDao.findById(expID);
-        if (expenditure.get().getStatus() != 0){
+        Expenditure expenditure = expenditureDao.findById(expID);
+        if (expenditure.getStatus() != 0){
             return SaResult.error("this expenditure can not be modified");
         }
         SaResult res = checkUserAndExpend(user, expenditure);

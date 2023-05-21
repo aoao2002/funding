@@ -33,4 +33,7 @@ public interface ExpenditureDao extends CommonDao<Expenditure>{
     boolean existsByNumberAndStatus(String number, int status);
 
 
+    Expenditure findById(long id);
+
+
 }

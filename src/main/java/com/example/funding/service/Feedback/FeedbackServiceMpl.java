@@ -25,22 +25,24 @@ public class FeedbackServiceMpl implements FeedbackService{
 
     @Override
     public SaResult getFeedbackUnread(long userId) {
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+//        Optional<User> user = userDao.findById(userId);
+        User user = userDao.findByUserId(userId);
+        if (user==null){
             return SaResult.error("this user is not exist.");
         }
-        return SaResult.ok().setData(user.get().getFeedbacks().stream()
+        return SaResult.ok().setData(user.getFeedbacks().stream()
                         .filter(s->s.getRead()==0)
                 .map(FeedbackInfo::new).toList());
     }
 
     @Override
     public SaResult getAllMyFeedback(long userId) {
-        Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+//        Optional<User> user = userDao.findById(userId);
+        User user = userDao.findByUserId(userId);
+        if (user==null){
             return SaResult.error("this user is not exist.");
         }
-        return SaResult.ok().setData(user.get().getFeedbacks().stream()
+        return SaResult.ok().setData(user.getFeedbacks().stream()
                 .map(FeedbackInfo::new).toList());
     }
 
@@ -52,8 +54,9 @@ public class FeedbackServiceMpl implements FeedbackService{
 
     @Override
     public SaResult getFeedbackByAppID(long appID,long userID){
-        Optional<User> user = userDao.findById(userID);
-        if (user.isEmpty()){
+//        Optional<User> user = userDao.findById(userID);
+        User user = userDao.findByUserId(userID);
+        if (user==null){
             return SaResult.error("this user is not exist.");
         }
         Optional<Application> application = applicationDao.findById(appID);
@@ -61,10 +64,10 @@ public class FeedbackServiceMpl implements FeedbackService{
             return SaResult.error("this application is not exist.");
         }
         //检查该user是否有权限查看该application的反馈
-        if((!application.get().getUser().equals(user.get()))&&user.get().getIdentity()==0){
+        if((!application.get().getUser().equals(user))&&user.getIdentity()==0){
             return SaResult.error("this user is not the person who apply this application.");
         }
-        Feedback feedback = feedbackDao.findFeedbackByApplicationId(appID);
+        Feedback feedback = feedbackDao.findByApplicationId(appID);
         if(feedback==null){
             return SaResult.error("this application has no feedback.");
         }
