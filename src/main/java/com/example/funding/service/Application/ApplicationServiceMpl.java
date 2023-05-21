@@ -187,11 +187,12 @@ public class ApplicationServiceMpl implements ApplicationService{
         Application application1 = applicationDao.save(application);
 
         Group group = expenditure.getGroup();
-        group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getAppToExam().add(application1));
+        if (saveStatus == 0){
+            group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->s.getAppToExam().add(application1));
+            expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amt, expendNumber);
+        }
         user1.getApplications().add(application1);
 //        group.getUsers().stream().forEach(s->userDao.save(s));
-
-        expenditureDao.updateRemainingAmountByNumber(expenditure.getRemainingAmount()-amt, expendNumber);
 
         return SaResult.ok().setData(application1.getId());
     }
@@ -260,7 +261,8 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("the user is not exist");
         }
         List<AppInfo> appInfos = userDao.findById(userId).get().getApplications().stream()
-                .sorted(Comparator.comparing(Application::getStatus).thenComparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
+                .sorted(Comparator.comparing(Application::getStatus).
+                        thenComparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
         return SaResult.data(appInfos);
     }
     /*
@@ -407,47 +409,57 @@ public class ApplicationServiceMpl implements ApplicationService{
 //    TODO quota是管理员设置？
     public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName, long userId) throws ParseException {
+        return saveExpend(expName, expNumber, totalAmound,
+                startTime, endTime, groupName, userId, 0);
+        }
+        public SaResult tempSaveExpend(String expName, String expNumber, String totalAmound,
+                                       String startTime, String endTime, String groupName, long userId) throws ParseException {
+            return saveExpend(expName, expNumber, totalAmound,
+                    startTime, endTime, groupName, userId, 4);
+        }
+    private SaResult saveExpend(String expName, String expNumber, String totalAmound,
+                                String startTime, String endTime, String groupName, long userId, int saveStatus) throws ParseException {
         /*
         验证各种关系：是否存在这个人/小组，小组包含人？小组已有该基金？
         检验小信息：时间（没有很严格）
          */
 //        当前用户与申请小组的检测
         Optional<User> user = userDao.findById(userId);
-        if (user.isEmpty()){
+        if (user.isEmpty()) {
             return SaResult.error("this user is not exist");
         }
         Group group = groupDao.findByName(groupName);
-        if(group == null){
+        if (group == null) {
             return SaResult.error("this group is not exist");
         }
-        if (!group.getUsers().stream().map(s->s.getEmail()+s.getIdentity()).toList()
-                .contains(user.get().getEmail()+user.get().getIdentity())){
+        if (!group.getUsers().stream().map(s -> s.getEmail() + s.getIdentity()).toList()
+                .contains(user.get().getEmail() + user.get().getIdentity())) {
             return SaResult.error("this user cannot submit this expenditure application for this group");
         }
 //        number存在
-        Optional<Expenditure> e0 = group.getExpenditures().stream().filter(s->s.getNumber().equals(expNumber))
+        Optional<Expenditure> e0 = group.getExpenditures().stream().filter(s -> s.getNumber().equals(expNumber))
                 .findFirst();
-        if(e0.isPresent()) {
+        if (e0.isPresent()) {
             return SaResult.error("this expenditure number has been exist");
         }
 //      检测amount是否
         double amt = 0.0;
-        if (isDouble(totalAmound)){
+        if (isDouble(totalAmound)) {
             amt = Double.parseDouble(totalAmound);
-        }else{
+        } else {
             return SaResult.error("this amount is not double");
         }
-        if(amt < 0){
+        if (amt < 0) {
             return SaResult.error("the amount is illegal ");
         }
 //        时间的简单检测
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date start = sdf.parse(startTime), end = sdf.parse(endTime);
-        if (start.after(end)){
+        if (start.after(end)) {
             return SaResult.error("the start time is after end");
         }
 //        检查是否已存在
-        if (group.getExpenditures().stream().map(Expenditure::getNumber).toList().contains(expNumber)){
+        if (group.getExpenditures().stream().map(Expenditure::getNumber).toList().contains(expNumber)) {
             return SaResult.error("This expenditure has been exist");
         }
 //      提交与保存
@@ -462,13 +474,15 @@ public class ApplicationServiceMpl implements ApplicationService{
         e.setEndTime(end);
         e.setGroup(group);
         e.setQuota(amt);
-        e.setStatus(0);
+        e.setStatus(saveStatus);
         e.setType(0);
         Expenditure expenditure = expenditureDao.save(e);
-        group.getUsers().stream().filter(s->s.getIdentity()>0).forEach(s->{
-            s.getExpendToExam().add(expenditure);
+        if (saveStatus==0) {
+            group.getUsers().stream().filter(s -> s.getIdentity() > 0).forEach(s -> {
+                s.getExpendToExam().add(expenditure);
 //            userDao.save(s);
-        });
+            });
+        }
         ExpendInfo expendInfo = new ExpendInfo(expenditure);
         userDao.updateSexById(user.get().getSex(), user.get().getId());
         return SaResult.ok().setData(expendInfo);

@@ -136,6 +136,13 @@ public class ApplicationCtrl {
         return applicationService.submitExpend(expName, expNumber, totalAmound,
                 startTime, endTime, groupName, StpUtil.getLoginIdAsLong());
     }
+    @RequestMapping(value ="edit/tempSaveExpend", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult tempSaveExpend(String expName, String expNumber, String totalAmound,
+                                 String startTime, String endTime, String groupName) throws ParseException {
+        return applicationService.tempSaveExpend(expName, expNumber, totalAmound,
+                startTime, endTime, groupName, StpUtil.getLoginIdAsLong());
+    }
 
 
     /*

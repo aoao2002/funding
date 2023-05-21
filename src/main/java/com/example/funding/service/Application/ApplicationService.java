@@ -21,7 +21,7 @@ public interface ApplicationService {
                                      String comment, String amount, long userId);
     public SaResult tempSaveApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
                                         String comment, String amount, long userId);
-    SaResult getTempSaveApp(Long userId);
+    public SaResult getTempSaveApp(Long userId);
     public SaResult withdrawApplication(String appId);
     public SaResult getMyApps(long userId);
     public SaResult getMyAppsOfExpend(String expendNumber, long userId);
@@ -33,6 +33,8 @@ public interface ApplicationService {
 
     public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName, long userId) throws ParseException;
+    public SaResult tempSaveExpend(String expName, String expNumber, String totalAmound,
+                                   String startTime, String endTime, String groupName, long userId) throws ParseException;
     public SaResult getMyExpendsToExam(long userId);
     public SaResult passExpenditure(long userId, String expId);
     public SaResult getAllMyExpends(long userId);

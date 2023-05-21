@@ -45,6 +45,12 @@ public class GroupServiceMpl implements GroupService {
 
     @Override
     public SaResult applyGroup(String groupName, String comment, long staffId) {
+        return saveGroupApplication(groupName, comment, staffId, 0);
+    }
+    public SaResult tempSaveGroup(String groupName, String comment, long staffId) {
+        return saveGroupApplication(groupName, comment, staffId, 4);
+    }
+    private SaResult saveGroupApplication(String groupName, String comment, long staffId, int saveStatus) {
 //        new application, send it to all managers
         Group group = groupDao.findByName(groupName);
         if(group == null){
@@ -68,7 +74,7 @@ public class GroupServiceMpl implements GroupService {
         groupApplication.setGroup(group);
         groupApplication.setComment(comment);
         groupApplication.setApplyTime(date);
-        groupApplication.setStatus(0);
+        groupApplication.setStatus(saveStatus);
         groupApplication = groupApplicationDao.save(groupApplication);
 //        find the corr manager and send it to him
         Set<User> users = group.getUsers();
@@ -76,9 +82,11 @@ public class GroupServiceMpl implements GroupService {
 //        TODO 这里可以直接get出来add吗，！！
         user.get().getGroupApplications().add(groupApplication);
         GroupApplication finalGroupApplication = groupApplication;
-        users.stream().filter(s->s.getIdentity()>0).forEach(s->s.getGroupAppToExam().add(finalGroupApplication));
-        //找到identity大于0的setExaminers
-        groupApplication.setExaminers(users.stream().filter(s->s.getIdentity()>0).collect(Collectors.toSet()));
+        if (saveStatus == 0) {
+            users.stream().filter(s -> s.getIdentity() > 0).forEach(s -> s.getGroupAppToExam().add(finalGroupApplication));
+            //找到identity大于0的setExaminers
+            groupApplication.setExaminers(users.stream().filter(s -> s.getIdentity() > 0).collect(Collectors.toSet()));
+        }
 //        userDao.saveAll(users);
         return SaResult.ok();
     }

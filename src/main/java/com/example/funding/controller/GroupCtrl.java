@@ -62,6 +62,14 @@ public class GroupCtrl {
        // TODO：this api just for test
         return groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong());
     }
+
+    @RequestMapping(value = "tempSaveGroupApp", method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult tempSaveGroupApp(String groupName, String comment){
+        // TODO：this api just for test
+        return groupService.tempSaveGroup(groupName, comment, StpUtil.getLoginIdAsLong());
+    }
+
     @RequestMapping(value ="quitGroup", method= RequestMethod.POST)
     @ResponseBody
     public SaResult quitGroup(String groupName){

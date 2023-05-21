@@ -48,13 +48,13 @@ public class AppInfo {
         this.appAbstract = application.getApp_abstract();
         this.appAmount = application.getAmount();
         this.comment = application.getComment();
-        if (application.getStatus()>4){
-            application.setStatus(4);
+        if (application.getStatus()>5){
+            application.setStatus(5);
         }
         if (application.getType()>2){
             application.setType(2);
         }
-        String[] statusName = {"Unread", "Pass", "Reject", "Withdraw", "Error"};
+        String[] statusName = {"Unread", "Pass", "Reject", "Withdraw", "TempSave", "Error"};
         String[] typeName = {"NewExpend", "NewApply", "Error"};
         this.status = statusName[application.getStatus()];
         this.type = typeName[application.getType()];

@@ -3,7 +3,6 @@ package com.example.funding.dao;
 import com.example.funding.bean.Expenditure;
 import com.example.funding.bean.Group;
 import com.example.funding.bean.User;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,8 +20,10 @@ public interface UserDao extends CommonDao<User> {
 
     List<User> findAllByGroups(Group group);
 
-    @Override
-    Optional<User> findById(@NotNull Long Id);
+//    @Override
+//    Optional<User> findById(@NotNull Long Id);
+
+
 
     User findByEmailAndIdentity(String email, int identity);
 
@@ -56,14 +57,5 @@ public interface UserDao extends CommonDao<User> {
     int updateStatusById(String status, Long id);
 
     List<User> findByGroups_NameAndIdentity(String name, int identity);
-
-
-
-
-
-
-
-
-
 
 }
