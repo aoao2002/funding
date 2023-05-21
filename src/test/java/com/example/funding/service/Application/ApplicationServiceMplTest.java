@@ -66,7 +66,7 @@ class ApplicationServiceMplTest {
         if (president==null){
             List<User> pre = userDao.findByIdentity(2);
             if (pre.isEmpty()){
-                assertTrue(false);
+                fail();
             }
             president = pre.get(0);
         }

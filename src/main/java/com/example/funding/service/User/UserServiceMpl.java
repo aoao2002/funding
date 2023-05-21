@@ -37,21 +37,21 @@ public class UserServiceMpl implements UserService{
     private GroupDao groupDao;
 
     public User getMe(){
-        System.out.println("getMe");
-        System.out.println(System.currentTimeMillis());
         return findById(StpUtil.getLoginIdAsLong());
     }
 
     public User findById(long userID){
-        System.out.println("findById");
-        System.out.println(System.currentTimeMillis());
-        System.out.println(userID);
-        Optional<User> us = userDao.findById(userID);
-        if(us.isEmpty()){
-            throw new BeanException("the User do not exist");
-        }
-        System.out.println(System.currentTimeMillis());
-        return us.get();
+        long startTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+startTime);
+//        Optional<User> user = userDao.findById(managerId);
+        User us = userDao.findByUserId(userID);
+        long endTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+(endTime-startTime));
+//        Optional<User> us = userDao.findById(userID);
+//        if(us.isEmpty()){
+//            throw new BeanException("the User do not exist");
+//        }
+        return us;
     }
 
     @Override
@@ -169,23 +169,21 @@ public class UserServiceMpl implements UserService{
 
     @Override
     public UserInfo getUserById(long id) {
-        System.out.println("getUserById");
-        System.out.println(System.currentTimeMillis());
-        System.out.println(id);
-        User user = userDao.findById(id).get();
-        System.out.println(System.currentTimeMillis());
+        long startTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+startTime);
+//        Optional<User> user = userDao.findById(id);
+        User user = userDao.findByUserId(id);
+        long endTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+(endTime-startTime));
 //        if(user.isEmpty()){
 //            System.out.println("no user with this id");
 //            return null;
 //        }
-//        System.out.println(System.currentTimeMillis());
         return new UserInfo(user);
     }
 
     @Override
     public UserInfo getMyInfo() {
-        System.out.println("getMyInfo");
-        System.out.println(System.currentTimeMillis());
         return getUserById(getMe().getId());
     }
 

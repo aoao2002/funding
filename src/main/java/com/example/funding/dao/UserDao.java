@@ -59,4 +59,9 @@ public interface UserDao extends CommonDao<User> {
 
     List<User> findByGroups_NameAndIdentity(String name, int identity);
 
+    // 通过id查找用户
+    @Transactional
+    @Query("select u from User u where u.id = ?1")
+    User findByUserId(Long id);
+
 }

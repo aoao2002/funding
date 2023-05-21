@@ -47,6 +47,9 @@ public class UserServiceMplTest {
     public void findById() {
         User user = userService.findById(1);
         Optional<User> expUser = userDao.findById(1L);
+        if (expUser.isEmpty()) {
+            fail();
+        }
         assertEquals(expUser.get().getEmail()+expUser.get().getIdentity(),
                 user.getEmail()+user.getIdentity());
     }
@@ -55,6 +58,9 @@ public class UserServiceMplTest {
     @Order(3)
     public void getUserByMailAndIdentity() {
         Optional<User> userExp = userDao.findById(0L);
+        if (userExp.isEmpty()) {
+            fail();
+        }
         UserInfo user = userService.getUserByMailAndIdentity(
                 userExp.get().getEmail(),String.valueOf(userExp.get().getIdentity())
         );
