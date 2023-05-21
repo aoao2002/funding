@@ -119,18 +119,18 @@ public class GroupServiceMpl implements GroupService {
     @Override
     public boolean passApplyGroup(long applyId) {
 //        找到application，再找到expen，再找到group，再找到所有manager，所有的application都设置然后删除
-        Optional<GroupApplication> groupApplication = groupApplicationDao.findById(applyId);
-        if(groupApplication.isEmpty()){
+        GroupApplication groupApplication = groupApplicationDao.findById(applyId);
+        if(groupApplication == null){
             System.out.printf("there is no such groupApplication of id %d\n", applyId);
             return false;
         }
-        groupApplication.get().setStatus(1);
-        groupApplicationDao.save(groupApplication.get());
+        groupApplication.setStatus(1);
+        groupApplicationDao.save(groupApplication);
 //        该组里所有manager的组申请set中删去这份application
-        groupApplication.get().getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
-                .forEach(s->s.getGroupApplications().remove(groupApplication.get()));
+        groupApplication.getGroup().getUsers().stream().filter(s->s.getIdentity()>0)
+                .forEach(s->s.getGroupApplications().remove(groupApplication));
 //        调用join方法将人加入到该组
-        this.joinGroup(groupApplication.get().getGroup().getName(), groupApplication.get().getUser().getId());
+        this.joinGroup(groupApplication.getGroup().getName(), groupApplication.getUser().getId());
         return true;
     }
 
