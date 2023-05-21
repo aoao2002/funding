@@ -103,6 +103,9 @@ public class ExpenditureServiceMpl implements ExpenditureService{
         List<Expenditure> expenditureList = expenditureDao.findAllByGroup(group);
         List<ExpenditureInfo> expenditureInfoList = new ArrayList<>();
         for(Expenditure expenditure:expenditureList){
+            if (expenditure.getStatus()==0||expenditure.getStatus()==2){
+                continue;
+            }
             expenditureInfoList.add(new ExpenditureInfo(expenditure));
         }
         return SaResult.data(expenditureInfoList);
@@ -116,6 +119,9 @@ public class ExpenditureServiceMpl implements ExpenditureService{
         for(Group group:groupList){
             List<Expenditure> expenditureList = expenditureDao.findAllByGroup(group);
             for(Expenditure expenditure:expenditureList){
+                if (expenditure.getStatus()==0||expenditure.getStatus()==2){
+                    continue;
+                }
                 expenditureInfoList.add(new ExpenditureInfo(expenditure));
             }
         }
