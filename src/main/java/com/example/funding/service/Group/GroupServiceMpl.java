@@ -92,22 +92,32 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public SaResult getMyGroupApplication(long staffId){
-        Optional<User> user = userDao.findById(staffId);
-        if (user.isEmpty()){
-            return SaResult.error("there is no this staff");
-        }
+        long startTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+startTime);
+//        Optional<User> user = userDao.findById(staffId);
+        User user = userDao.findByUserId(staffId);
+        long endTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+(endTime-startTime));
+//        if (user.isEmpty()){
+//            return SaResult.error("there is no this staff");
+//        }
         List<GroupAppInfoDetail> groupAppInfoDetails = user
-                .get().getGroupApplications().stream().map(GroupAppInfoDetail::new).toList();
+                .getGroupApplications().stream().map(GroupAppInfoDetail::new).toList();
         return SaResult.ok().setData(groupAppInfoDetails);
 
     }
     public SaResult getMyGroupAppToExam(long managerId){
-        Optional<User> user = userDao.findById(managerId);
-        if (user.isEmpty()){
-            return SaResult.error("there is no this staff");
-        }
+        long startTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+startTime);
+//        Optional<User> user = userDao.findById(managerId);
+        User user = userDao.findByUserId(managerId);
+        long endTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+(endTime-startTime));
+//        if (user.isEmpty()){
+//            return SaResult.error("there is no this staff");
+//        }
         List<GroupAppInfoDetail> groupAppInfoDetails = user
-                .get().getGroupAppToExam().stream()
+                .getGroupAppToExam().stream()
                 .filter(s->s.getStatus()==0)
                 .map(GroupAppInfoDetail::new).toList();
         return SaResult.ok().setData(groupAppInfoDetails);

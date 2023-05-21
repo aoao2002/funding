@@ -41,11 +41,17 @@ public class UserServiceMpl implements UserService{
     }
 
     public User findById(long userID){
-        Optional<User> us = userDao.findById(userID);
-        if(us.isEmpty()){
-            throw new BeanException("the User do not exist");
-        }
-        return us.get();
+        long startTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+startTime);
+//        Optional<User> user = userDao.findById(managerId);
+        User us = userDao.findByUserId(userID);
+        long endTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+(endTime-startTime));
+//        Optional<User> us = userDao.findById(userID);
+//        if(us.isEmpty()){
+//            throw new BeanException("the User do not exist");
+//        }
+        return us;
     }
 
     @Override
@@ -163,12 +169,17 @@ public class UserServiceMpl implements UserService{
 
     @Override
     public UserInfo getUserById(long id) {
-        Optional<User> user = userDao.findById(id);
-        if(user.isEmpty()){
-            System.out.println("no user with this id");
-            return null;
-        }
-        return new UserInfo(user.get());
+        long startTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+startTime);
+//        Optional<User> user = userDao.findById(id);
+        User user = userDao.findByUserId(id);
+        long endTime = System.currentTimeMillis();
+        System.out.println("getMyGroupApplication: "+(endTime-startTime));
+//        if(user.isEmpty()){
+//            System.out.println("no user with this id");
+//            return null;
+//        }
+        return new UserInfo(user);
     }
 
     @Override
