@@ -19,6 +19,9 @@ public interface ApplicationService {
     public SaResult getQuota(String expendNumber);
     public SaResult submitApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
                                      String comment, String amount, long userId);
+    public SaResult tempSaveApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
+                                        String comment, String amount, long userId);
+    SaResult getTempSaveApp(Long userId);
     public SaResult withdrawApplication(String appId);
     public SaResult getMyApps(long userId);
     public SaResult getMyAppsOfExpend(String expendNumber, long userId);

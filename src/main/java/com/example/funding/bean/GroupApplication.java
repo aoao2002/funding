@@ -39,7 +39,7 @@ public class GroupApplication extends BaseBean{
     private Group group;
 
     /**
-     * 申请的状态（0 未审核 1 审核通过 2 审核未通过）
+     * 申请的状态（0 未审核 1 审核通过 2 审核未通过， 4 暂存）
      */
     @NotNull
     private int status;

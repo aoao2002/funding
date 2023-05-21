@@ -116,6 +116,31 @@ public class ApplicationServiceMpl implements ApplicationService{
     @Override
     public SaResult submitApplication(String expendNumber, String expendCategory1, String expendCategory2,
                                       String abstrac , String comment, String amount, long userId) {
+        return  saveApplication(expendNumber, expendCategory1, expendCategory2,
+                abstrac , comment, amount, userId, 0);
+    }
+
+    public SaResult tempSaveApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
+                                 String comment, String amount, long userId){
+        return saveApplication(expendNumber, expendCategory1, expendCategory2,
+                abstrac , comment, amount, userId, 4);
+    }
+    public SaResult getTempSaveApp(Long userId){
+        if (userId == null){
+            return SaResult.error("userId is null");
+        }
+        List<Application> applications = applicationDao.findByUser_IdAndStatus(userId, 4);
+        if (applications.size() == 0){
+            return SaResult.error("no temp save");
+        }
+        Application application = new Application();
+        application.setComment("no app find");
+        return SaResult.ok().setData(new AppInfo(applications.stream()
+                .max(Comparator.comparing(Application::getCreatedDate)).orElse(application)));
+
+    }
+    private SaResult saveApplication(String expendNumber, String expendCategory1, String expendCategory2,
+                                     String abstrac , String comment, String amount, long userId, int saveStatus) {
 //        List<Expenditure> expenditures = expenditureDao.findByNumber(expendNumber);
         Expenditure expenditure = expenditureDao.findByNumberAndStatus(expendNumber, 1);
         if(expenditure == null){
@@ -155,7 +180,7 @@ public class ApplicationServiceMpl implements ApplicationService{
         application.setComment(comment);
         application.setUser(user1);
         application.setExpenditure(expenditure);
-        application.setStatus(0);
+        application.setStatus(saveStatus);
         application.setType(1);
         application.setAmount(amt);
         application.setExpendCategory(expCate);
@@ -182,6 +207,9 @@ public class ApplicationServiceMpl implements ApplicationService{
         Optional<Application> application = applicationDao.findById(appID);
         if(application.isEmpty()){
             return SaResult.error("this app is not present");
+        }
+        if (application.get().getStatus() != 0){
+            return SaResult.error("this application has been examined");
         }
 //        设置成撤销状态
         Expenditure expenditure = application.get().getExpenditure();

@@ -46,6 +46,19 @@ public class ApplicationCtrl {
         return applicationService.submitApplication(expenditureNumber, cate1, cate2,
                 abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong());
     }
+
+    @RequestMapping(value = "view/getTempSaveApp", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getTempSaveApp(){
+        return applicationService.getTempSaveApp(StpUtil.getLoginIdAsLong());
+    }
+    @RequestMapping(value = "view/tempSaveApplication", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult tempSaveApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
+                                        String comment, String amount){
+        return applicationService.tempSaveApplication(expendNumber, expendCategory1, expendCategory2, abstrac ,
+                comment, amount, StpUtil.getLoginIdAsLong());
+    }
     @RequestMapping(value ="edit/withdrawApplication", method= RequestMethod.POST)
     @ResponseBody
     public SaResult withdrawApplication(String appId){
