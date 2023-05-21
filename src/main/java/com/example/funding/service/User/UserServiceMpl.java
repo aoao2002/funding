@@ -41,16 +41,11 @@ public class UserServiceMpl implements UserService{
     }
 
     public User findById(long userID){
-        long startTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+startTime);
-//        Optional<User> user = userDao.findById(managerId);
+        //        Optional<User> us = userDao.findById(userID);
         User us = userDao.findByUserId(userID);
-        long endTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+(endTime-startTime));
-//        Optional<User> us = userDao.findById(userID);
-//        if(us.isEmpty()){
-//            throw new BeanException("the User do not exist");
-//        }
+        if(us==null){
+            throw new BeanException("the User do not exist");
+        }
         return us;
     }
 
@@ -169,16 +164,12 @@ public class UserServiceMpl implements UserService{
 
     @Override
     public UserInfo getUserById(long id) {
-        long startTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+startTime);
 //        Optional<User> user = userDao.findById(id);
         User user = userDao.findByUserId(id);
-        long endTime = System.currentTimeMillis();
-        System.out.println("getMyGroupApplication: "+(endTime-startTime));
-//        if(user.isEmpty()){
-//            System.out.println("no user with this id");
-//            return null;
-//        }
+        if(user==null){
+            System.out.println("no user with this id");
+            return null;
+        }
         return new UserInfo(user);
     }
 
@@ -376,11 +367,12 @@ public class UserServiceMpl implements UserService{
     }
 
     public SaResult getMyEmail(long myId){
-        Optional<User> user = userDao.findById(myId);
-        if (user.isEmpty()){
+//        Optional<User> user = userDao.findById(myId);
+        User user = userDao.findByUserId(myId);
+        if (user == null){
             return SaResult.error("this id is not exist");
         }
-        return SaResult.ok().setData(user.get().getEmail());
+        return SaResult.ok().setData(user.getEmail());
     }
 
 
