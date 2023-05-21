@@ -67,7 +67,7 @@ public class FeedbackServiceMpl implements FeedbackService{
         if((!application.get().getUser().equals(user))&&user.getIdentity()==0){
             return SaResult.error("this user is not the person who apply this application.");
         }
-        Feedback feedback = feedbackDao.findFeedbackByApplicationId(appID);
+        Feedback feedback = feedbackDao.findByApplicationId(appID);
         if(feedback==null){
             return SaResult.error("this application has no feedback.");
         }

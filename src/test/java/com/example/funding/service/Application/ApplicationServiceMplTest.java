@@ -63,6 +63,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(1)
     public void basicSetUp1(){
+        System.out.println("basicSetUp1Test");
         if (president==null){
             List<User> pre = userDao.findByIdentity(2);
             if (pre.isEmpty()){
@@ -155,6 +156,7 @@ class ApplicationServiceMplTest {
 
         这个默认的 基金imed123,
          */
+        System.out.println("testSubmitApplication2Test");
         String[] condtion = {"test_subApp", "10", "hell", "imed123", "Office", "pen"};
         if (expenditure==null){
             expenditure = expenditureDao.findByNumber("imed123").get(0);
@@ -186,6 +188,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(3)
     public void withdrawApplication() {
+        System.out.println("withdrawApplicationTest");
         SaResult res = applicationService.withdrawApplication(String.valueOf(appId.get(0)));
         assertEquals(200, res.getCode());
     }
@@ -193,6 +196,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(4)
     public void passApplication() {
+        System.out.println("passApplicationTest");
         userId = manager.getId();
         SaResult res = applicationService.passApplication(userId, String.valueOf(appId.get(1)), "good job");
         System.out.println(res.getMsg());
@@ -202,6 +206,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(5)
     public void rejectApplication() {
+        System.out.println("rejectApplicationTest");
         SaResult res = applicationService.rejectApplication(userId, String.valueOf(appId.get(2)), "bad jobs");
         System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
@@ -213,6 +218,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(6)
     public void submitExpend3() throws ParseException {
+        System.out.println("submitExpend3Test");
         testExpNumber = new ArrayList<>();
         testExpId = new ArrayList<>();
         Random random = new Random();
@@ -249,6 +255,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(7)
     public void getMyExpendsToExam() {
+        System.out.println("getMyExpendsToExamTest");
         SaResult res = applicationService.getAllMyExpends(staff.getId());
 //        NOTE 数据库里没保存上面测试存的application，所以还是这样测试吧（）
 //        List<ExpendInfo> resExp = (List<ExpendInfo>) res.getData();
@@ -260,6 +267,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(8)
     public void passExpenditure() {
+        System.out.println("passExpenditureTest");
         SaResult res = applicationService.passExpenditure(manager.getId(), String.valueOf(testExpId.get(0)));
         System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
@@ -268,6 +276,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(9)
     public void rejectExpenditure() {
+        System.out.println("rejectExpenditureTest");
         SaResult res = applicationService.rejectExpenditure(manager.getId(), String.valueOf(testExpId.get(1)));
         System.out.println(res.getMsg());
         assertEquals(200, res.getCode());
@@ -276,6 +285,7 @@ class ApplicationServiceMplTest {
     @Test
     @Order(10)
     public void getAllMyExpends() {
+        System.out.println("getAllMyExpendsTest");
         SaResult res = applicationService.getAllMyExpends(staff.getId());
 //        List<Long> resExpId = ((List<ExpendInfo>)res.getData()).stream().map(ExpendInfo::getExpendId).toList();
 //        System.out.printf("resExpId : %s, testExpId : %s", resExpId.toString(), testExpId.toString());
