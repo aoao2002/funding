@@ -25,6 +25,7 @@ public interface UserDao extends CommonDao<User> {
 
 
 
+
     User findByEmailAndIdentity(String email, int identity);
 
     boolean existsByEmailAndIdentity(String email, int identity);

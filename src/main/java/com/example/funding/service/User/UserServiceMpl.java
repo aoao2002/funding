@@ -37,14 +37,20 @@ public class UserServiceMpl implements UserService{
     private GroupDao groupDao;
 
     public User getMe(){
+        System.out.println("getMe");
+        System.out.println(System.currentTimeMillis());
         return findById(StpUtil.getLoginIdAsLong());
     }
 
     public User findById(long userID){
+        System.out.println("findById");
+        System.out.println(System.currentTimeMillis());
+        System.out.println(userID);
         Optional<User> us = userDao.findById(userID);
         if(us.isEmpty()){
             throw new BeanException("the User do not exist");
         }
+        System.out.println(System.currentTimeMillis());
         return us.get();
     }
 
@@ -163,16 +169,23 @@ public class UserServiceMpl implements UserService{
 
     @Override
     public UserInfo getUserById(long id) {
-        Optional<User> user = userDao.findById(id);
-        if(user.isEmpty()){
-            System.out.println("no user with this id");
-            return null;
-        }
-        return new UserInfo(user.get());
+        System.out.println("getUserById");
+        System.out.println(System.currentTimeMillis());
+        System.out.println(id);
+        User user = userDao.findById(id).get();
+        System.out.println(System.currentTimeMillis());
+//        if(user.isEmpty()){
+//            System.out.println("no user with this id");
+//            return null;
+//        }
+//        System.out.println(System.currentTimeMillis());
+        return new UserInfo(user);
     }
 
     @Override
     public UserInfo getMyInfo() {
+        System.out.println("getMyInfo");
+        System.out.println(System.currentTimeMillis());
         return getUserById(getMe().getId());
     }
 

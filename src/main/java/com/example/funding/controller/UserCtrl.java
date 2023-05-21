@@ -69,6 +69,8 @@ public class UserCtrl {
 
     @RequestMapping(value ="getMyInfo", method= RequestMethod.GET)
     public SaResult getMyInfo(){
+        System.out.println("getMyInfo");
+        System.out.println(System.currentTimeMillis());
         return ReturnHelper.returnObj(userService.getMyInfo());
     }
 
