@@ -18,5 +18,9 @@ public interface ApplicationDao extends CommonDao<Application>{
     @Query("update Application a set a.status = ?1 where a.id = ?2")
     int updateStatusById(int status, Long id);
 
+    List<Application> findByUser_IdAndStatus(Long id, int status);
+
+
+
 
 }

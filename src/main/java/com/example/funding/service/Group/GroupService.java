@@ -13,6 +13,7 @@ import java.util.Set;
 public interface GroupService {
     public List<GroupInfo> getAllGroups();
     public SaResult applyGroup(String groupName, String comment, long staffId);
+    public SaResult tempSaveGroup(String groupName, String comment, long staffId);
     public SaResult getMyGroupApplication(long staffId);
     public SaResult getMyGroupAppToExam(long managerId);
     public boolean passApplyGroup(long applyId);

@@ -46,6 +46,19 @@ public class ApplicationCtrl {
         return applicationService.submitApplication(expenditureNumber, cate1, cate2,
                 abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong());
     }
+
+    @RequestMapping(value = "view/getTempSaveApp", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getTempSaveApp(){
+        return applicationService.getTempSaveApp(StpUtil.getLoginIdAsLong());
+    }
+    @RequestMapping(value = "view/tempSaveApplication", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult tempSaveApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
+                                        String comment, String amount){
+        return applicationService.tempSaveApplication(expendNumber, expendCategory1, expendCategory2, abstrac ,
+                comment, amount, StpUtil.getLoginIdAsLong());
+    }
     @RequestMapping(value ="edit/withdrawApplication", method= RequestMethod.POST)
     @ResponseBody
     public SaResult withdrawApplication(String appId){
@@ -121,6 +134,13 @@ public class ApplicationCtrl {
     public SaResult submitExpend(String expName, String expNumber, String totalAmound,
                                  String startTime, String endTime, String groupName) throws ParseException {
         return applicationService.submitExpend(expName, expNumber, totalAmound,
+                startTime, endTime, groupName, StpUtil.getLoginIdAsLong());
+    }
+    @RequestMapping(value ="edit/tempSaveExpend", method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult tempSaveExpend(String expName, String expNumber, String totalAmound,
+                                 String startTime, String endTime, String groupName) throws ParseException {
+        return applicationService.tempSaveExpend(expName, expNumber, totalAmound,
                 startTime, endTime, groupName, StpUtil.getLoginIdAsLong());
     }
 
