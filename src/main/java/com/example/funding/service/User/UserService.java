@@ -45,6 +45,8 @@ public interface UserService {
 
     SaResult getAllManagers();
 
+    int getMyIdentity();
+
     /*
       Email related
       1. 注册时验证邮箱是否可用，首先后端创建该用户，但是valid位置为 0，然后进行邮箱验证【拆成：创建用户，邮箱验证，valid改为1-》账户可用】

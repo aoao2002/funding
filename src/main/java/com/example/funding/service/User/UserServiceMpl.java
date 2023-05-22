@@ -218,7 +218,7 @@ public class UserServiceMpl implements UserService{
         return getMyIdentity() == 0;
     }
 
-    private int getMyIdentity() {
+    public int getMyIdentity() {
         User me = getMe();
         return me.getIdentity();
     }
