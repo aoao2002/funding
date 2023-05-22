@@ -335,9 +335,9 @@ public class ApplicationServiceMpl implements ApplicationService{
                 .map(s->s.getEmail()+s.getIdentity()).toList()
                 .contains(user.getEmail()+user.getIdentity())){
             applicationDao.updateStatusById(1, application.getId());
-            expenditureDao.updateRemainingAmountByNumber(
-                    application.getExpenditure().getRemainingAmount()+application.getAmount(),
-                    application.getExpenditure().getNumber());
+//            expenditureDao.updateRemainingAmountByNumber(
+//                    application.getExpenditure().getRemainingAmount()+application.getAmount(),
+//                    application.getExpenditure().getNumber());
             Feedback feedback = new Feedback();
             feedback.setComment(comment);
             feedback.setReplyTime(new Date());
@@ -389,6 +389,9 @@ public class ApplicationServiceMpl implements ApplicationService{
 //          申请者会收到feedback
             application.getUser().getFeedbacks().add(feedback);
             userDao.save(application.getUser());
+            expenditureDao.updateRemainingAmountByNumber(
+                    application.getExpenditure().getRemainingAmount()+application.getAmount(),
+                    application.getExpenditure().getNumber());
             return SaResult.ok("reject");
         }else{
             return SaResult.error("this user can not reject the application");
