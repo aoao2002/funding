@@ -308,7 +308,9 @@ public class ApplicationServiceMpl implements ApplicationService{
             return SaResult.error("this id is not int");
         }
 //        application不为空,
+        System.out.println("start to find application");
         Application application = applicationDao.findById(appID);
+        System.out.println("find application");
         if(application == null){
             return SaResult.error("this appId "+ appId + " is not exist");
         }

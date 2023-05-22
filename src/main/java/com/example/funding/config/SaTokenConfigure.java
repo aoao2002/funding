@@ -62,7 +62,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                             .check(r -> checkPresident());
 
                     SaRouter.match("/group/edit/**")
-                            .check(r -> checkPresident());
+                            .check(r -> checkManagerAndPresident());
 
                     SaRouter.match("/user/edit/getAllManagers")
                             .check(r -> checkPresident());

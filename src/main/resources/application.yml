@@ -12,7 +12,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
-      maximum-pool-size: 12
+      maximum-pool-size: 60
       connection-timeout: 60000
       minimum-idle: 10
       idle-timeout: 500000
