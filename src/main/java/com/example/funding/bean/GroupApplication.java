@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class GroupApplication extends BaseBean{
     //申请时间
-//    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date applyTime;
     //申请理由

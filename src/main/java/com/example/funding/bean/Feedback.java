@@ -19,7 +19,7 @@ public class Feedback extends BaseBean{
     @Column(name = "comment", nullable = true)
     private String comment;
     // 回复时间
-//    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date replyTime;
     /**
