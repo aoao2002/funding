@@ -6,8 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExpenditureServiceMplTest {
 
+    String groupName = "imed";
+
     @Test
     void getOneExpenditureAllInfo() {
+        System.out.println("getOneExpenditureAllInfoTest");
+
+
 
     }
 

@@ -11,7 +11,6 @@ import com.example.funding.service.Application.FeedbackInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class FeedbackServiceMpl implements FeedbackService{
@@ -59,12 +58,12 @@ public class FeedbackServiceMpl implements FeedbackService{
         if (user==null){
             return SaResult.error("this user is not exist.");
         }
-        Optional<Application> application = applicationDao.findById(appID);
-        if (application.isEmpty()){
+        Application application = applicationDao.findById(appID);
+        if (application == null){
             return SaResult.error("this application is not exist.");
         }
         //检查该user是否有权限查看该application的反馈
-        if((!application.get().getUser().equals(user))&&user.getIdentity()==0){
+        if((!application.getUser().equals(user))&&user.getIdentity()==0){
             return SaResult.error("this user is not the person who apply this application.");
         }
         Feedback feedback = feedbackDao.findByApplicationId(appID);

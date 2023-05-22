@@ -41,5 +41,10 @@ public class InputChecker {
         return matcher.matches();
     }
 
+    public static boolean checkPhone(String i){
+        Pattern pattern = Pattern.compile("[0-9]{11}");
+        Matcher matcher = pattern.matcher((CharSequence) i);
+        return matcher.matches();
+    }
 
 }

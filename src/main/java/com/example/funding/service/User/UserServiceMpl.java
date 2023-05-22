@@ -156,6 +156,10 @@ public class UserServiceMpl implements UserService{
         if (!InputChecker.checkNullAndEmpty(Lists.newArrayList(userInfo.getName(),userInfo.getSex()+""))){
             return false;
         }
+        //检查电话信息是否规范
+        if (!InputChecker.checkPhone(userInfo.getPhoneNumber())){
+            return false;
+        }
         User me = getMe();
         if(me==null) return false;
         userDao.save(userInfo.changeUser(me));

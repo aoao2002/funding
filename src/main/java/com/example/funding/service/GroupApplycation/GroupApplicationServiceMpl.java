@@ -6,7 +6,6 @@ import com.example.funding.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -18,11 +17,11 @@ public class GroupApplicationServiceMpl implements GroupApplicationService{
 
     @Override
     public GroupApplication findById(long applyID) {
-        Optional<GroupApplication> us = groupApplicationDao.findById(applyID);
-        if(us.isEmpty()){
+        GroupApplication us = groupApplicationDao.findById(applyID);
+        if(us==null){
             throw new BeanException("the GroupApplication do not exist");
         }
-        return us.get();
+        return us;
     }
 
     @Override
