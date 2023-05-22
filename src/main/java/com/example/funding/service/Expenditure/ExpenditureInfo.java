@@ -38,6 +38,7 @@ public class ExpenditureInfo {
         this.quota = expenditure.getQuota();
         this.status = statusName[expenditure.getStatus()];
         this.applications = expenditure.getApplications().stream()
+                .filter(s->s.getStatus() < 4)
                 .sorted(Comparator.comparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
     }
 

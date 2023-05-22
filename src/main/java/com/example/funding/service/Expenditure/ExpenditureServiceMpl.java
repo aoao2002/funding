@@ -117,7 +117,9 @@ public class ExpenditureServiceMpl implements ExpenditureService{
         List<Group> groupList = groupDao.findAllByUsers(user);
         List<ExpenditureInfo> expenditureInfoList = new ArrayList<>();
         for(Group group:groupList){
-            List<Expenditure> expenditureList = expenditureDao.findAllByGroup(group);
+            List<Expenditure> expenditureList = expenditureDao.findAllByGroup(group)
+                    .stream().filter(s->s.getStatus() == 1)
+                    .toList();
             for(Expenditure expenditure:expenditureList){
                 if (expenditure.getStatus()==0||expenditure.getStatus()==2){
                     continue;
