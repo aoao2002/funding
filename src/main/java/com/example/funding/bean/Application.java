@@ -15,7 +15,7 @@ import java.util.Date;
 @Table(name = "expenditure_application")
 public class Application extends BaseBean{
     //申请时间
-//    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date applyTime;
 //    baseBean中已经有createTime，去除该量 TODO 这个量可以去除，但是需要扬数据库

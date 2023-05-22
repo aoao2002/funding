@@ -32,7 +32,7 @@ public class Expenditure extends BaseBean{
     private double remainingAmount;
 
     // start_time
-//    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date startTime;
 

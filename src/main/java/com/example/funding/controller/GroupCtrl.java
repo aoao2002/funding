@@ -26,7 +26,7 @@ public class GroupCtrl {
     @RequestMapping(value ="edit/JoinApi", method= RequestMethod.POST)
     @ResponseBody
     public SaResult JoinApi(String groupName){
-        System.out.printf("check groupName %s\n", groupName);
+//        System.out.printf("check groupName %s\n", groupName);
         return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));
     }
 

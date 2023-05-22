@@ -121,7 +121,7 @@ public class GroupServiceMpl implements GroupService {
 //        找到application，再找到expen，再找到group，再找到所有manager，所有的application都设置然后删除
         GroupApplication groupApplication = groupApplicationDao.findById(applyId);
         if(groupApplication == null){
-            System.out.printf("there is no such groupApplication of id %d\n", applyId);
+            System.out.println("there is no this application");
             return false;
         }
         groupApplication.setStatus(1);
@@ -138,7 +138,7 @@ public class GroupServiceMpl implements GroupService {
     public boolean rejectApplyGroup(long applyId) {
         GroupApplication groupApplication = groupApplicationDao.findById(applyId);
         if(groupApplication == null){
-            System.out.printf("there is no such groupApplication of id %d\n", applyId);
+            System.out.println("there is no this application");
             return false;
         }
         groupApplication.setStatus(2);
@@ -152,7 +152,7 @@ public class GroupServiceMpl implements GroupService {
 //        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
-            System.out.printf("something wrong, the staffId of %d is not exist\n", staffId);
+            System.out.println("there is no this staff");
             return null;
         }
         return user.getGroupApplications().stream().filter(s->s.getStatus() == 0).map(GroupAppInfo::new).collect(Collectors.toSet());
@@ -162,7 +162,7 @@ public class GroupServiceMpl implements GroupService {
 //        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
-            System.out.printf("something wrong, the staffId of %d is not exist\n", staffId);
+            System.out.println("there is no this staff");
             return null;
         }
         return user.getGroups().stream().map(GroupInfo::new).collect(Collectors.toSet());
@@ -316,7 +316,7 @@ public class GroupServiceMpl implements GroupService {
 
     @Override
     public boolean checkGroupEditPower(String applyID, String groupName, String UserID) {
-        if(!InputChecker.checkNullAndEmpty(groupName) && !InputChecker.checkNullAndEmpty(groupName)){
+        if(!InputChecker.checkNullAndEmpty(groupName)){
             throw new BeanException("you need offer either applyID or groupName to edit group");
         }
         if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(UserID))){
