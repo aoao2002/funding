@@ -143,6 +143,11 @@ public class ApplicationCtrl {
         return applicationService.tempSaveExpend(expName, expNumber, totalAmound,
                 startTime, endTime, groupName, StpUtil.getLoginIdAsLong());
     }
+    @RequestMapping(value = "edit/getTempSaveExpend", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getTempSaveExpend(){
+        return applicationService.getTempSaveExpend(StpUtil.getLoginIdAsLong());
+    }
 
 
     /*

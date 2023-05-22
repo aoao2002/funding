@@ -37,5 +37,10 @@ public interface ExpenditureDao extends CommonDao<Expenditure>{
     @Query("select e from Expenditure e where e.id = ?1")
     Expenditure findById(long id);
 
+    List<Expenditure> findByIdAndStatus(Long id, int status);
+
+
+
+
 
 }

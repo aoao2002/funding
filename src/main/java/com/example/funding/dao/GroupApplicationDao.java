@@ -19,4 +19,8 @@ public interface GroupApplicationDao extends CommonDao<GroupApplication>{
     GroupApplication findById(long aLong);
 
     List<GroupApplication> findAllByGroup(Group group);
+
+    List<GroupApplication> findByIdAndStatus(Long id, int status);
+
+
 }

@@ -8,6 +8,7 @@ import com.example.funding.bean.Group;
 import com.example.funding.bean.GroupApplication;
 import com.example.funding.bean.User;
 import com.example.funding.dao.*;
+import com.example.funding.service.Application.AppInfo;
 import com.example.funding.service.Application.GroupAppInfo;
 import com.example.funding.service.GroupApplycation.GroupApplicationService;
 import com.example.funding.service.User.UserService;
@@ -56,7 +57,6 @@ public class GroupServiceMpl implements GroupService {
         if(group == null){
             return SaResult.error(String.format("there is no group of %s\n", groupName));
         }
-//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if (user == null){
             return SaResult.error("there is no the staff");
@@ -91,9 +91,22 @@ public class GroupServiceMpl implements GroupService {
 //        userDao.saveAll(users);
         return SaResult.ok();
     }
+    public SaResult getTempSaveGroup(Long staffId){
+        if (staffId== null){
+            return SaResult.error("userId is null");
+        }
+        List<GroupApplication> groupApplications = groupApplicationDao.findByIdAndStatus(staffId, 4);
+        if (groupApplications.size() == 0){
+            return SaResult.error("no temp save");
+        }
+        GroupApplication groupApplication = new GroupApplication();
+        groupApplication.setComment("no groupApp find");
+        return SaResult.ok().setData(new GroupAppInfoDetail(groupApplications.stream()
+                .max(Comparator.comparing(GroupApplication::getCreatedDate)).orElse(groupApplication)));
+
+    }
 
     public SaResult getMyGroupApplication(long staffId){
-//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if (user == null){
             return SaResult.error("there is no this staff");
@@ -104,7 +117,6 @@ public class GroupServiceMpl implements GroupService {
 
     }
     public SaResult getMyGroupAppToExam(long managerId){
-//        Optional<User> user = userDao.findById(managerId);
         User user = userDao.findByUserId(managerId);
         if (user == null){
             return SaResult.error("there is no this staff");
@@ -149,7 +161,6 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public Set<GroupAppInfo> getAllGroupApplicationToBeChecked(long staffId){
-//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
             System.out.println("there is no this staff");
@@ -159,7 +170,6 @@ public class GroupServiceMpl implements GroupService {
     }
 
     public Set<GroupInfo> getMyGroups(long staffId){
-//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
             System.out.println("there is no this staff");
@@ -179,7 +189,6 @@ public class GroupServiceMpl implements GroupService {
             return false;
         }
 //        Set<User> groupUsers = group.getUsers();
-//        Optional<User> user = userDao.findById(staffId);
         User user = userDao.findByUserId(staffId);
         if(user == null){
             System.out.printf("this user of id %d is not exist\n", staffId);
@@ -208,7 +217,6 @@ public class GroupServiceMpl implements GroupService {
 //      , and it might be duplicate to judge null
         Set<User> groupUser = group.getUsers();
         User user = userDao.findByUserId(staffId);
-//        Optional<User> user = userDao.findById(staffId);
         if (user == null){
             throw new RuntimeException("this user is not exist");
         }

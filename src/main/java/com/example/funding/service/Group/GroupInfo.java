@@ -31,7 +31,9 @@ public class GroupInfo {
             this.managers = group.get().getUsers().stream().filter(s->s.getIdentity()>0).map(UserInfo::new).toList();
             this.staffs = group.get().getUsers().stream().filter(s->s.getIdentity()==0).map(UserInfo::new).toList();
             this.MemberNames = group.get().getUsers().stream().map(User::getName).toList();
-            this.expens = group.get().getExpenditures().stream().map(ExpenditureInfo::new).toList();
+            this.expens = group.get().getExpenditures().stream()
+                    .filter(e->e.getStatus() < 4)
+                    .map(ExpenditureInfo::new).toList();
         }else{
             System.out.println("this group is not present");
         }
@@ -41,7 +43,9 @@ public class GroupInfo {
         this.managers = group.getUsers().stream().filter(s->s.getIdentity()>0).map(UserInfo::new).toList();
         this.staffs = group.getUsers().stream().filter(s->s.getIdentity()==0).map(UserInfo::new).toList();
         this.MemberNames = group.getUsers().stream().map(User::getName).toList();
-        this.expens = group.getExpenditures().stream().map(ExpenditureInfo::new).toList();
+        this.expens = group.getExpenditures().stream()
+                .filter(e->e.getStatus() < 4)
+                .map(ExpenditureInfo::new).toList();
     }
 
 }

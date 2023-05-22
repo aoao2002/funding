@@ -204,19 +204,26 @@ public class ApplicationServiceMpl implements ApplicationService{
         }else{
             return SaResult.error("this id is not int");
         }
+//        System.out.println(System.currentTimeMillis());
         Application application = applicationDao.findById(appID);
+        System.out.println(System.currentTimeMillis());
         if(application == null){
             return SaResult.error("this app is not present");
+        }
+        if (application.getUser().getId() != StpUtil.getLoginIdAsLong()){
+            return SaResult.error("you have no right to withdraw, as it belongs to someone else;");
         }
         if (application.getStatus() != 0){
             return SaResult.error("this application has been examined");
         }
+        System.out.println(System.currentTimeMillis());
 //        设置成撤销状态
         Expenditure expenditure = application.getExpenditure();
         expenditureDao.updateRemainingAmountByNumber(
                 application.getExpenditure().getRemainingAmount()+application.getAmount(),
                 application.getExpenditure().getNumber());
         application.setStatus(3);
+        System.out.println(System.currentTimeMillis());
         return SaResult.ok();
     }
     /*
@@ -488,6 +495,21 @@ public class ApplicationServiceMpl implements ApplicationService{
         userDao.updateSexById(user.getSex(), user.getId());
         return SaResult.ok().setData(expendInfo);
     }
+
+    public SaResult getTempSaveExpend(Long userId){
+        if (userId == null){
+            return SaResult.error("userId is null");
+        }
+        List<Expenditure> expenditures = expenditureDao.findByIdAndStatus(userId, 4);
+        if (expenditures.size() == 0){
+            return SaResult.error("no temp save");
+        }
+        Expenditure expenditure = new Expenditure();
+        expenditure.setName("no app find");
+        return SaResult.ok().setData(new ExpendInfo(expenditures.stream()
+                .max(Comparator.comparing(Expenditure::getCreatedDate)).orElse(expenditure)));
+    }
+
     public SaResult checkUserAndExpend(User user, Expenditure expenditure){
         if (user == null){
             return SaResult.error("this user is not exist");

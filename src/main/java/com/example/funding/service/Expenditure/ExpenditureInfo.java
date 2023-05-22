@@ -37,8 +37,8 @@ public class ExpenditureInfo {
         this.endTime = expenditure.getEndTime();
         this.quota = expenditure.getQuota();
         this.status = statusName[expenditure.getStatus()];
-        this.applications = expenditure.getApplications().stream().
-                sorted(Comparator.comparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
+        this.applications = expenditure.getApplications().stream()
+                .sorted(Comparator.comparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();
     }
 
     public void setExpenditureNumber(String expenditureNumber) {

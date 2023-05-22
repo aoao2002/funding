@@ -36,6 +36,7 @@ public interface ApplicationService {
     public SaResult tempSaveExpend(String expName, String expNumber, String totalAmound,
                                    String startTime, String endTime, String groupName, long userId) throws ParseException;
     public SaResult getMyExpendsToExam(long userId);
+    public SaResult getTempSaveExpend(Long userId);
     public SaResult passExpenditure(long userId, String expId);
     public SaResult getAllMyExpends(long userId);
     public SaResult rejectExpenditure(long userId, String expId);
