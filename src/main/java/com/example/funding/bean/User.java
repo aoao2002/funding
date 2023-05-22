@@ -55,7 +55,7 @@ public class User extends BaseBean{
     /**
      * 课题组
      */
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "user_group", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "group_id")})
     private Set<Group> groups;
@@ -68,20 +68,20 @@ public class User extends BaseBean{
      * 自己提交的基金建立
      * 需要审批的
      */
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Application> applications;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Application> appToExam;
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<GroupApplication> groupApplications;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name="all_user_group_app_to_exam", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "group_app_to_exam_id")})
     private Set<GroupApplication> groupAppToExam;
 //    因为基金不属于个人，属于小组
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Expenditure> expenditures;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Expenditure> expendToExam;
 
     /**
@@ -89,7 +89,7 @@ public class User extends BaseBean{
      * TODO 这里作为测试尝试一个变量多种用途，上面还是不同用途不同变量
      * 上面确实不适合放在一个，因为这里的操作有可能出现管理员申请
      */
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Feedback> feedbacks;
 
     /*

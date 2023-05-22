@@ -28,13 +28,13 @@ public class GroupApplication extends BaseBean{
      * 申请人， 一个申请只能由一个人提交，一个人可以提交多个申请
      */
     @NotNull
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
 
     @NotNull
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
 
@@ -44,6 +44,6 @@ public class GroupApplication extends BaseBean{
     @NotNull
     private int status;
 
-    @ManyToMany(mappedBy = "groupAppToExam", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "groupAppToExam", cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<User> examiners;
 }

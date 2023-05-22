@@ -26,7 +26,7 @@ public class Feedback extends BaseBean{
      * 回复人， 一个回复只能由一个人提交，一个人可以提交多个回复
      */
     @NotNull
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
     /**

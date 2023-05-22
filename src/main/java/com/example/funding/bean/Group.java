@@ -22,13 +22,13 @@ public class Group extends BaseBean{
     /**
      * 课题组成员
      */
-    @ManyToMany(mappedBy = "groups", cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "groups", cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<User> users;
 
     /**
      * 课题组下的经费
      */
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "group_expenditure", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "expenditure_id")})
     private Set<Expenditure> expenditures = new HashSet<>();
 

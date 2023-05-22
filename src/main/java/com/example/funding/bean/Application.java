@@ -29,7 +29,7 @@ public class Application extends BaseBean{
      * 申请人， 一个申请只能由一个人提交，一个人可以提交多个申请
      */
     @NotNull
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -38,7 +38,7 @@ public class Application extends BaseBean{
      * 申请的经费，一次申请只能申请一个经费，一个经费可以被多次申请
      */
     @NotNull
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "expenditure_id")
     private Expenditure expenditure;
 
