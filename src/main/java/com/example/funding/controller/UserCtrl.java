@@ -134,4 +134,9 @@ public class UserCtrl {
         return userService.getMyEmail(StpUtil.getLoginIdAsLong());
     }
 
+    @RequestMapping(value = "getMyIdentity", method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyIdentity(){
+        return ReturnHelper.returnObj(userService.getMyIdentity());
+    }
 }
