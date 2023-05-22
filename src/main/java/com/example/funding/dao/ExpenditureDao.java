@@ -32,7 +32,9 @@ public interface ExpenditureDao extends CommonDao<Expenditure>{
 
     boolean existsByNumberAndStatus(String number, int status);
 
-
+    //用id找Expenditure
+    @Transactional
+    @Query("select e from Expenditure e where e.id = ?1")
     Expenditure findById(long id);
 
 

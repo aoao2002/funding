@@ -20,6 +20,9 @@ public interface ApplicationDao extends CommonDao<Application>{
 
     List<Application> findByUser_IdAndStatus(Long id, int status);
 
+    //用id找Application
+    @Transactional
+    @Query("select a from Application a where a.id = ?1")
     Application findById(long id);
 
 }
