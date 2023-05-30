@@ -10,9 +10,9 @@ name: Maven and Docker CI on funding project
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 env:
   IMAGE_NAME: funding
