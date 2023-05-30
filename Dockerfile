@@ -3,7 +3,7 @@
 # 2. Start a new container: `docker run --rm --name cs304 -p 8000:8080 cs304:v1`
 # 3. Now the backend is running on port 8000.
 
-FROM openjdk:8
+FROM openjdk:18
 
 COPY target/funding-0.0.1-SNAPSHOT.jar /app.jar
 
