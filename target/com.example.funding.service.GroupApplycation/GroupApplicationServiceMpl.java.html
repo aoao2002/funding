@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroupApplicationServiceMpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.GroupApplycation</a> &gt; <span class="el_source">GroupApplicationServiceMpl.java</span></div><h1>GroupApplicationServiceMpl.java</h1><pre class="source lang-java linenums">package com.example.funding.service.GroupApplycation;
+
+import com.example.funding.Util.Exception.BeanException;
+import com.example.funding.bean.*;
+import com.example.funding.dao.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+
+@Service
+<span class="fc" id="L12">public class GroupApplicationServiceMpl implements GroupApplicationService{</span>
+    @Autowired
+    private GroupApplicationDao groupApplicationDao;
+    @Autowired
+    private UserDao userDao;
+
+    @Override
+    public GroupApplication findById(long applyID) {
+<span class="nc" id="L20">        GroupApplication us = groupApplicationDao.findById(applyID);</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if(us==null){</span>
+<span class="nc" id="L22">            throw new BeanException(&quot;the GroupApplication do not exist&quot;);</span>
+        }
+<span class="nc" id="L24">        return us;</span>
+    }
+
+    @Override
+    public boolean deleteById(long applyID){
+<span class="nc" id="L29">        GroupApplication groupApplication = findById(applyID);</span>
+<span class="nc" id="L30">        Set&lt;User&gt; examiners = groupApplication.getExaminers();</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        for (User examiner : examiners) {</span>
+<span class="nc" id="L32">            Set&lt;GroupApplication&gt; groupApplications = examiner.getGroupAppToExam();</span>
+<span class="nc" id="L33">            groupApplications.remove(groupApplication);</span>
+<span class="nc" id="L34">            examiner.setGroupAppToExam(groupApplications);</span>
+<span class="nc" id="L35">        }</span>
+<span class="nc" id="L36">        groupApplicationDao.delete(groupApplication);</span>
+<span class="nc" id="L37">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

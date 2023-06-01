@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RedisCache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.Util.Redis</a> &gt; <span class="el_source">RedisCache.java</span></div><h1>RedisCache.java</h1><pre class="source lang-java linenums">package com.example.funding.Util.Redis;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundSetOperations;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+@SuppressWarnings(value = { &quot;unchecked&quot;, &quot;rawtypes&quot; })
+@Component
+<span class="fc" id="L15">public class RedisCache</span>
+{
+    @Autowired
+    public RedisTemplate redisTemplate;
+
+    /**
+     * 缓存基本的对象，Integer、String、实体类等
+     *
+     * @param key 缓存的键值
+     * @param value 缓存的值
+     */
+    public &lt;T&gt; void setCacheObject(final String key, final T value)
+    {
+<span class="nc" id="L28">        redisTemplate.opsForValue().set(key, value);</span>
+<span class="nc" id="L29">    }</span>
+
+    /**
+     * 缓存基本的对象，Integer、String、实体类等
+     *
+     * @param key 缓存的键值
+     * @param value 缓存的值
+     * @param timeout 时间
+     * @param timeUnit 时间颗粒度
+     */
+    public &lt;T&gt; void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
+    {
+<span class="nc" id="L41">        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);</span>
+<span class="nc" id="L42">    }</span>
+
+    /**
+     * 设置有效时间
+     *
+     * @param key Redis键
+     * @param timeout 超时时间
+     * @return true=设置成功；false=设置失败
+     */
+    public boolean expire(final String key, final long timeout)
+    {
+<span class="nc" id="L53">        return expire(key, timeout, TimeUnit.SECONDS);</span>
+    }
+
+    /**
+     * 设置有效时间
+     *
+     * @param key Redis键
+     * @param timeout 超时时间
+     * @param unit 时间单位
+     * @return true=设置成功；false=设置失败
+     */
+    public boolean expire(final String key, final long timeout, final TimeUnit unit)
+    {
+<span class="nc" id="L66">        return redisTemplate.expire(key, timeout, unit);</span>
+    }
+
+    /**
+     * 获得缓存的基本对象。
+     *
+     * @param key 缓存键值
+     * @return 缓存键值对应的数据
+     */
+    public &lt;T&gt; T getCacheObject(final String key)
+    {
+<span class="nc" id="L77">        ValueOperations&lt;String, T&gt; operation = redisTemplate.opsForValue();</span>
+<span class="nc" id="L78">        return operation.get(key);</span>
+    }
+
+    /**
+     * 删除单个对象
+     *
+     * @param key
+     */
+    public boolean deleteObject(final String key)
+    {
+<span class="nc" id="L88">        return redisTemplate.delete(key);</span>
+    }
+
+    /**
+     * 删除集合对象
+     *
+     * @param collection 多个对象
+     * @return
+     */
+    public long deleteObject(final Collection collection)
+    {
+<span class="nc" id="L99">        return redisTemplate.delete(collection);</span>
+    }
+
+    /**
+     * 缓存List数据
+     *
+     * @param key 缓存的键值
+     * @param dataList 待缓存的List数据
+     * @return 缓存的对象
+     */
+    public &lt;T&gt; long setCacheList(final String key, final List&lt;T&gt; dataList)
+    {
+<span class="nc" id="L111">        Long count = redisTemplate.opsForList().rightPushAll(key, dataList);</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        return count == null ? 0 : count;</span>
+    }
+
+    /**
+     * 获得缓存的list对象
+     *
+     * @param key 缓存的键值
+     * @return 缓存键值对应的数据
+     */
+    public &lt;T&gt; List&lt;T&gt; getCacheList(final String key)
+    {
+<span class="nc" id="L123">        return redisTemplate.opsForList().range(key, 0, -1);</span>
+    }
+
+    /**
+     * 缓存Set
+     *
+     * @param key 缓存键值
+     * @param dataSet 缓存的数据
+     * @return 缓存数据的对象
+     */
+    public &lt;T&gt; BoundSetOperations&lt;String, T&gt; setCacheSet(final String key, final Set&lt;T&gt; dataSet)
+    {
+<span class="nc" id="L135">        BoundSetOperations&lt;String, T&gt; setOperation = redisTemplate.boundSetOps(key);</span>
+<span class="nc" id="L136">        Iterator&lt;T&gt; it = dataSet.iterator();</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        while (it.hasNext())</span>
+        {
+<span class="nc" id="L139">            setOperation.add(it.next());</span>
+        }
+<span class="nc" id="L141">        return setOperation;</span>
+    }
+
+    /**
+     * 获得缓存的set
+     *
+     * @param key
+     * @return
+     */
+    public &lt;T&gt; Set&lt;T&gt; getCacheSet(final String key)
+    {
+<span class="nc" id="L152">        return redisTemplate.opsForSet().members(key);</span>
+    }
+
+    /**
+     * 缓存Map
+     *
+     * @param key
+     * @param dataMap
+     */
+    public &lt;T&gt; void setCacheMap(final String key, final Map&lt;String, T&gt; dataMap)
+    {
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (dataMap != null) {</span>
+<span class="nc" id="L164">            redisTemplate.opsForHash().putAll(key, dataMap);</span>
+        }
+<span class="nc" id="L166">    }</span>
+
+    /**
+     * 获得缓存的Map
+     *
+     * @param key
+     * @return
+     */
+    public &lt;T&gt; Map&lt;String, T&gt; getCacheMap(final String key)
+    {
+<span class="nc" id="L176">        return redisTemplate.opsForHash().entries(key);</span>
+    }
+
+    /**
+     * 往Hash中存入数据
+     *
+     * @param key Redis键
+     * @param hKey Hash键
+     * @param value 值
+     */
+    public &lt;T&gt; void setCacheMapValue(final String key, final String hKey, final T value)
+    {
+<span class="nc" id="L188">        redisTemplate.opsForHash().put(key, hKey, value);</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * 获取Hash中的数据
+     *
+     * @param key Redis键
+     * @param hKey Hash键
+     * @return Hash中的对象
+     */
+    public &lt;T&gt; T getCacheMapValue(final String key, final String hKey)
+    {
+<span class="nc" id="L200">        HashOperations&lt;String, String, T&gt; opsForHash = redisTemplate.opsForHash();</span>
+<span class="nc" id="L201">        return opsForHash.get(key, hKey);</span>
+    }
+
+    /**
+     * 删除Hash中的数据
+     *
+     * @param key
+     * @param hkey
+     */
+    public void delCacheMapValue(final String key, final String hkey)
+    {
+<span class="nc" id="L212">        HashOperations hashOperations = redisTemplate.opsForHash();</span>
+<span class="nc" id="L213">        hashOperations.delete(key, hkey);</span>
+<span class="nc" id="L214">    }</span>
+
+    /**
+     * 获取多个Hash中的数据
+     *
+     * @param key Redis键
+     * @param hKeys Hash键集合
+     * @return Hash对象集合
+     */
+    public &lt;T&gt; List&lt;T&gt; getMultiCacheMapValue(final String key, final Collection&lt;Object&gt; hKeys)
+    {
+<span class="nc" id="L225">        return redisTemplate.opsForHash().multiGet(key, hKeys);</span>
+    }
+
+    /**
+     * 获得缓存的基本对象列表
+     *
+     * @param pattern 字符串前缀
+     * @return 对象列表
+     */
+    public Collection&lt;String&gt; keys(final String pattern)
+    {
+<span class="nc" id="L236">        return redisTemplate.keys(pattern);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

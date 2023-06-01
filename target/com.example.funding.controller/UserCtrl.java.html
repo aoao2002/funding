@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserCtrl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.controller</a> &gt; <span class="el_source">UserCtrl.java</span></div><h1>UserCtrl.java</h1><pre class="source lang-java linenums">package com.example.funding.controller;
+
+import cn.dev33.satoken.stp.StpUtil;
+import com.example.funding.Util.Handler.ReturnHelper;
+import com.example.funding.service.User.EmailAndPwd;
+import com.example.funding.service.User.RegisterInfo;
+import com.example.funding.service.User.UserInfo;
+import com.example.funding.service.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import cn.dev33.satoken.util.SaResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
+
+@RestController
+@RequestMapping(&quot;user/&quot;)
+<span class="fc" id="L20">public class UserCtrl {</span>
+<span class="fc" id="L21">    private static final Logger logger = LoggerFactory.getLogger(UserCtrl.class);</span>
+
+    @Autowired
+    private UserService userService;
+
+//    TODO 之后注册时，首先将account设置为abnormal
+    @RequestMapping(value =&quot;register&quot;, method= RequestMethod.POST)
+    public SaResult register(@RequestBody RegisterInfo registerInfo){
+<span class="fc" id="L29">        return userService.addUser(registerInfo.getEmail(), registerInfo.getPwd(),</span>
+<span class="fc" id="L30">                registerInfo.getName(), registerInfo.getIdentity());</span>
+    }
+
+    @RequestMapping(value =&quot;logout&quot;, method= RequestMethod.POST)
+    public SaResult Logout(){
+<span class="fc" id="L35">        StpUtil.logout();</span>
+<span class="fc" id="L36">        return SaResult.ok(&quot;logout success&quot;);</span>
+    }
+
+    @RequestMapping(value =&quot;getUserByName&quot;, method= RequestMethod.GET)
+    public SaResult getUserByName(String name){
+<span class="nc" id="L41">        return ReturnHelper.returnObj(userService.getUserByName(name));</span>
+    }
+
+    @RequestMapping(value =&quot;getUserByMail&quot;, method= RequestMethod.GET)
+    public SaResult getUserByMail(String mail){
+<span class="nc" id="L46">        return ReturnHelper.returnObj(userService.getUserByMail(mail));</span>
+    }
+
+    @RequestMapping(value =&quot;getUserByMailAndIdentity&quot;, method= RequestMethod.GET)
+    public SaResult getUserByMailAndIdentity(String mail, String identity){
+<span class="fc" id="L51">        return ReturnHelper.returnObj(userService.getUserByMailAndIdentity(mail, identity));</span>
+    }
+
+    @RequestMapping(value =&quot;isLogin&quot;, method= RequestMethod.GET)
+    public SaResult isLogin() {
+<span class="nc" id="L56">        return SaResult.ok(&quot;isLogin：&quot; + StpUtil.isLogin());</span>
+    }
+
+    @RequestMapping(value =&quot;LoginEmail&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult LoginEmail( @RequestBody EmailAndPwd emailAndPwd, String identity){
+<span class="nc" id="L62">        return userService.LoginMail(emailAndPwd.getEmail(), emailAndPwd.getPwd(), identity);</span>
+    }
+
+    @RequestMapping(value =&quot;editMyInfo&quot;, method= RequestMethod.POST)
+    public SaResult editMyInfo(String bio, String phoneNumber, String sex, String name){
+<span class="nc" id="L67">        return ReturnHelper.returnBool(userService.editMyInfo(new UserInfo(bio, name, phoneNumber, sex)));</span>
+    }
+
+    @RequestMapping(value =&quot;getMyInfo&quot;, method= RequestMethod.GET)
+    public SaResult getMyInfo(){
+<span class="nc" id="L72">        System.out.println(&quot;getMyInfo&quot;);</span>
+<span class="nc" id="L73">        System.out.println(System.currentTimeMillis());</span>
+<span class="nc" id="L74">        return ReturnHelper.returnObj(userService.getMyInfo());</span>
+    }
+
+    @RequestMapping(value =&quot;getUserByGroup&quot;, method= RequestMethod.GET)
+    public SaResult getUserByGroup(String groupName){
+<span class="nc" id="L79">        return userService.getUserByGroup(groupName);</span>
+    }
+
+    // find back pwd
+
+    @RequestMapping(value =&quot;edit/getPresidents&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getPresidents(){
+<span class="fc" id="L87">        return userService.getPresidents();</span>
+    }
+
+    @RequestMapping(value =&quot;edit/getAllManagers&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getAllManagers(){
+<span class="nc" id="L93">        return userService.getAllManagers();</span>
+    }
+
+//    send email
+    /*
+    TODO 这里验证码就放在User里，对应一个真实邮箱。
+    TODO 避免大量的邮箱申请，同一用户限制需求邮箱的时间
+    1. 找回密码通过这个邮箱
+    2. 创建账户验证邮箱，可以先创建User
+     */
+    @RequestMapping(value =&quot;sendEmail&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult sendEmail(String mail, String identity) throws MessagingException, IOException {
+<span class="nc" id="L106">        return userService.sendEmail(mail, identity);</span>
+    }
+
+    @RequestMapping(value =&quot;checkCode&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult checkCode(String mail, String identity, String code) {
+<span class="nc" id="L112">        return userService.checkCode(mail, identity, code);</span>
+    }
+
+    @RequestMapping(value =&quot;validMail&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult validMail(String mail, String identity) {
+<span class="nc" id="L118">        return userService.validMail(mail, identity);</span>
+    }
+    @RequestMapping(value =&quot;unValidMail&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult unValidMail(String mail, String identity) {
+<span class="nc" id="L123">        return userService.unValidMail(mail, identity);</span>
+    }
+    @RequestMapping(value =&quot;getPasswd&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult getPasswd(String mail, String identity) {
+<span class="nc" id="L128">        return userService.getPasswd(mail, identity);</span>
+    }
+
+    @RequestMapping(value = &quot;getMyEmail&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyEmail(){
+<span class="nc" id="L134">        return userService.getMyEmail(StpUtil.getLoginIdAsLong());</span>
+    }
+
+    @RequestMapping(value = &quot;getMyIdentity&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyIdentity(){
+<span class="nc" id="L140">        return ReturnHelper.returnObj(userService.getMyIdentity());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

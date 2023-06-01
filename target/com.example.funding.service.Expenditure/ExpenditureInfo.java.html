@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpenditureInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.Expenditure</a> &gt; <span class="el_source">ExpenditureInfo.java</span></div><h1>ExpenditureInfo.java</h1><pre class="source lang-java linenums">package com.example.funding.service.Expenditure;
+
+import com.example.funding.bean.*;
+import com.example.funding.service.Application.AppInfo;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.*;
+
+@Getter
+<span class="nc" id="L11">@Setter</span>
+public class ExpenditureInfo {
+    private String expenditureNumber;
+    private String expenditureName;
+    private String groupName;
+    private double totalAmount;
+    // remaining_amount
+    private double remainingAmount;
+    // start_time
+    private Date startTime;
+    // end_time
+    private Date endTime;
+    private double quota;
+<span class="nc" id="L24">    private String status;</span>
+//    申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销 4 时间停止）
+<span class="pc" id="L26">    String[] statusName = {&quot;Unread&quot;, &quot;Pass&quot;, &quot;Reject&quot;, &quot;Withdraw&quot;, &quot;Timeout&quot;};</span>
+
+<span class="fc" id="L28">    private List&lt;AppInfo&gt; applications=new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L30">    public ExpenditureInfo(Expenditure expenditure){</span>
+<span class="fc" id="L31">        this.expenditureNumber = expenditure.getNumber();</span>
+<span class="fc" id="L32">        this.expenditureName = expenditure.getName();</span>
+<span class="fc" id="L33">        this.groupName = expenditure.getGroup().getName();</span>
+<span class="fc" id="L34">        this.totalAmount = expenditure.getTotalAmount();</span>
+<span class="fc" id="L35">        this.remainingAmount = expenditure.getRemainingAmount();</span>
+<span class="fc" id="L36">        this.startTime = expenditure.getStartTime();</span>
+<span class="fc" id="L37">        this.endTime = expenditure.getEndTime();</span>
+<span class="fc" id="L38">        this.quota = expenditure.getQuota();</span>
+<span class="fc" id="L39">        this.status = statusName[expenditure.getStatus()];</span>
+<span class="fc" id="L40">        this.applications = expenditure.getApplications().stream()</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                .filter(s-&gt;s.getStatus() &lt; 4)</span>
+<span class="fc" id="L42">                .sorted(Comparator.comparing(Application::getCreatedDate).reversed()).map(AppInfo::new).toList();</span>
+<span class="fc" id="L43">    }</span>
+
+    public void setExpenditureNumber(String expenditureNumber) {
+<span class="nc" id="L46">        this.expenditureNumber = expenditureNumber;</span>
+<span class="nc" id="L47">    }</span>
+
+    public String getExpenditureNumber() {
+<span class="nc" id="L50">        return expenditureNumber;</span>
+    }
+
+    public void setExpenditureName(String expenditureName) {
+<span class="nc" id="L54">        this.expenditureName = expenditureName;</span>
+<span class="nc" id="L55">    }</span>
+
+    public String getExpenditureName() {
+<span class="nc" id="L58">        return expenditureName;</span>
+    }
+
+    public void setGroupName(String groupName) {
+<span class="nc" id="L62">        this.groupName = groupName;</span>
+<span class="nc" id="L63">    }</span>
+
+    public String getGroupName() {
+<span class="nc" id="L66">        return groupName;</span>
+    }
+
+    public void setTotalAmount(double totalAmount) {
+<span class="nc" id="L70">        this.totalAmount = totalAmount;</span>
+<span class="nc" id="L71">    }</span>
+
+    public double getTotalAmount() {
+<span class="nc" id="L74">        return totalAmount;</span>
+    }
+
+    public void setRemainingAmount(double remainingAmount) {
+<span class="nc" id="L78">        this.remainingAmount = remainingAmount;</span>
+<span class="nc" id="L79">    }</span>
+
+    public double getRemainingAmount() {
+<span class="nc" id="L82">        return remainingAmount;</span>
+    }
+
+    public void setStartTime(Date startTime) {
+<span class="nc" id="L86">        this.startTime = startTime;</span>
+<span class="nc" id="L87">    }</span>
+
+
+    public Date getStartTime() {
+<span class="nc" id="L91">        return startTime;</span>
+    }
+
+    public void setEndTime(Date endTime) {
+<span class="nc" id="L95">        this.endTime = endTime;</span>
+<span class="nc" id="L96">    }</span>
+
+    public Date getEndTime() {
+<span class="nc" id="L99">        return endTime;</span>
+    }
+
+    public void setQuota(double quota) {
+<span class="nc" id="L103">        this.quota = quota;</span>
+<span class="nc" id="L104">    }</span>
+
+    public double getQuota() {
+<span class="nc" id="L107">        return quota;</span>
+    }
+
+    public void setApplications(List&lt;AppInfo&gt; applications) {
+<span class="nc" id="L111">        this.applications = applications;</span>
+<span class="nc" id="L112">    }</span>
+
+    public List&lt;AppInfo&gt; getApplications() {
+<span class="nc" id="L115">        return applications;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

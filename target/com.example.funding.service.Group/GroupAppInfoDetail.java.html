@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroupAppInfoDetail.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.Group</a> &gt; <span class="el_source">GroupAppInfoDetail.java</span></div><h1>GroupAppInfoDetail.java</h1><pre class="source lang-java linenums">package com.example.funding.service.Group;
+
+import com.example.funding.bean.GroupApplication;
+import com.example.funding.service.User.UserInfo;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Getter
+<span class="nc" id="L11">@Setter</span>
+public class GroupAppInfoDetail {
+<span class="nc" id="L13">    private long groupAppId;</span>
+<span class="nc" id="L14">    private Date applyTime;</span>
+<span class="nc" id="L15">    private String comment;</span>
+<span class="nc" id="L16">    private UserInfo applicant;</span>
+<span class="nc" id="L17">    private String groupName;</span>
+<span class="nc" id="L18">    private long groupId;</span>
+<span class="nc" id="L19">    private String status;</span>
+
+<span class="nc" id="L21">    public GroupAppInfoDetail(){}</span>
+<span class="fc" id="L22">    public GroupAppInfoDetail(GroupApplication groupApplication){</span>
+<span class="fc" id="L23">        this.groupAppId = groupApplication.getId();</span>
+<span class="fc" id="L24">        this.applyTime = groupApplication.getApplyTime();</span>
+<span class="fc" id="L25">        this.comment = groupApplication.getComment();</span>
+<span class="fc" id="L26">        this.applicant = new UserInfo(groupApplication.getUser());</span>
+<span class="fc" id="L27">        this.groupName = groupApplication.getGroup().getName();</span>
+<span class="fc" id="L28">        this.groupId = groupApplication.getGroup().getId();</span>
+<span class="fc" id="L29">        String[] statusName = {&quot;Unread&quot;, &quot;Pass&quot;, &quot;Reject&quot;};</span>
+<span class="fc" id="L30">        this.status = statusName[groupApplication.getStatus()];</span>
+<span class="fc" id="L31">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

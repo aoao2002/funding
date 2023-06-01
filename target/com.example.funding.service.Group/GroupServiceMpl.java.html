@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroupServiceMpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.Group</a> &gt; <span class="el_source">GroupServiceMpl.java</span></div><h1>GroupServiceMpl.java</h1><pre class="source lang-java linenums">package com.example.funding.service.Group;
+
+import cn.dev33.satoken.util.SaResult;
+import com.example.funding.Util.Exception.BeanException;
+import com.example.funding.Util.Handler.InputChecker;
+import com.example.funding.bean.Application;
+import com.example.funding.bean.Group;
+import com.example.funding.bean.GroupApplication;
+import com.example.funding.bean.User;
+import com.example.funding.dao.*;
+import com.example.funding.service.Application.AppInfo;
+import com.example.funding.service.Application.GroupAppInfo;
+import com.example.funding.service.GroupApplycation.GroupApplicationService;
+import com.example.funding.service.User.UserService;
+import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+<span class="fc" id="L25">public class GroupServiceMpl implements GroupService {</span>
+    @Autowired
+    private GroupDao groupDao;
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private GroupApplicationService groupApplicationService;
+
+    @Autowired
+    private GroupApplicationDao groupApplicationDao;
+
+    @Autowired
+    private UserService userService;
+
+
+    @Override
+    public List&lt;GroupInfo&gt; getAllGroups(){
+<span class="fc" id="L43">        List&lt;Group&gt; groups = groupDao.findAll();</span>
+<span class="fc" id="L44">        return groups.stream().map(GroupInfo::new).toList();</span>
+    }
+
+    @Override
+    public SaResult applyGroup(String groupName, String comment, long staffId) {
+<span class="fc" id="L49">        return saveGroupApplication(groupName, comment, staffId, 0);</span>
+    }
+    public SaResult tempSaveGroup(String groupName, String comment, long staffId) {
+<span class="fc" id="L52">        return saveGroupApplication(groupName, comment, staffId, 4);</span>
+    }
+    private SaResult saveGroupApplication(String groupName, String comment, long staffId, int saveStatus) {
+//        new application, send it to all managers
+<span class="fc" id="L56">        Group group = groupDao.findByName(groupName);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if(group == null){</span>
+<span class="fc" id="L58">            return SaResult.error(String.format(&quot;there is no group of %s\n&quot;, groupName));</span>
+        }
+<span class="fc" id="L60">        User user = userDao.findByUserId(staffId);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (user == null){</span>
+<span class="fc" id="L62">            return SaResult.error(&quot;there is no the staff&quot;);</span>
+        }
+<span class="fc" id="L64">        Set&lt;GroupApplication&gt; myApp = user.getGroupApplications();</span>
+<span class="fc bfc" id="L65" title="All 6 branches covered.">        if (myApp.stream().anyMatch(s-&gt;s.getGroup().getName().equals(groupName) &amp;&amp; s.getStatus()==0)){</span>
+<span class="fc" id="L66">            return SaResult.error(&quot;you have submit the application&quot;);</span>
+        }
+<span class="fc" id="L68">        List&lt;String&gt; groupUsers = group.getUsers().stream().map(s-&gt;s.getEmail()+s.getIdentity()).toList();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (groupUsers.contains(user.getEmail()+user.getIdentity())){</span>
+<span class="nc" id="L70">            return SaResult.error(&quot;you have been in this group&quot;);</span>
+        }
+<span class="fc" id="L72">        Date date = new Date();</span>
+<span class="fc" id="L73">        GroupApplication groupApplication = new GroupApplication();</span>
+<span class="fc" id="L74">        groupApplication.setUser(user);</span>
+<span class="fc" id="L75">        groupApplication.setGroup(group);</span>
+<span class="fc" id="L76">        groupApplication.setComment(comment);</span>
+<span class="fc" id="L77">        groupApplication.setApplyTime(date);</span>
+<span class="fc" id="L78">        groupApplication.setStatus(saveStatus);</span>
+<span class="fc" id="L79">        groupApplication = groupApplicationDao.save(groupApplication);</span>
+//        find the corr manager and send it to him
+<span class="fc" id="L81">        Set&lt;User&gt; users = group.getUsers();</span>
+//        Iterator&lt;User&gt; iterator = users.iterator();
+//        TODO 这里可以直接get出来add吗，！！
+<span class="fc" id="L84">        user.getGroupApplications().add(groupApplication);</span>
+<span class="fc" id="L85">        GroupApplication finalGroupApplication = groupApplication;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (saveStatus == 0) {</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            users.stream().filter(s -&gt; s.getIdentity() &gt; 0).forEach(s -&gt; s.getGroupAppToExam().add(finalGroupApplication));</span>
+            //找到identity大于0的setExaminers
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">            groupApplication.setExaminers(users.stream().filter(s -&gt; s.getIdentity() &gt; 0).collect(Collectors.toSet()));</span>
+        }
+//        userDao.saveAll(users);
+<span class="fc" id="L92">        return SaResult.ok();</span>
+    }
+    public SaResult getTempSaveGroup(Long staffId){
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (staffId== null){</span>
+<span class="nc" id="L96">            return SaResult.error(&quot;userId is null&quot;);</span>
+        }
+<span class="fc" id="L98">        List&lt;GroupApplication&gt; groupApplications = groupApplicationDao.findByIdAndStatus(staffId, 4);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (groupApplications.size() == 0){</span>
+<span class="fc" id="L100">            return SaResult.error(&quot;no temp save&quot;);</span>
+        }
+<span class="nc" id="L102">        GroupApplication groupApplication = new GroupApplication();</span>
+<span class="nc" id="L103">        groupApplication.setComment(&quot;no groupApp find&quot;);</span>
+<span class="nc" id="L104">        return SaResult.ok().setData(new GroupAppInfoDetail(groupApplications.stream()</span>
+<span class="nc" id="L105">                .max(Comparator.comparing(GroupApplication::getCreatedDate)).orElse(groupApplication)));</span>
+
+    }
+
+    public SaResult getMyGroupApplication(long staffId){
+<span class="fc" id="L110">        User user = userDao.findByUserId(staffId);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (user == null){</span>
+<span class="fc" id="L112">            return SaResult.error(&quot;there is no this staff&quot;);</span>
+        }
+<span class="fc" id="L114">        List&lt;GroupAppInfoDetail&gt; groupAppInfoDetails = user</span>
+<span class="fc" id="L115">                .getGroupApplications().stream().map(GroupAppInfoDetail::new).toList();</span>
+<span class="fc" id="L116">        return SaResult.ok().setData(groupAppInfoDetails);</span>
+
+    }
+    public SaResult getMyGroupAppToExam(long managerId){
+<span class="fc" id="L120">        User user = userDao.findByUserId(managerId);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (user == null){</span>
+<span class="nc" id="L122">            return SaResult.error(&quot;there is no this staff&quot;);</span>
+        }
+<span class="fc" id="L124">        List&lt;GroupAppInfoDetail&gt; groupAppInfoDetails = user</span>
+<span class="fc" id="L125">                .getGroupAppToExam().stream()</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                .filter(s-&gt;s.getStatus()==0)</span>
+<span class="fc" id="L127">                .map(GroupAppInfoDetail::new).toList();</span>
+<span class="fc" id="L128">        return SaResult.ok().setData(groupAppInfoDetails);</span>
+    }
+
+    @Override
+    public boolean passApplyGroup(long applyId) {
+//        找到application，再找到expen，再找到group，再找到所有manager，所有的application都设置然后删除
+<span class="fc" id="L134">        GroupApplication groupApplication = groupApplicationDao.findById(applyId);</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if(groupApplication == null){</span>
+<span class="fc" id="L136">            System.out.println(&quot;there is no this application&quot;);</span>
+<span class="fc" id="L137">            return false;</span>
+        }
+<span class="fc" id="L139">        groupApplication.setStatus(1);</span>
+<span class="fc" id="L140">        groupApplicationDao.save(groupApplication);</span>
+//        该组里所有manager的组申请set中删去这份application
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        groupApplication.getGroup().getUsers().stream().filter(s-&gt;s.getIdentity()&gt;0)</span>
+<span class="fc" id="L143">                .forEach(s-&gt;s.getGroupApplications().remove(groupApplication));</span>
+//        调用join方法将人加入到该组
+<span class="fc" id="L145">        this.joinGroup(groupApplication.getGroup().getName(), groupApplication.getUser().getId());</span>
+<span class="fc" id="L146">        return true;</span>
+    }
+
+    @Override
+    public boolean rejectApplyGroup(long applyId) {
+<span class="fc" id="L151">        GroupApplication groupApplication = groupApplicationDao.findById(applyId);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if(groupApplication == null){</span>
+<span class="fc" id="L153">            System.out.println(&quot;there is no this application&quot;);</span>
+<span class="fc" id="L154">            return false;</span>
+        }
+<span class="fc" id="L156">        groupApplication.setStatus(2);</span>
+//        该组里所有manager的组申请set中删去这份application
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        groupApplication.getGroup().getUsers().stream().filter(s-&gt;s.getIdentity()&gt;0)</span>
+<span class="fc" id="L159">                .forEach(s-&gt;s.getGroupApplications().remove(groupApplication));</span>
+<span class="fc" id="L160">        return true;</span>
+    }
+
+    public Set&lt;GroupAppInfo&gt; getAllGroupApplicationToBeChecked(long staffId){
+<span class="nc" id="L164">        User user = userDao.findByUserId(staffId);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L166">            System.out.println(&quot;there is no this staff&quot;);</span>
+<span class="nc" id="L167">            return null;</span>
+        }
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        return user.getGroupApplications().stream().filter(s-&gt;s.getStatus() == 0).map(GroupAppInfo::new).collect(Collectors.toSet());</span>
+    }
+
+    public Set&lt;GroupInfo&gt; getMyGroups(long staffId){
+<span class="nc" id="L173">        User user = userDao.findByUserId(staffId);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L175">            System.out.println(&quot;there is no this staff&quot;);</span>
+<span class="nc" id="L176">            return null;</span>
+        }
+<span class="nc" id="L178">        return user.getGroups().stream().map(GroupInfo::new).collect(Collectors.toSet());</span>
+    }
+
+    @Override
+    public boolean joinGroup(String groupName, long staffId){
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if(groupDao.existsByNameAndUsers_Id(groupName, staffId)){</span>
+<span class="fc" id="L184">            return false;</span>
+        }
+<span class="fc" id="L186">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        if(group == null){</span>
+<span class="nc" id="L188">            System.out.printf(&quot;this group of name %s is null\n&quot;, groupName);</span>
+<span class="nc" id="L189">            return false;</span>
+        }
+//        Set&lt;User&gt; groupUsers = group.getUsers();
+<span class="fc" id="L192">        User user = userDao.findByUserId(staffId);</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L194">            System.out.printf(&quot;this user of id %d is not exist\n&quot;, staffId);</span>
+<span class="nc" id="L195">            return false;</span>
+        }
+<span class="fc" id="L197">        user.getGroups().add(group);</span>
+<span class="fc" id="L198">        group.getUsers().add(user);</span>
+//        Set&lt;Group&gt; userGroups = user.get().getGroups();
+//        userGroups.add(group);
+//        user.get().setGroups(userGroups);
+//        groupUsers.add(user.get());
+//        group.setUsers(groupUsers);
+<span class="fc" id="L204">        return true;</span>
+    }
+
+    public boolean quitGroup(String groupName, long staffId){
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        if(!groupDao.existsByNameAndUsers_Id(groupName, staffId)){</span>
+<span class="nc" id="L209">            return false;</span>
+        }
+<span class="fc" id="L211">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        if(group == null){</span>
+<span class="nc" id="L213">            System.out.printf(&quot;this group of name %s is null\n&quot;, groupName);</span>
+<span class="nc" id="L214">            return false;</span>
+        }
+//      find the group and the user, find groupUsers and userGroups relatively and add
+//      , and it might be duplicate to judge null
+<span class="fc" id="L218">        Set&lt;User&gt; groupUser = group.getUsers();</span>
+<span class="fc" id="L219">        User user = userDao.findByUserId(staffId);</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (user == null){</span>
+<span class="nc" id="L221">            throw new RuntimeException(&quot;this user is not exist&quot;);</span>
+        }
+<span class="fc" id="L223">        Set&lt;Group&gt; userGroups = user.getGroups();</span>
+
+<span class="fc" id="L225">        groupUser.remove(user);</span>
+<span class="fc" id="L226">        userGroups.remove(group);</span>
+
+<span class="fc" id="L228">        group.setUsers(groupUser);</span>
+<span class="fc" id="L229">        user.setGroups(userGroups);</span>
+<span class="fc" id="L230">        return true;</span>
+    }
+
+    /*
+    using groupDao.existsByName(groupName), the IDEA would skip following code if it is null by finding groupName, raise an error
+     */
+    public boolean createGroup(String groupName){
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if(groupDao.existsByName(groupName)){</span>
+<span class="fc" id="L238">            System.out.printf(&quot;this group of %s is exist\n&quot;, groupName);</span>
+<span class="fc" id="L239">            return false;</span>
+        }
+<span class="fc" id="L241">        System.out.println(&quot;this group does not exist&quot;);</span>
+<span class="fc" id="L242">        Group group = new Group();</span>
+<span class="fc" id="L243">        group.setName(groupName);</span>
+<span class="fc" id="L244">        group.setUsers(new HashSet&lt;&gt;());</span>
+<span class="fc" id="L245">        group.setExpenditures(new HashSet&lt;&gt;());</span>
+<span class="fc" id="L246">        Date date = new Date();</span>
+<span class="fc" id="L247">        group.setCreatedDate(date);</span>
+<span class="fc" id="L248">        List&lt;User&gt; admins = userDao.findByIdentity(2);</span>
+<span class="fc" id="L249">        admins.forEach(s-&gt;group.getUsers().add(s));</span>
+<span class="fc" id="L250">        Group group1 = groupDao.save(group);</span>
+<span class="fc" id="L251">        admins.forEach(s-&gt; {</span>
+<span class="fc" id="L252">            s.getGroups().add(group1);</span>
+<span class="fc" id="L253">            System.out.printf(&quot;in createGroup, %s\n&quot;, s.getName());</span>
+<span class="fc" id="L254">        });</span>
+<span class="fc" id="L255">        userDao.saveAll(admins);</span>
+//        groupDao.updateCreatedDateById(new Date(), group1.getId());
+<span class="fc" id="L257">        return true;</span>
+    }
+
+    public boolean deleteGroup(String groupName){
+<span class="fc" id="L261">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if (group == null){</span>
+<span class="fc" id="L263">            return false;</span>
+        }
+<span class="nc" id="L265">        Set&lt;User&gt; groupUsers = group.getUsers();</span>
+//        groupUsers.stream().forEach(s-&gt;s.setGroups(s.getGroups().remove(group))); //how to handle this to avoid for loop
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        for (User user : groupUsers) {</span>
+<span class="nc" id="L268">            Set&lt;Group&gt; userGroups = user.getGroups();</span>
+<span class="nc" id="L269">            userGroups.remove(group);</span>
+<span class="nc" id="L270">            user.setGroups(userGroups);</span>
+<span class="nc" id="L271">        }</span>
+<span class="nc" id="L272">        List&lt;GroupApplication&gt; groupApplications = groupApplicationDao.findAllByGroup(group);</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        for (GroupApplication groupApplication : groupApplications) {</span>
+<span class="nc" id="L274">            groupApplicationService.deleteById(groupApplication.getId());</span>
+<span class="nc" id="L275">        }</span>
+<span class="nc" id="L276">        group.setUsers(new HashSet&lt;&gt;());</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        return groupDao.deleteByName(groupName)&gt;0;</span>
+    }
+
+    public boolean assignManager(String groupName, String manEmail){
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if(!groupDao.existsByName(groupName)){</span>
+<span class="nc" id="L282">            System.out.printf(&quot;this group of %s is not exist\n&quot;, groupName);</span>
+<span class="nc" id="L283">            return false;</span>
+        }
+<span class="fc" id="L285">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">        if(group == null){</span>
+<span class="nc" id="L287">            System.out.printf(&quot;this group of name %s is null\n&quot;, groupName);</span>
+<span class="nc" id="L288">            return false;</span>
+        }
+<span class="fc" id="L290">        User user = userDao.findByEmailAndIdentity(manEmail, 1);</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        if(user == null){</span>
+<span class="fc" id="L292">            System.out.printf(&quot;this user of email %s is null\n&quot;, manEmail);</span>
+<span class="fc" id="L293">            return false;</span>
+        }
+<span class="fc" id="L295">        Set&lt;User&gt; groupUsers = group.getUsers();</span>
+<span class="fc" id="L296">        Set&lt;Group&gt; userGroups = user.getGroups();</span>
+<span class="fc" id="L297">        groupUsers.add(user);</span>
+<span class="fc" id="L298">        userGroups.add(group);</span>
+<span class="fc" id="L299">        group.setUsers(groupUsers);</span>
+<span class="fc" id="L300">        user.setGroups(userGroups);</span>
+<span class="fc" id="L301">        return true;</span>
+    }
+
+    public boolean unassignManager(String groupName, String manEmail){
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if(!groupDao.existsByName(groupName)){</span>
+<span class="nc" id="L306">            System.out.printf(&quot;this group of %s is not exist\n&quot;, groupName);</span>
+<span class="nc" id="L307">            return false;</span>
+        }
+<span class="fc" id="L309">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if(group == null){</span>
+<span class="nc" id="L311">            System.out.printf(&quot;this group of name %s is null\n&quot;, groupName);</span>
+<span class="nc" id="L312">            return false;</span>
+        }
+<span class="fc" id="L314">        User user = userDao.findByEmailAndIdentity(manEmail, 1);</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if(user == null){</span>
+<span class="fc" id="L316">            System.out.printf(&quot;this user of email %s is null\n&quot;, manEmail);</span>
+<span class="fc" id="L317">            return false;</span>
+        }
+<span class="nc" id="L319">        Set&lt;User&gt; groupUsers = group.getUsers();</span>
+<span class="nc" id="L320">        Set&lt;Group&gt; userGroups = user.getGroups();</span>
+<span class="nc" id="L321">        groupUsers.remove(user);</span>
+<span class="nc" id="L322">        userGroups.remove(group);</span>
+<span class="nc" id="L323">        group.setUsers(groupUsers);</span>
+<span class="nc" id="L324">        user.setGroups(userGroups);</span>
+<span class="nc" id="L325">        return true;</span>
+    }
+
+    @Override
+    public boolean checkGroupEditPower(String applyID, String groupName, String UserID) {
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        if(!InputChecker.checkNullAndEmpty(groupName)){</span>
+<span class="nc" id="L331">            throw new BeanException(&quot;you need offer either applyID or groupName to edit group&quot;);</span>
+        }
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if(!InputChecker.checkNullAndEmpty(Lists.newArrayList(UserID))){</span>
+<span class="nc" id="L334">            throw new BeanException(&quot;do not offer user for edit group&quot;);</span>
+        }
+<span class="nc" id="L336">        User user = userService.findById(Long.parseLong(UserID));</span>
+
+<span class="nc bnc" id="L338" title="All 2 branches missed.">        if(user==null) throw new BeanException(&quot;UserID wrong for edit group&quot;);</span>
+
+<span class="nc" id="L340">        Group group = groupDao.findByName(groupName);</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">        if(group==null) {</span>
+            //可能是通过applyID请求的，尝试找到对应group
+
+<span class="nc" id="L344">            GroupApplication groupApplication =  groupApplicationService.findById(Long.parseLong(applyID));</span>
+<span class="nc bnc" id="L345" title="All 2 branches missed.">            if (groupApplication == null) throw new BeanException(&quot;groupApplication do not exit&quot;);</span>
+
+<span class="nc" id="L347">            group = groupApplication.getGroup();</span>
+<span class="nc bnc" id="L348" title="All 2 branches missed.">            if(group==null) throw new BeanException(&quot;group do not exit&quot;);</span>
+        }
+
+<span class="nc bnc" id="L351" title="All 4 branches missed.">        return user.getIdentity() != 0 &amp;&amp; group.getUsers().contains(user);</span>
+    }
+
+    /**
+     * test only
+     */
+    public boolean assignStaff(String groupName, String manEmail){
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        if(!groupDao.existsByName(groupName)){</span>
+<span class="nc" id="L359">            System.out.printf(&quot;this group of %s is not exist\n&quot;, groupName);</span>
+<span class="nc" id="L360">            return false;</span>
+        }
+<span class="fc" id="L362">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        if(group == null){</span>
+<span class="nc" id="L364">            System.out.printf(&quot;this group of name %s is null\n&quot;, groupName);</span>
+<span class="nc" id="L365">            return false;</span>
+        }
+<span class="fc" id="L367">        User user = userDao.findByEmailAndIdentity(manEmail, 0);</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L369">            System.out.printf(&quot;this user of email %s is null\n&quot;, manEmail);</span>
+<span class="nc" id="L370">            return false;</span>
+        }
+<span class="fc" id="L372">        Set&lt;User&gt; groupUsers = group.getUsers();</span>
+<span class="fc" id="L373">        Set&lt;Group&gt; userGroups = user.getGroups();</span>
+<span class="fc" id="L374">        groupUsers.add(user);</span>
+<span class="fc" id="L375">        userGroups.add(group);</span>
+<span class="fc" id="L376">        group.setUsers(groupUsers);</span>
+<span class="fc" id="L377">        user.setGroups(userGroups);</span>
+<span class="fc" id="L378">        return true;</span>
+    }
+    public boolean unassignStaff(String groupName, String manEmail){
+<span class="pc bpc" id="L381" title="1 of 2 branches missed.">        if(!groupDao.existsByName(groupName)){</span>
+<span class="nc" id="L382">            System.out.printf(&quot;this group of %s is not exist\n&quot;, groupName);</span>
+<span class="nc" id="L383">            return false;</span>
+        }
+<span class="fc" id="L385">        Group group = groupDao.findByName(groupName);</span>
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">        if(group == null){</span>
+<span class="nc" id="L387">            System.out.printf(&quot;this group of name %s is null\n&quot;, groupName);</span>
+<span class="nc" id="L388">            return false;</span>
+        }
+<span class="fc" id="L390">        User user = userDao.findByEmailAndIdentity(manEmail, 0);</span>
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">        if(user == null){</span>
+<span class="nc" id="L392">            System.out.printf(&quot;this user of email %s is null\n&quot;, manEmail);</span>
+<span class="nc" id="L393">            return false;</span>
+        }
+<span class="fc" id="L395">        Set&lt;User&gt; groupUsers = group.getUsers();</span>
+<span class="fc" id="L396">        Set&lt;Group&gt; userGroups = user.getGroups();</span>
+<span class="fc" id="L397">        groupUsers.remove(user);</span>
+<span class="fc" id="L398">        userGroups.remove(group);</span>
+<span class="fc" id="L399">        group.setUsers(groupUsers);</span>
+<span class="fc" id="L400">        user.setGroups(userGroups);</span>
+<span class="fc" id="L401">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

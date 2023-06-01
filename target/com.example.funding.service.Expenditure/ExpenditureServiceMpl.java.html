@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpenditureServiceMpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.Expenditure</a> &gt; <span class="el_source">ExpenditureServiceMpl.java</span></div><h1>ExpenditureServiceMpl.java</h1><pre class="source lang-java linenums">package com.example.funding.service.Expenditure;
+
+import cn.dev33.satoken.util.SaResult;
+import com.example.funding.bean.Application;
+import com.example.funding.bean.Expenditure;
+import com.example.funding.bean.Group;
+import com.example.funding.bean.User;
+import com.example.funding.dao.*;
+import com.example.funding.service.Application.AppInfo;
+import com.example.funding.service.User.UserService;
+import org.apache.poi.sl.usermodel.ObjectMetaData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+@Service
+<span class="fc" id="L18">public class ExpenditureServiceMpl implements ExpenditureService{</span>
+    @Autowired
+    private ExpenditureDao expenditureDao;
+    @Autowired
+    private UserService userService;
+
+    @Autowired UserDao userDao;
+
+    @Autowired GroupDao groupDao;
+
+    @Autowired ApplicationDao applicationDao;
+
+    @Override
+    public SaResult getOneExpenditureAllInfo(String expenditureNumber){
+//        List&lt;Expenditure&gt; expenditures = expenditureDao.findByNumber(expenditureNumber);
+<span class="nc" id="L33">        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (Objects.isNull(expenditure)) {</span>
+<span class="nc" id="L35">            return SaResult.error(&quot;the expenditure is not exist&quot;);</span>
+        }
+<span class="nc" id="L37">        User user = userService.getMe();</span>
+        // 如果经费所属的课题组user没有这个课题组则返回错误
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if(!groupDao.findAllByUsers(user).contains(expenditure.getGroup())){</span>
+<span class="nc" id="L40">            return SaResult.error(&quot;the expenditure do not belong to the user&quot;);</span>
+        }
+<span class="nc" id="L42">        return SaResult.data(new ExpenditureInfo(expenditure));</span>
+    }
+
+    @Override
+    public SaResult updateExpenditureQuota(String expenditureNumber, String quota){
+//        List&lt;Expenditure&gt; expenditures = expenditureDao.findByNumber(expenditureNumber);
+<span class="nc" id="L48">        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (Objects.isNull(expenditure)) {</span>
+<span class="nc" id="L50">            return SaResult.error(&quot;the expenditure is not exist&quot;);</span>
+        }
+<span class="nc" id="L52">        User user = userService.getMe();</span>
+        // 如果经费所属的课题组user没有这个课题组则返回错误
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if(!groupDao.findAllByUsers(user).contains(expenditure.getGroup())){</span>
+<span class="nc" id="L55">            return SaResult.error(&quot;the expenditure do not belong to the user&quot;);</span>
+        }
+        // 将String转化为double
+<span class="nc" id="L58">        double quotaDouble = Double.parseDouble(quota);</span>
+<span class="nc" id="L59">        expenditure.setQuota(quotaDouble);</span>
+<span class="nc" id="L60">        expenditureDao.save(expenditure);</span>
+<span class="nc" id="L61">        return SaResult.ok(&quot;update success&quot;);</span>
+    }
+
+    @Override
+    public SaResult updateExpenditureEndTime(String expenditureNumber, String endTime){
+//        List&lt;Expenditure&gt; expenditures = expenditureDao.findByNumber(expenditureNumber);
+<span class="nc" id="L67">        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (Objects.isNull(expenditure)) {</span>
+<span class="nc" id="L69">            return SaResult.error(&quot;the expenditure is not exist&quot;);</span>
+        }
+<span class="nc" id="L71">        User user = userService.getMe();</span>
+        // 如果经费所属的课题组user没有这个课题组则返回错误
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if(!groupDao.findAllByUsers(user).contains(expenditure.getGroup())){</span>
+<span class="nc" id="L74">            return  SaResult.error(&quot;the expenditure do not belong to the user&quot;);</span>
+        }
+        // 将String转化为Date
+<span class="nc" id="L77">        Date date = new Date();</span>
+        try {
+<span class="nc" id="L79">            date = new java.text.SimpleDateFormat(&quot;yyyy-MM-dd&quot;).parse(endTime);</span>
+<span class="nc" id="L80">        } catch (Exception e) {</span>
+<span class="nc" id="L81">            e.printStackTrace();</span>
+<span class="nc" id="L82">        }</span>
+<span class="nc" id="L83">        Date startDate = expenditure.getStartTime();</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if(date.before(startDate)){</span>
+<span class="nc" id="L85">            return SaResult.error(&quot;the endTime is before the startTime&quot;);</span>
+        }
+<span class="nc" id="L87">        expenditure.setEndTime(date);</span>
+<span class="nc" id="L88">        expenditureDao.save(expenditure);</span>
+<span class="nc" id="L89">        return SaResult.ok(&quot;update success&quot;);</span>
+    }
+
+    @Override
+    public SaResult getAllExpenditureInfoInOneGroup(String groupName){
+<span class="nc" id="L94">        Group group = groupDao.findByName(groupName);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (Objects.isNull(group)) {</span>
+<span class="nc" id="L96">            return SaResult.error(&quot;the group is not exist&quot;);</span>
+        }
+<span class="nc" id="L98">        User user = userService.getMe();</span>
+        // 如果经费所属的课题组user没有这个课题组则返回错误
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if(!groupDao.findAllByUsers(user).contains(group)){</span>
+<span class="nc" id="L101">             return SaResult.error(&quot;the group do not belong to the user&quot;);</span>
+        }
+<span class="nc" id="L103">        List&lt;Expenditure&gt; expenditureList = expenditureDao.findAllByGroup(group);</span>
+<span class="nc" id="L104">        List&lt;ExpenditureInfo&gt; expenditureInfoList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        for(Expenditure expenditure:expenditureList){</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">            if (expenditure.getStatus()==0||expenditure.getStatus()==2){</span>
+<span class="nc" id="L107">                continue;</span>
+            }
+<span class="nc" id="L109">            expenditureInfoList.add(new ExpenditureInfo(expenditure));</span>
+<span class="nc" id="L110">        }</span>
+<span class="nc" id="L111">        return SaResult.data(expenditureInfoList);</span>
+    }
+
+    @Override
+    public SaResult getAllExpenditureInfo(){
+<span class="nc" id="L116">        User user = userService.getMe();</span>
+<span class="nc" id="L117">        List&lt;Group&gt; groupList = groupDao.findAllByUsers(user);</span>
+<span class="nc" id="L118">        List&lt;ExpenditureInfo&gt; expenditureInfoList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        for(Group group:groupList){</span>
+<span class="nc" id="L120">            List&lt;Expenditure&gt; expenditureList = expenditureDao.findAllByGroup(group)</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                    .stream().filter(s-&gt;s.getStatus() == 1)</span>
+<span class="nc" id="L122">                    .toList();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            for(Expenditure expenditure:expenditureList){</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">                if (expenditure.getStatus()==0||expenditure.getStatus()==2){</span>
+<span class="nc" id="L125">                    continue;</span>
+                }
+<span class="nc" id="L127">                expenditureInfoList.add(new ExpenditureInfo(expenditure));</span>
+<span class="nc" id="L128">            }</span>
+<span class="nc" id="L129">        }</span>
+<span class="nc" id="L130">        return SaResult.data(expenditureInfoList);</span>
+    }
+
+    @Override
+    public SaResult getOneExpenditureAppAllInfoByMyself(String expenditureNumber){
+//        List&lt;Expenditure&gt; expenditures = expenditureDao.findByNumber(expenditureNumber);
+<span class="nc" id="L136">        Expenditure expenditure = expenditureDao.findByNumberAndStatus(expenditureNumber, 1);</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (Objects.isNull(expenditure)) {</span>
+<span class="nc" id="L138">            return SaResult.error(&quot;the expenditure is not exist&quot;);</span>
+        }
+<span class="nc" id="L140">        User user = userService.getMe();</span>
+        // 如果经费所属的课题组user没有这个课题组则返回错误
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if(!groupDao.findAllByUsers(user).contains(expenditure.getGroup())){</span>
+<span class="nc" id="L143">            return SaResult.error(&quot;the expenditure do not belong to the user&quot;);</span>
+        }
+<span class="nc" id="L145">        List&lt;Application&gt; applicationList = applicationDao.findAllByExpenditure(expenditure);</span>
+<span class="nc" id="L146">        List&lt;AppInfo&gt; applicationInfoList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        for(Application application:applicationList){</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (application.getUser().equals(user)){</span>
+<span class="nc" id="L149">                applicationInfoList.add(new AppInfo(application));</span>
+            }
+<span class="nc" id="L151">        }</span>
+<span class="nc" id="L152">        return SaResult.data(applicationInfoList);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

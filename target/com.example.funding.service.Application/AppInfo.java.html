@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.Application</a> &gt; <span class="el_source">AppInfo.java</span></div><h1>AppInfo.java</h1><pre class="source lang-java linenums">package com.example.funding.service.Application;
+
+import com.example.funding.bean.Application;
+import com.example.funding.bean.Expenditure;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Getter
+<span class="nc" id="L11">@Setter</span>
+public class AppInfo {
+//    已有基金的情况下的申请
+<span class="nc" id="L14">    private long appId;</span>
+<span class="nc" id="L15">    private long expendId;</span>
+<span class="nc" id="L16">    private String expendName;</span>
+<span class="nc" id="L17">    private String expendNumber;</span>
+<span class="nc" id="L18">    private String groupName;</span>
+<span class="nc" id="L19">    private double totalAmount;</span>
+<span class="nc" id="L20">    private double remainAmount;</span>
+<span class="nc" id="L21">    private double availAmount;</span>
+<span class="nc" id="L22">    private long userId;</span>
+<span class="nc" id="L23">    private String userName;</span>
+<span class="nc" id="L24">    private String[] expendCategory;</span>
+<span class="nc" id="L25">    private String appAbstract;</span>
+<span class="nc" id="L26">    private double appAmount;</span>
+<span class="nc" id="L27">    private String comment;</span>
+<span class="nc" id="L28">    private String status;</span>
+<span class="nc" id="L29">    private String type;</span>
+
+<span class="nc" id="L31">    private Date createdDate;</span>
+//    0 未审核 1 审核通过 2 审核未通过 3 撤销
+
+<span class="nc" id="L34">    public AppInfo(){}</span>
+
+//    默认
+<span class="fc" id="L37">    public AppInfo(Application application){</span>
+<span class="fc" id="L38">        this.appId = application.getId();</span>
+<span class="fc" id="L39">        this.expendId = application.getExpenditure().getId();</span>
+<span class="fc" id="L40">        this.expendName = application.getExpenditure().getName();</span>
+<span class="fc" id="L41">        this.groupName = application.getExpenditure().getGroup().getName();</span>
+<span class="fc" id="L42">        this.totalAmount = application.getExpenditure().getTotalAmount();</span>
+<span class="fc" id="L43">        this.remainAmount = application.getExpenditure().getRemainingAmount();</span>
+<span class="fc" id="L44">        this.availAmount = this.totalAmount - this.remainAmount;</span>
+<span class="fc" id="L45">        this.userId = application.getUser().getId();</span>
+<span class="fc" id="L46">        this.userName = application.getUser().getName();</span>
+<span class="fc" id="L47">        ExpendCategory expendCategory1 = getExpendCategory(application.getExpendCategory());</span>
+<span class="fc" id="L48">        this.expendCategory = new String[]{expendCategory1.getClass().getSimpleName(), expendCategory1.toString()};</span>
+<span class="fc" id="L49">        this.appAbstract = application.getApp_abstract();</span>
+<span class="fc" id="L50">        this.appAmount = application.getAmount();</span>
+<span class="fc" id="L51">        this.comment = application.getComment();</span>
+<span class="fc" id="L52">        this.expendNumber = application.getExpenditure().getNumber();</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (application.getStatus()&gt;5){</span>
+<span class="nc" id="L54">            application.setStatus(5);</span>
+        }
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (application.getType()&gt;2){</span>
+<span class="nc" id="L57">            application.setType(2);</span>
+        }
+<span class="fc" id="L59">        String[] statusName = {&quot;Unread&quot;, &quot;Pass&quot;, &quot;Reject&quot;, &quot;Withdraw&quot;, &quot;TempSave&quot;, &quot;Error&quot;};</span>
+<span class="fc" id="L60">        String[] typeName = {&quot;NewExpend&quot;, &quot;NewApply&quot;, &quot;Error&quot;};</span>
+<span class="fc" id="L61">        this.status = statusName[application.getStatus()];</span>
+<span class="fc" id="L62">        this.type = typeName[application.getType()];</span>
+<span class="fc" id="L63">        this.createdDate = application.getCreatedDate();</span>
+<span class="fc" id="L64">    }</span>
+<span class="nc" id="L65">    public AppInfo(Expenditure expenditure){</span>
+<span class="nc" id="L66">        this.expendId = expenditure.getId();</span>
+<span class="nc" id="L67">        this.expendName = expenditure.getName();</span>
+<span class="nc" id="L68">        this.groupName = expenditure.getGroup().getName();</span>
+<span class="nc" id="L69">        this.totalAmount = expenditure.getTotalAmount();</span>
+<span class="nc" id="L70">        this.remainAmount = expenditure.getRemainingAmount();</span>
+<span class="nc" id="L71">        this.expendNumber = expenditure.getNumber();</span>
+<span class="nc" id="L72">    }</span>
+    public ExpendCategory getExpendCategory(int categoryCode) {
+<span class="pc bpc" id="L74" title="8 of 12 branches missed.">        switch (categoryCode) {</span>
+<span class="fc" id="L75">            case 0: return ExpendCategory.Office.officeSupplies;</span>
+<span class="fc" id="L76">            case 1: return ExpendCategory.Office.pen;</span>
+<span class="fc" id="L77">            case 2: return ExpendCategory.Office.notebook;</span>
+<span class="nc" id="L78">            case 3: return ExpendCategory.Print.print;</span>
+<span class="fc" id="L79">            case 4: return ExpendCategory.Print.paper;</span>
+<span class="nc" id="L80">            case 5: return ExpendCategory.Maintenance.building;</span>
+<span class="nc" id="L81">            case 6: return ExpendCategory.Maintenance.instrument;</span>
+<span class="nc" id="L82">            case 7: return ExpendCategory.Maintenance.publicSever;</span>
+<span class="nc" id="L83">            case 8: return ExpendCategory.Postage.postage;</span>
+<span class="nc" id="L84">            case 9: return ExpendCategory.Postage.telephone;</span>
+<span class="nc" id="L85">            case 10: return ExpendCategory.Train.train;</span>
+<span class="nc" id="L86">            default: return ExpendCategory.Error.noSuchCategory;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

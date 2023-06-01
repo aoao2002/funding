@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApplicationCtrl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.controller</a> &gt; <span class="el_source">ApplicationCtrl.java</span></div><h1>ApplicationCtrl.java</h1><pre class="source lang-java linenums">package com.example.funding.controller;
+
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
+import com.example.funding.service.Application.ApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+
+/**
+ * TODO 通过test类来检查，手动测试太麻烦了/ps测试类更麻烦
+ * 有的方法：app/expend 的新建，申请，
+ * 1. getAppInfoByNumber(String expendNumber)：填表时通过expendNumber获得该expend相关的其他信息
+ * 2. submitApplication：填写申请的其余部分
+ * 3. withdrawApplication：撤销，通过app_id
+ * 4. newExpenditureApplication：新建expend
+ */
+
+
+@RestController
+@RequestMapping(&quot;/application/&quot;)
+<span class="fc" id="L28">public class ApplicationCtrl {</span>
+    @Autowired
+    private ApplicationService applicationService;
+
+    @RequestMapping(value = &quot;edit/getAppInfoByNumber&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getAppInfoByNumber(String expendNumber){
+<span class="nc" id="L35">        return applicationService.getAppInfoByNumber(expendNumber, StpUtil.getLoginIdAsLong());</span>
+    }
+
+    /* TODO 填写支出类别，内容摘要、支出金额、备注；实现中save过程怎么判断是否成功，测试-注意观察id
+        NOTE 返回app的id，这里提交之后就需要在expend里面实时修改
+        自动填组，经办人；申请提交之后就更新数据库信息
+        TODO 测试：直接exp操作能实现金额修改吗
+    */
+    @RequestMapping(value =&quot;edit/submitApplication&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult submitApplication(String expenditureNumber, String cate1, String cate2, String abstrac, String comment,String applyAmount){
+<span class="nc" id="L46">        return applicationService.submitApplication(expenditureNumber, cate1, cate2,</span>
+<span class="nc" id="L47">                abstrac, comment, applyAmount, StpUtil.getLoginIdAsLong());</span>
+    }
+
+    @RequestMapping(value = &quot;view/getTempSaveApp&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getTempSaveApp(){
+<span class="nc" id="L53">        return applicationService.getTempSaveApp(StpUtil.getLoginIdAsLong());</span>
+    }
+    @RequestMapping(value = &quot;view/tempSaveApplication&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult tempSaveApplication(String expendNumber, String expendCategory1, String expendCategory2, String abstrac ,
+                                        String comment, String amount){
+<span class="nc" id="L59">        return applicationService.tempSaveApplication(expendNumber, expendCategory1, expendCategory2, abstrac ,</span>
+<span class="nc" id="L60">                comment, amount, StpUtil.getLoginIdAsLong());</span>
+    }
+    @RequestMapping(value =&quot;edit/withdrawApplication&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult withdrawApplication(String appId){
+        // TODO（或者管理者处分析app状态，然后管理者按键操作）
+<span class="nc" id="L66">        return applicationService.withdrawApplication(appId);</span>
+    }
+//    返回该基金在该年度还剩余的额度
+//    public SaResult getQuota(String expendNumber){
+//
+//    }
+//    申请者-获取自己的申请记录（所有）
+    @RequestMapping(value = &quot;edit/getMyApps&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyApps(){
+<span class="nc" id="L76">        return applicationService.getMyApps(StpUtil.getLoginIdAsLong());</span>
+    }
+//    获得自己关于某个基金的所有申请
+    @RequestMapping(value = &quot;edit/getMyAppsOfExpend&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyAppsOfExpend(String expendNumber){
+<span class="nc" id="L82">        return applicationService.getMyAppsOfExpend(expendNumber, StpUtil.getLoginIdAsLong());</span>
+    }
+//    获得自己可以申请的基金
+    @RequestMapping(value = &quot;getAllMyExpends&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    SaResult getAllMyExpends(){
+<span class="nc" id="L88">        return applicationService.getAllMyExpends(StpUtil.getLoginIdAsLong());</span>
+    }
+
+    /*
+    TODO 管理者部分的api：
+     1. 获取自己所有需要处理的申请（通过状态号筛选）
+     2. 通过申请
+     3. 拒绝申请
+     */
+    @RequestMapping(value = &quot;edit/getMyAppsToExam&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyAppsToExam(){
+<span class="nc" id="L100">        return applicationService.getMyAppsToExam(StpUtil.getLoginIdAsLong());</span>
+    }
+
+//    NOTE 组不重名
+    @RequestMapping(value = &quot;edit/passApplication&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passApplication(String appId, String comment){
+<span class="nc" id="L107">        return applicationService.passApplication(StpUtil.getLoginIdAsLong(), appId, comment);</span>
+    }
+
+    @RequestMapping(value = &quot;edit/rejectApplication&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectApplication(String appId, String comment){
+<span class="nc" id="L113">        return applicationService.rejectApplication(StpUtil.getLoginIdAsLong(), appId, comment);</span>
+    }
+
+    /*
+       建立新的expend，填写具体的expend 名称
+       报错：
+       1. 填写的组别不属于该用户属于的组
+       2. 填写的时间不对
+       3. 该经费不存在（这个交给上面去审核）
+       TODO 注意管理者需要给expend设置每年的限额，这个先交到manager的set里，然后再交到对应的Group里【manager确认之后】
+       NOTE 这里所有的申请审批都是 加到对应人里，有人修改之后，申请状态改变，对应人每次处理时会先筛选申请表的状态
+    */
+    @RequestMapping(value =&quot;edit/newExpenditureApplication&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult newExpenditureApplication(String expenditureName, String groupName, String expenditureNumber,
+                                              String expenditureTotalAmount, String beginTime, String endTime) throws ParseException {
+<span class="nc" id="L129">        return applicationService.newExpenditureApplication(expenditureName, groupName, expenditureNumber,</span>
+<span class="nc" id="L130">                expenditureTotalAmount, beginTime, endTime, StpUtil.getLoginIdAsLong());</span>
+    }
+    @RequestMapping(value =&quot;edit/submitExpend&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult submitExpend(String expName, String expNumber, String totalAmound,
+                                 String startTime, String endTime, String groupName) throws ParseException {
+<span class="nc" id="L136">        return applicationService.submitExpend(expName, expNumber, totalAmound,</span>
+<span class="nc" id="L137">                startTime, endTime, groupName, StpUtil.getLoginIdAsLong());</span>
+    }
+    @RequestMapping(value =&quot;edit/tempSaveExpend&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult tempSaveExpend(String expName, String expNumber, String totalAmound,
+                                 String startTime, String endTime, String groupName) throws ParseException {
+<span class="nc" id="L143">        return applicationService.tempSaveExpend(expName, expNumber, totalAmound,</span>
+<span class="nc" id="L144">                startTime, endTime, groupName, StpUtil.getLoginIdAsLong());</span>
+    }
+    @RequestMapping(value = &quot;edit/getTempSaveExpend&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getTempSaveExpend(){
+<span class="nc" id="L149">        return applicationService.getTempSaveExpend(StpUtil.getLoginIdAsLong());</span>
+    }
+
+
+    /*
+    TODO 管理者部分的api(Expend部分)：
+     1. 获取自己所有需要处理的申请（通过状态号筛选）
+     2. 通过申请
+     3. 拒绝申请
+     */
+    @RequestMapping(value = &quot;edit/getMyExpendsToExam&quot;, method = RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyExpendsToExam(){
+<span class="nc" id="L162">        return applicationService.getMyExpendsToExam(StpUtil.getLoginIdAsLong());</span>
+    }
+
+    //    NOTE 组不重名
+    @RequestMapping(value = &quot;edit/passExpenditure&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passExpenditure(String appId){
+<span class="nc" id="L169">        return applicationService.passExpenditure(StpUtil.getLoginIdAsLong(), appId);</span>
+    }
+
+    @RequestMapping(value = &quot;edit/rejectExpenditure&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectExpenditure(String appId){
+<span class="nc" id="L175">        return applicationService.rejectExpenditure(StpUtil.getLoginIdAsLong(), appId);</span>
+    }
+
+
+    @RequestMapping(value =&quot;file/uploadCsvFileToApply&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult uploadCsvFileToApply(MultipartFile uploadFile){
+        // TODO
+<span class="nc" id="L183">        return applicationService.uploadCsvFileToApply(uploadFile, StpUtil.getLoginIdAsLong());</span>
+    }
+
+    @RequestMapping(value =&quot;file/downloadCsvFileApplyFromOneExp&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult downloadCsvFileApplyFromOneExp(HttpServletResponse response, String expendNumber){
+        // TODO
+<span class="nc" id="L190">        return applicationService.downloadCsvFileApplyFromOneExp(response, expendNumber, StpUtil.getLoginIdAsLong());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

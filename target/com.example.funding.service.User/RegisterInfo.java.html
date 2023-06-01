@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegisterInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.User</a> &gt; <span class="el_source">RegisterInfo.java</span></div><h1>RegisterInfo.java</h1><pre class="source lang-java linenums">package com.example.funding.service.User;
+
+public class RegisterInfo {
+    String email;
+    String pwd;
+    String name;
+
+    String identity;
+
+<span class="fc" id="L10">    public RegisterInfo(String email, String pwd, String name, String identity) {</span>
+<span class="fc" id="L11">        this.email = email;</span>
+<span class="fc" id="L12">        this.pwd = pwd;</span>
+<span class="fc" id="L13">        this.name = name;</span>
+<span class="fc" id="L14">        this.identity = identity;</span>
+<span class="fc" id="L15">    }</span>
+
+    public String getIdentity() {
+<span class="fc" id="L18">        return identity;</span>
+    }
+
+    public void setIdentity(String identity) {
+<span class="nc" id="L22">        this.identity = identity;</span>
+<span class="nc" id="L23">    }</span>
+
+    public void setEmail(String email) {
+<span class="nc" id="L26">        this.email = email;</span>
+<span class="nc" id="L27">    }</span>
+
+    public void setPwd(String pwd) {
+<span class="nc" id="L30">        this.pwd = pwd;</span>
+<span class="nc" id="L31">    }</span>
+
+    public void setName(String name) {
+<span class="nc" id="L34">        this.name = name;</span>
+<span class="nc" id="L35">    }</span>
+
+    public String getEmail() {
+<span class="fc" id="L38">        return email;</span>
+    }
+
+    public String getPwd() {
+<span class="fc" id="L42">        return pwd;</span>
+    }
+
+    public String getName() {
+<span class="fc" id="L46">        return name;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

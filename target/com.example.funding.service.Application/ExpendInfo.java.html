@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpendInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.service.Application</a> &gt; <span class="el_source">ExpendInfo.java</span></div><h1>ExpendInfo.java</h1><pre class="source lang-java linenums">package com.example.funding.service.Application;
+
+import com.example.funding.bean.Application;
+import com.example.funding.bean.Expenditure;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.text.SimpleDateFormat;
+
+@Getter
+<span class="nc" id="L11">@Setter</span>
+public class ExpendInfo {
+<span class="nc" id="L13">    long expendId;</span>
+<span class="nc" id="L14">    String expendName;</span>
+<span class="nc" id="L15">    String expendNumber;</span>
+<span class="nc" id="L16">    double totalAmount;</span>
+<span class="nc" id="L17">    double remainAmount;</span>
+<span class="nc" id="L18">    double passedAmount;</span>
+<span class="nc" id="L19">    double applyingAmount;</span>
+<span class="nc" id="L20">    String startTime;</span>
+<span class="nc" id="L21">    String endTime;</span>
+<span class="nc" id="L22">    String groupName;</span>
+<span class="nc" id="L23">    long groupId;</span>
+<span class="nc" id="L24">    double quota; //each year usage allowed</span>
+<span class="nc" id="L25">    String status;</span>
+//    申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销 4 时间停止）
+<span class="pc" id="L27">    String[] statusName = {&quot;Unread&quot;, &quot;Pass&quot;, &quot;Reject&quot;, &quot;Withdraw&quot;, &quot;Timeout&quot;, &quot;Error&quot;};</span>
+
+
+<span class="fc" id="L30">    public ExpendInfo(){}</span>
+<span class="fc" id="L31">    public ExpendInfo(Expenditure e){</span>
+<span class="fc" id="L32">        SimpleDateFormat srtFormat = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span>
+<span class="fc" id="L33">        expendId = e.getId();</span>
+<span class="fc" id="L34">        expendName = e.getName();</span>
+<span class="fc" id="L35">        expendNumber = e.getNumber();</span>
+<span class="fc" id="L36">        totalAmount = e.getTotalAmount();</span>
+<span class="fc" id="L37">        remainAmount = e.getRemainingAmount();</span>
+<span class="fc" id="L38">        startTime = srtFormat.format(e.getStartTime());</span>
+<span class="fc" id="L39">        endTime = srtFormat.format(e.getEndTime());</span>
+<span class="fc" id="L40">        groupName = e.getGroup().getName();</span>
+<span class="fc" id="L41">        groupId = e.getGroup().getId();</span>
+<span class="fc" id="L42">        quota = e.getQuota();</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if (e.getStatus()&gt;5){</span>
+<span class="nc" id="L44">            e.setStatus(5);</span>
+        }
+<span class="fc" id="L46">        status = statusName[e.getStatus()];</span>
+<span class="pc bnc" id="L47" title="All 2 branches missed.">        passedAmount = e.getApplications().stream().filter(s-&gt;s.getStatus()==1)</span>
+<span class="fc" id="L48">                .mapToDouble(Application::getAmount).sum();</span>
+<span class="pc bnc" id="L49" title="All 2 branches missed.">        applyingAmount = e.getApplications().stream().filter(s-&gt;s.getAmount()==0)</span>
+<span class="fc" id="L50">                .mapToDouble(Application::getAmount).sum();</span>
+<span class="fc" id="L51">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

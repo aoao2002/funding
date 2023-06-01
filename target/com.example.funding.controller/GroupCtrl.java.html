@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroupCtrl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.controller</a> &gt; <span class="el_source">GroupCtrl.java</span></div><h1>GroupCtrl.java</h1><pre class="source lang-java linenums">package com.example.funding.controller;
+
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
+import com.example.funding.Util.Handler.ReturnHelper;
+import com.example.funding.service.Group.GroupService;
+import com.example.funding.service.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+//import sun.jvm.hotspot.oops.RawHeapVisitor;
+
+
+@RestController
+@RequestMapping(&quot;/group/&quot;)
+<span class="fc" id="L18">public class GroupCtrl {</span>
+//    TODO 加入和退出，staff和manager的操作本质上是一样的，得优化一下
+
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private UserService userService;
+
+    @RequestMapping(value =&quot;edit/JoinApi&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult JoinApi(String groupName){
+//        System.out.printf(&quot;check groupName %s\n&quot;, groupName);
+<span class="nc" id="L30">        return ReturnHelper.returnBool(groupService.joinGroup(groupName, StpUtil.getLoginIdAsLong()));</span>
+    }
+
+    @RequestMapping(value =&quot;getAllGroups&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getAllGroups(){
+<span class="nc" id="L36">        return ReturnHelper.returnObj(groupService.getAllGroups());</span>
+    }
+
+
+    @RequestMapping(value =&quot;getGroupsByUserName&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getGroupsByUserName(String userName){
+<span class="nc" id="L43">        return ReturnHelper.returnObj(groupService.getAllGroups());</span>
+    }
+
+    @RequestMapping(value =&quot;getMyGroups&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyGroups(){
+<span class="nc" id="L49">        return ReturnHelper.returnObj(groupService.getMyGroups(StpUtil.getLoginIdAsLong()));</span>
+    }
+
+
+
+    /**
+     * staff's behavior
+     * no need to check authority
+     */
+
+    @RequestMapping(value = &quot;joinGroup&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult joinGroup(String groupName, String comment){
+       // TODO：this api just for test
+<span class="nc" id="L63">        return groupService.applyGroup(groupName, comment, StpUtil.getLoginIdAsLong());</span>
+    }
+
+    @RequestMapping(value = &quot;tempSaveGroupApp&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult tempSaveGroupApp(String groupName, String comment){
+        // TODO：this api just for test
+<span class="nc" id="L70">        return groupService.tempSaveGroup(groupName, comment, StpUtil.getLoginIdAsLong());</span>
+    }
+
+    @RequestMapping(value =&quot;quitGroup&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult quitGroup(String groupName){
+<span class="nc" id="L76">        return ReturnHelper.returnBool(groupService.quitGroup(groupName, StpUtil.getLoginIdAsLong()));</span>
+    }
+
+//  获得自己申请过的记录
+    @RequestMapping(value =&quot;getMyGroupApplication&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyGroupApplication(){
+<span class="nc" id="L83">        return groupService.getMyGroupApplication(StpUtil.getLoginIdAsLong());</span>
+    }
+
+
+
+
+    /**
+     * manager's behavior
+     *
+     * the input of each api need include the group name
+     */
+
+    @RequestMapping(value =&quot;getMyGroupAppToExam&quot;, method= RequestMethod.GET)
+    @ResponseBody
+    public SaResult getMyGroupAppToExam(){
+<span class="nc" id="L98">        return groupService.getMyGroupAppToExam(StpUtil.getLoginIdAsLong());</span>
+    }
+
+
+
+    @RequestMapping(value =&quot;edit/modifyGroup&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public boolean modifyGroup(String groupName, String updateName){
+        // TODO 可以再商量一下，暂时不管
+        // 1. check if name exists
+        // 2. if exists, update database
+        // 3. modify what? add user or add expenditure
+<span class="nc" id="L110">        return false;</span>
+    }
+//    @RequestMapping(value =&quot;getMyGroupApplication&quot;, method= RequestMethod.POST)
+//    @ResponseBody
+//    public SaResult getMyGroupApplication(){
+//        return ReturnHelper.returnObj(groupService.getAllGroupApplicationToBeChecked(StpUtil.getLoginIdAsLong()));
+//    }
+
+    @RequestMapping(value = &quot;edit/passApplyGroup&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult passApplyGroup(long applyId){
+        // to apply for join the group
+<span class="nc" id="L122">        return ReturnHelper.returnBool(groupService.passApplyGroup(applyId));</span>
+    }
+    @RequestMapping(value = &quot;edit/rejectApplyGroup&quot;, method = RequestMethod.POST)
+    @ResponseBody
+    public SaResult rejectApplyGroup(long applyId){
+<span class="nc" id="L127">        return ReturnHelper.returnBool(groupService.rejectApplyGroup(applyId));</span>
+    }
+
+
+    /**
+     * president's behavior
+     */
+
+    @RequestMapping(value =&quot;president/createGroup&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult createGroup(String groupName){
+
+<span class="fc" id="L139">        return ReturnHelper.returnBool(groupService.createGroup(groupName));</span>
+    }
+    @RequestMapping(value =&quot;president/deleteGroup&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult deleteGroup(String groupName){
+
+<span class="nc" id="L145">        return ReturnHelper.returnBool(groupService.deleteGroup(groupName));</span>
+    }
+    @RequestMapping(value =&quot;president/assignManager&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult assignManager(String groupName, String manEmail){
+
+<span class="fc" id="L151">        return ReturnHelper.returnBool(groupService.assignManager(groupName, manEmail));</span>
+    }
+
+    @RequestMapping(value =&quot;president/unassignManager&quot;, method= RequestMethod.POST)
+    @ResponseBody
+    public SaResult unassignManager(String groupName, String manEmail){
+
+<span class="nc" id="L158">        return ReturnHelper.returnBool(groupService.unassignManager(groupName, manEmail));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
