@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Application.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.bean</a> &gt; <span class="el_source">Application.java</span></div><h1>Application.java</h1><pre class="source lang-java linenums">package com.example.funding.bean;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.istack.NotNull;
+import lombok.*;
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity
+@Getter
+<span class="pc bpc" id="L11" title="2 of 4 branches missed.">@Setter</span>
+<span class="nc" id="L12">@ToString</span>
+<span class="nc bnc" id="L13" title="All 4 branches missed.">@RequiredArgsConstructor</span>
+<span class="fc" id="L14">@NoArgsConstructor</span>
+@Table(name = &quot;expenditure_application&quot;)
+public class Application extends BaseBean{
+    //申请时间
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern=&quot;yyyy-MM-dd HH:mm:ss&quot;,timezone=&quot;GMT+8&quot;)
+<span class="nc" id="L20">    private Date applyTime;</span>
+//    baseBean中已经有createTime，去除该量 TODO 这个量可以去除，但是需要扬数据库
+    // 申请摘要（用钱来干什么）
+    @Column(name = &quot;app_abstract&quot;, nullable = true)
+<span class="fc" id="L24">    private String app_abstract;</span>
+    //申请的附加评论（加急与否）
+    @Column(name = &quot;comment&quot;, nullable = true)
+<span class="fc" id="L27">    private String comment;</span>
+    /**
+     * 申请人， 一个申请只能由一个人提交，一个人可以提交多个申请
+     */
+    @NotNull
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;user_id&quot;)
+<span class="fc" id="L34">    private User user;</span>
+
+
+    /**
+     * 申请的经费，一次申请只能申请一个经费，一个经费可以被多次申请
+     */
+    @NotNull
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;expenditure_id&quot;)
+<span class="fc" id="L43">    private Expenditure expenditure;</span>
+
+
+    /**
+     * 申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销 4 暂存）
+     */
+    @NotNull
+<span class="fc" id="L50">    private int status;</span>
+
+    /**
+     * 是新建经费项目还是申请经费拨款(0 新建经费项目 1 申请经费拨款)
+     * TODO 通过app新建不了，信息不够expend，现在是改了expend来实现
+     */
+    @NotNull
+<span class="fc" id="L57">    private int type;</span>
+
+    /**
+     * TODO 加上支出金额以及支出类别
+     */
+    //支出金额
+    @Column(name = &quot;amount&quot;, nullable = true)
+<span class="fc" id="L64">    private double amount;</span>
+    //支出类别，在service/Application/ExpendCategory.java
+    @Column(name = &quot;expend_category&quot;, nullable = true)
+<span class="fc" id="L67">    private int expendCategory;</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

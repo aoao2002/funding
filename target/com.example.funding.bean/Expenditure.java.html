@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Expenditure.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funding</a> &gt; <a href="index.source.html" class="el_package">com.example.funding.bean</a> &gt; <span class="el_source">Expenditure.java</span></div><h1>Expenditure.java</h1><pre class="source lang-java linenums">package com.example.funding.bean;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.istack.NotNull;
+import lombok.*;
+import javax.persistence.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Getter
+<span class="pc bpc" id="L13" title="2 of 4 branches missed.">@Setter</span>
+<span class="nc" id="L14">@ToString</span>
+<span class="nc bnc" id="L15" title="All 4 branches missed.">@RequiredArgsConstructor</span>
+<span class="fc" id="L16">@NoArgsConstructor</span>
+@Table(name = &quot;expenditure&quot;)
+public class Expenditure extends BaseBean{
+    //name
+    @NotNull
+<span class="fc" id="L21">    private String name;</span>
+    //sequence number
+    @NotNull
+<span class="fc" id="L24">    private String number;</span>
+
+    // total_amount
+    @NotNull
+<span class="fc" id="L28">    private double totalAmount;</span>
+
+    // remaining_amount
+    @NotNull
+<span class="fc" id="L32">    private double remainingAmount;</span>
+
+    // start_time
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern=&quot;yyyy-MM-dd HH:mm:ss&quot;,timezone=&quot;GMT+8&quot;)
+<span class="fc" id="L37">    private Date startTime;</span>
+
+    // end_time
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern=&quot;yyyy-MM-dd HH:mm:ss&quot;,timezone=&quot;GMT+8&quot;)
+<span class="fc" id="L42">    private Date endTime;</span>
+
+    /**
+     * 经费所属课题组
+     */
+//    @ManyToMany(mappedBy = &quot;expenditures&quot;, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+//    private Set&lt;Group&gt; groups = new HashSet&lt;&gt;();
+    @ManyToOne
+    @JoinColumn(name = &quot;group_id&quot;)
+<span class="fc" id="L51">    private Group group;</span>
+
+    /**
+     * 经费申请
+     */
+    @OneToMany(mappedBy = &quot;expenditure&quot;, cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+<span class="fc" id="L57">    private Set&lt;Application&gt; applications;</span>
+
+    //TODO: each year usage
+    //quota amount
+    @Column(name = &quot;quota&quot;, nullable = true)
+<span class="fc" id="L62">    private double quota;</span>
+
+    /**
+     * 申请的状态（0 未审核 1 审核通过 2 审核未通过 3 撤销 4 时间停止）
+     */
+    @NotNull
+<span class="fc" id="L68">    private int status;</span>
+
+//    已经不需要了，但是数据库存着，要改的话需要扬库
+    @NotNull
+<span class="nc" id="L72">    private int type;</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
